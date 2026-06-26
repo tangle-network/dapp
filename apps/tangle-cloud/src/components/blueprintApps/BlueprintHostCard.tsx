@@ -40,7 +40,7 @@ type Props = {
 // fed into CSS custom properties so each blueprint can tint its hero with its
 // brand color. They are not part of the design-token palette — operators can
 // override them via `blueprintUi.theme`, and the rest of the card uses the
-// cloud-app design tokens (bg-card, text-foreground, ...) which honor the
+// cloud-app design tokens (bg-mono-0 dark:bg-mono-180, text-mono-200 dark:text-mono-0, ...) which honor the
 // active theme (tangle / vault) for AA contrast.
 const DEFAULT_ACCENT = '#6366F1';
 const DEFAULT_SECONDARY = '#0B1020';
@@ -88,7 +88,7 @@ const BlueprintHostCard = ({
     >
       <Card
         variant="sandbox"
-        className="relative overflow-hidden rounded-[32px] border border-border bg-card shadow-[var(--shadow-card)]"
+        className="relative overflow-hidden rounded-[32px] border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 shadow-sm"
       >
         {/* Brand-tinted accent wash. Sits on top of the card surface at low
             opacity so card-token text remains AA-contrast on both themes. */}
@@ -111,10 +111,10 @@ const BlueprintHostCard = ({
         <CardContent className="relative grid gap-8 p-6 md:p-8 xl:grid-cols-[minmax(0,1.35fr)_minmax(360px,0.75fr)]">
           <div className="space-y-7">
             <div className="space-y-4">
-              <h1 className="max-w-[720px] font-display text-4xl font-extrabold leading-[1.04] tracking-[-0.04em] text-foreground sm:text-5xl md:text-6xl md:leading-[0.94] md:tracking-[-0.055em] xl:text-6xl">
+              <h1 className="max-w-[720px] font-display text-4xl font-extrabold leading-[1.04] tracking-[-0.04em] text-mono-200 dark:text-mono-0 sm:text-5xl md:text-6xl md:leading-[0.94] md:tracking-[-0.055em] xl:text-6xl">
                 {hero.title}
               </h1>
-              <p className="max-w-2xl text-lg leading-8 text-muted-foreground">
+              <p className="max-w-2xl text-lg leading-8 text-mono-120 dark:text-mono-100">
                 {hero.subtitle}
               </p>
             </div>
@@ -242,8 +242,8 @@ const BlueprintHostCard = ({
           </div>
 
           {blueprintUi.externalApp && (
-            <div className="mt-6 rounded-xl border border-border bg-[color:var(--bg-elevated)] p-4">
-              <p className="text-sm leading-6 text-muted-foreground">
+            <div className="mt-6 rounded-xl border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)] p-4">
+              <p className="text-sm leading-6 text-mono-120 dark:text-mono-100">
                 Publisher console opens in a separate tab.
                 {serviceId !== undefined
                   ? ` Service #${serviceId.toString()} remains manageable here.`
@@ -251,7 +251,7 @@ const BlueprintHostCard = ({
               </p>
               <button
                 type="button"
-                className="mt-3 inline-flex items-center gap-2 rounded-md text-sm font-semibold text-foreground outline-none transition-colors hover:text-[color:var(--brand-cool)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+                className="mt-3 inline-flex items-center gap-2 rounded-md text-sm font-semibold text-mono-200 dark:text-mono-0 outline-none transition-colors hover:text-[color:var(--brand-cool)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                 onClick={() =>
                   window.open(
                     blueprintUi.externalApp?.url,
@@ -269,15 +269,15 @@ const BlueprintHostCard = ({
            * Works for ANY blueprint that sets `website` in its metadata, with or
            * without an iframe/console tier. */}
           {blueprint.websiteUrl && (
-            <div className="mt-4 rounded-xl border border-border bg-[color:var(--bg-elevated)] p-4">
-              <p className="text-sm leading-6 text-muted-foreground">
+            <div className="mt-4 rounded-xl border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)] p-4">
+              <p className="text-sm leading-6 text-mono-120 dark:text-mono-100">
                 Visit the blueprint&apos;s own site.
               </p>
               <a
                 href={blueprint.websiteUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-3 inline-flex items-center gap-2 rounded-md text-sm font-semibold text-foreground outline-none transition-colors hover:text-[color:var(--brand-cool)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+                className="mt-3 inline-flex items-center gap-2 rounded-md text-sm font-semibold text-mono-200 dark:text-mono-0 outline-none transition-colors hover:text-[color:var(--brand-cool)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card"
               >
                 Visit site
                 <ExternalLinkLine className="h-4 w-4" />
@@ -299,8 +299,8 @@ const PrimaryLaunchLink = ({
 }) => {
   // Use the sandbox-ui Button primitive (`size="xl"`) so primary CTA styling
   // — focus ring, disabled state, hover — comes from the design system rather
-  // than being re-implemented inline. `size="xl"` resolves to `bg-primary` +
-  // `text-primary-foreground` which both themes provide.
+  // than being re-implemented inline. `size="xl"` resolves to `bg-purple-40` +
+  // `text-purple-40-foreground` which both themes provide.
   return provisionPath ? (
     <Button asChild size="xl" className="rounded-xl px-8 text-base font-bold">
       <Link to={provisionPath}>{label}</Link>
@@ -325,15 +325,15 @@ const LaunchPlan = ({
   trackedLabel: string;
   pageCopy: BlueprintPageCopy;
 }) => (
-  <aside className="relative overflow-hidden rounded-[28px] border border-border bg-[color:var(--bg-elevated)] p-5 shadow-[var(--shadow-card)] backdrop-blur">
+  <aside className="relative overflow-hidden rounded-[28px] border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)] p-5 shadow-sm backdrop-blur">
     <div
       aria-hidden
       className="pointer-events-none absolute left-0 top-0 h-px w-full bg-gradient-to-r from-transparent via-[color:var(--border-accent-hover)] to-transparent"
     />
-    <p className="font-semibold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+    <p className="font-semibold text-[10px] uppercase tracking-[0.2em] text-mono-120 dark:text-mono-100">
       Launch plan
     </p>
-    <h2 className="mt-2 font-display text-2xl font-extrabold tracking-tight text-foreground">
+    <h2 className="mt-2 font-display text-2xl font-extrabold tracking-tight text-mono-200 dark:text-mono-0">
       {pageCopy.planTitle}
     </h2>
 
@@ -347,11 +347,11 @@ const LaunchPlan = ({
       />
     </div>
 
-    <div className="mt-5 rounded-xl border border-border bg-card p-4">
-      <p className="font-semibold text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+    <div className="mt-5 rounded-xl border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 p-4">
+      <p className="font-semibold text-[10px] uppercase tracking-[0.18em] text-mono-120 dark:text-mono-100">
         Publisher
       </p>
-      <p className="mt-2 font-display text-xl font-extrabold text-foreground">
+      <p className="mt-2 font-display text-xl font-extrabold text-mono-200 dark:text-mono-0">
         {publisherLabel}
       </p>
     </div>
@@ -359,22 +359,24 @@ const LaunchPlan = ({
 );
 
 const ProofPoint = ({ label, value }: { label: string; value: string }) => (
-  <div className="rounded-xl border border-border bg-[color:var(--bg-elevated)] p-4">
-    <p className="font-semibold text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+  <div className="rounded-xl border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)] p-4">
+    <p className="font-semibold text-[10px] uppercase tracking-[0.18em] text-mono-120 dark:text-mono-100">
       {label}
     </p>
-    <p className="mt-2 font-display text-lg font-extrabold tracking-tight text-foreground">
+    <p className="mt-2 font-display text-lg font-extrabold tracking-tight text-mono-200 dark:text-mono-0">
       {value}
     </p>
   </div>
 );
 
 const PlanStep = ({ index, title }: { index: string; title: string }) => (
-  <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-3">
-    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-primary font-display text-sm font-extrabold text-primary-foreground">
+  <div className="flex items-center gap-3 rounded-xl border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 p-3">
+    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-purple-40 font-display text-sm font-extrabold text-purple-40-foreground">
       {index}
     </span>
-    <p className="text-sm font-semibold leading-5 text-foreground">{title}</p>
+    <p className="text-sm font-semibold leading-5 text-mono-200 dark:text-mono-0">
+      {title}
+    </p>
   </div>
 );
 
@@ -391,10 +393,10 @@ const SectionHeader = ({
     <p className="font-semibold text-[10px] uppercase tracking-[0.2em] text-[color:var(--surface-success-text)]">
       {kicker}
     </p>
-    <h2 className="mt-2 font-display text-3xl font-extrabold leading-tight tracking-tight text-foreground">
+    <h2 className="mt-2 font-display text-3xl font-extrabold leading-tight tracking-tight text-mono-200 dark:text-mono-0">
       {title}
     </h2>
-    <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
+    <p className="mt-3 max-w-2xl text-sm leading-6 text-mono-120 dark:text-mono-100">
       {description}
     </p>
   </div>
@@ -409,14 +411,14 @@ const OutcomeCard = ({
   value: string;
   description: string;
 }) => (
-  <div className="rounded-xl border border-border bg-[color:var(--bg-elevated)] p-4">
-    <p className="font-semibold text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+  <div className="rounded-xl border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)] p-4">
+    <p className="font-semibold text-[10px] uppercase tracking-[0.18em] text-mono-120 dark:text-mono-100">
       {title}
     </p>
-    <h3 className="mt-2 font-display text-xl font-extrabold tracking-tight text-foreground">
+    <h3 className="mt-2 font-display text-xl font-extrabold tracking-tight text-mono-200 dark:text-mono-0">
       {value}
     </h3>
-    <p className="mt-3 text-sm leading-6 text-muted-foreground">
+    <p className="mt-3 text-sm leading-6 text-mono-120 dark:text-mono-100">
       {description}
     </p>
   </div>
@@ -429,17 +431,17 @@ const ActionPreview = ({
   action: BlueprintUiAction;
   index: number;
 }) => (
-  <div className="rounded-xl border border-border bg-[color:var(--bg-elevated)] p-4">
+  <div className="rounded-xl border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)] p-4">
     <div className="flex gap-4">
-      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[var(--blueprint-accent)] font-display text-sm font-extrabold text-primary-foreground">
+      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[var(--blueprint-accent)] font-display text-sm font-extrabold text-purple-40-foreground">
         {index}
       </span>
       <div className="min-w-0 flex-1">
-        <h3 className="font-display text-lg font-semibold text-foreground">
+        <h3 className="font-display text-lg font-semibold text-mono-200 dark:text-mono-0">
           {action.label}
         </h3>
         {action.description && (
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">
+          <p className="mt-2 text-sm leading-6 text-mono-120 dark:text-mono-100">
             {action.description}
           </p>
         )}
@@ -458,7 +460,7 @@ const ActionPreview = ({
 const FieldChip = ({ field }: { field: BlueprintUiActionField }) => (
   <Badge
     variant="sandbox"
-    className="border-border bg-card text-muted-foreground"
+    className="border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 text-mono-120 dark:text-mono-100"
   >
     {field.label}
     {field.required ? ' *' : ''}
@@ -472,9 +474,9 @@ const RuntimeTable = ({
   view: NonNullable<BlueprintUi['resourceViews']>[number];
   trackedLabel: string;
 }) => (
-  <div className="overflow-hidden rounded-xl border border-border bg-[color:var(--bg-elevated)]">
-    <div className="flex items-center justify-between border-b border-border p-4">
-      <h3 className="font-display text-lg font-semibold text-foreground">
+  <div className="overflow-hidden rounded-xl border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)]">
+    <div className="flex items-center justify-between border-b border-mono-60 dark:border-mono-170 p-4">
+      <h3 className="font-display text-lg font-semibold text-mono-200 dark:text-mono-0">
         {view.title}
       </h3>
       <Badge className="bg-[color:var(--surface-success-bg)] text-[color:var(--surface-success-text)]">
@@ -490,14 +492,14 @@ const RuntimeTable = ({
       {view.columns.map((column) => (
         <div
           key={`head-${column.key}`}
-          className="border-r border-border px-4 py-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground last:border-r-0"
+          className="border-r border-mono-60 dark:border-mono-170 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-mono-120 dark:text-mono-100 last:border-r-0"
         >
           {column.label}
         </div>
       ))}
     </div>
     <div
-      className="grid border-t border-border"
+      className="grid border-t border-mono-60 dark:border-mono-170"
       style={{
         gridTemplateColumns: `repeat(${view.columns.length}, minmax(9rem, 1fr))`,
       }}
@@ -505,7 +507,7 @@ const RuntimeTable = ({
       {view.columns.map((column) => (
         <div
           key={`cell-${column.key}`}
-          className="border-r border-border px-4 py-4 text-sm font-semibold text-foreground last:border-r-0"
+          className="border-r border-mono-60 dark:border-mono-170 px-4 py-4 text-sm font-semibold text-mono-200 dark:text-mono-0 last:border-r-0"
         >
           {column.emphasis ? trackedLabel : 'Pending'}
         </div>
@@ -517,7 +519,7 @@ const RuntimeTable = ({
 const Chip = ({ children }: { children: string }) => (
   <Badge
     variant="sandbox"
-    className="border-border bg-[color:var(--bg-elevated)] text-muted-foreground"
+    className="border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)] text-mono-120 dark:text-mono-100"
   >
     {children}
   </Badge>

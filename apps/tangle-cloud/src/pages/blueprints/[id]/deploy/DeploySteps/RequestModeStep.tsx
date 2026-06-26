@@ -174,7 +174,7 @@ export const RequestModeStep: FC<BaseDeployStepProps> = ({
       <Text variant="h5" className="mb-2">
         Request Mode
       </Text>
-      <Text variant="body2" className="text-muted-foreground mb-4">
+      <Text variant="body2" className="text-mono-120 dark:text-mono-100 mb-4">
         Select which contract request variant to use when deploying.
       </Text>
 
@@ -204,7 +204,10 @@ export const RequestModeStep: FC<BaseDeployStepProps> = ({
               </SelectContent>
             </Select>
             {errors?.requestMode?.message && (
-              <Text variant="body3" className="text-destructive mt-1">
+              <Text
+                variant="body3"
+                className="text-red-500 dark:text-red-400 mt-1"
+              >
                 {errors.requestMode.message}
               </Text>
             )}
@@ -252,7 +255,10 @@ export const RequestModeStep: FC<BaseDeployStepProps> = ({
               <Text variant="body3" className={cx(LabelClassName, 'mb-0.5')}>
                 Per-Operator Exposure (%)
               </Text>
-              <Text variant="body3" className="text-muted-foreground">
+              <Text
+                variant="body3"
+                className="text-mono-120 dark:text-mono-100"
+              >
                 Set the exact exposure percent for each selected operator.
               </Text>
             </div>
@@ -292,16 +298,16 @@ export const RequestModeStep: FC<BaseDeployStepProps> = ({
                   return (
                     <div
                       key={operator}
-                      className="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6 p-4 bg-muted/40 rounded-lg"
+                      className="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6 p-4 bg-mono-20/50 dark:bg-mono-190/50 rounded-lg"
                     >
                       <div className="flex items-center gap-3 flex-shrink-0 lg:w-[200px]">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-gradient-to-br from-primary/25 to-accent/25 font-mono text-xs text-foreground">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-mono-60 dark:border-mono-170 bg-gradient-to-br from-primary/25 to-accent/25 font-mono text-xs text-mono-200 dark:text-mono-0">
                           {operator.slice(2, 4).toUpperCase()}
                         </div>
                         <div className="min-w-0">
                           <Text
                             variant="body4"
-                            className="text-muted-foreground uppercase tracking-wide mb-0.5"
+                            className="text-mono-120 dark:text-mono-100 uppercase tracking-wide mb-0.5"
                           >
                             Operator
                           </Text>
@@ -336,7 +342,7 @@ export const RequestModeStep: FC<BaseDeployStepProps> = ({
                                 });
                               }}
                             />
-                            <span className="w-12 text-right font-mono text-sm text-foreground">
+                            <span className="w-12 text-right font-mono text-sm text-mono-200 dark:text-mono-0">
                               {exposurePercent}%
                             </span>
                           </div>

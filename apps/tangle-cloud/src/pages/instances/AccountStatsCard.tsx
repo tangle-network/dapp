@@ -118,13 +118,13 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
       >
         <CardContent className="flex h-full flex-col gap-5 p-5 md:p-6">
           <div className="min-w-0">
-            <p className="font-semibold text-muted-foreground text-xs uppercase tracking-wider">
+            <p className="font-semibold text-mono-120 dark:text-mono-100 text-xs uppercase tracking-wider">
               Account
             </p>
-            <div className="mt-2 font-display font-bold text-foreground text-lg tracking-tight">
+            <div className="mt-2 font-display font-bold text-mono-200 dark:text-mono-0 text-lg tracking-tight">
               Connect a wallet to load your account
             </div>
-            <p className="mt-2 max-w-xl text-muted-foreground text-sm leading-relaxed">
+            <p className="mt-2 max-w-xl text-mono-120 dark:text-mono-100 text-sm leading-relaxed">
               Connect to load deployed services, operator registrations, and
               account-scoped lifecycle events. Public catalog and operator
               registry data load below without a wallet.
@@ -150,10 +150,10 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
               size="lg"
             />
             <div className="min-w-0">
-              <div className="truncate font-display font-bold text-foreground text-lg tracking-tight">
+              <div className="truncate font-display font-bold text-mono-200 dark:text-mono-0 text-lg tracking-tight">
                 {identityName}
               </div>
-              <div className="mt-1 flex items-center gap-2 text-muted-foreground text-xs">
+              <div className="mt-1 flex items-center gap-2 text-mono-120 dark:text-mono-100 text-xs">
                 <span className="truncate font-mono">
                   {accountAddress ?? 'Connect a wallet to see your account'}
                 </span>
@@ -162,7 +162,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
                     href={accountExplorerUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-muted-foreground transition-colors hover:text-primary"
+                    className="text-mono-120 dark:text-mono-100 transition-colors hover:text-purple-40"
                     aria-label="Open account in explorer"
                   >
                     <ExternalLinkLine className="h-4 w-4 fill-current" />
@@ -175,7 +175,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
           {isOperator && <Badge variant="success">Operator</Badge>}
         </div>
 
-        <div className="grid min-h-[120px] grid-cols-2 overflow-hidden rounded-lg border border-border bg-card">
+        <div className="grid min-h-[120px] grid-cols-2 overflow-hidden rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180">
           {Array.from({ length: 4 }).map((_, index) => {
             const item = statsItems[index];
             const isLeftColumn = index % 2 === 0;
@@ -186,17 +186,18 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
                 key={item?.title ?? `placeholder-${index}`}
                 className={twMerge(
                   'min-h-24 p-4',
-                  isLeftColumn && 'border-r border-border',
-                  isTopRow && 'border-b border-border',
+                  isLeftColumn &&
+                    'border-r border-mono-60 dark:border-mono-170',
+                  isTopRow && 'border-b border-mono-60 dark:border-mono-170',
                 )}
                 title={item?.tooltip}
               >
                 {item && (
                   <>
-                    <p className="text-muted-foreground text-xs">
+                    <p className="text-mono-120 dark:text-mono-100 text-xs">
                       {item.title}
                     </p>
-                    <p className="mt-2 font-display font-bold text-foreground text-2xl">
+                    <p className="mt-2 font-display font-bold text-mono-200 dark:text-mono-0 text-2xl">
                       {item.children}
                     </p>
                   </>

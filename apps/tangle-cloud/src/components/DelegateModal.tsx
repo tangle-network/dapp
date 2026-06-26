@@ -58,7 +58,7 @@ const DelegateModal: FC<DelegateModalProps> = ({
         </DialogHeader>
         <div className="space-y-4 p-4">
           <div>
-            <label className="text-sm font-medium text-muted-foreground">
+            <label className="text-sm font-medium text-mono-120 dark:text-mono-100">
               Amount (TNT)
             </label>
             <input
@@ -66,14 +66,18 @@ const DelegateModal: FC<DelegateModalProps> = ({
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="0.0"
-              className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-foreground outline-none focus:border-primary"
+              className="mt-1 w-full rounded-md border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-190 px-3 py-2 text-mono-200 dark:text-mono-0 outline-none focus:border-purple-40"
             />
           </div>
-          {error && <p className="text-sm text-destructive">{error.message}</p>}
+          {error && (
+            <p className="text-sm text-red-500 dark:text-red-400">
+              {error.message}
+            </p>
+          )}
           <button
             onClick={handleDelegate}
             disabled={!isConnected || !amount}
-            className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
+            className="w-full rounded-md bg-purple-40 px-4 py-2 text-sm font-medium text-purple-40-foreground transition-colors hover:bg-purple-40/90 disabled:opacity-50"
           >
             Delegate
           </button>

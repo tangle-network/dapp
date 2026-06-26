@@ -70,7 +70,7 @@ const EarningsAssetCell: FC<{
         {iconSymbol ? (
           <TokenIcon name={iconSymbol} size="xl" />
         ) : (
-          <span className="grid h-9 w-9 place-items-center rounded-md border border-border bg-muted font-mono text-foreground text-xs">
+          <span className="grid h-9 w-9 place-items-center rounded-md border border-mono-60 dark:border-mono-170 bg-mono-20 dark:bg-mono-190 font-mono text-mono-200 dark:text-mono-0 text-xs">
             {token.slice(2, 4).toUpperCase()}
           </span>
         )}
@@ -78,18 +78,18 @@ const EarningsAssetCell: FC<{
 
       <div className="flex flex-col min-w-0">
         <div className="flex items-center gap-2 min-w-0">
-          <span className="whitespace-nowrap font-semibold text-foreground text-sm">
+          <span className="whitespace-nowrap font-semibold text-mono-200 dark:text-mono-0 text-sm">
             {isLoading ? 'Loading...' : symbol}
           </span>
           {tokenName && (
-            <span className="truncate text-muted-foreground text-xs">
+            <span className="truncate text-mono-120 dark:text-mono-100 text-xs">
               {tokenName}
             </span>
           )}
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="font-mono text-muted-foreground text-xs">
+          <span className="font-mono text-mono-120 dark:text-mono-100 text-xs">
             {shortenHex(token)}
           </span>
           <CopyIconButton value={token} label="Copy asset address" />
@@ -98,7 +98,7 @@ const EarningsAssetCell: FC<{
               href={explorerAddressUrl ?? undefined}
               target="_blank"
               rel="noreferrer"
-              className="text-muted-foreground transition-colors hover:text-primary"
+              className="text-mono-120 dark:text-mono-100 transition-colors hover:text-purple-40"
               aria-label="View asset address on block explorer"
             >
               <ExternalLinkLine className="w-4 h-4 !fill-current" />
@@ -135,7 +135,9 @@ const EarningsByAssetsTable: FC<{
 }> = ({ rows, addressExplorerUrl }) => {
   if (rows.length === 0) {
     return (
-      <p className="text-muted-foreground text-sm">No payouts recorded.</p>
+      <p className="text-mono-120 dark:text-mono-100 text-sm">
+        No payouts recorded.
+      </p>
     );
   }
 
@@ -177,7 +179,7 @@ const EarningsAssetsCard: FC<EarningsAssetsCardProps> = ({
   return (
     <Card variant="sandbox">
       <CardContent className="p-6">
-        <h2 className="mb-4 font-display font-bold text-foreground text-xl">
+        <h2 className="mb-4 font-display font-bold text-mono-200 dark:text-mono-0 text-xl">
           Earnings by Assets
         </h2>
         <EarningsByAssetsTable
@@ -198,7 +200,7 @@ const CopyIconButton: FC<{ value: string; label: string }> = ({
   <button
     type="button"
     aria-label={label}
-    className="inline-flex text-muted-foreground transition-colors hover:text-primary"
+    className="inline-flex text-mono-120 dark:text-mono-100 transition-colors hover:text-purple-40"
     onClick={() => void navigator.clipboard?.writeText(value)}
   >
     <FileCopyLine className="h-4 w-4 fill-current" />

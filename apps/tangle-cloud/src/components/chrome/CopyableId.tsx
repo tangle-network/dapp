@@ -43,7 +43,7 @@ const CopyableId: FC<Props> = ({
   }, [value]);
 
   if (!value) {
-    return <span className="text-muted-foreground">—</span>;
+    return <span className="text-mono-120 dark:text-mono-100">—</span>;
   }
 
   const looksHex = /^0x[0-9a-fA-F]{8,}$/.test(value);
@@ -57,14 +57,14 @@ const CopyableId: FC<Props> = ({
       title={copied ? 'Copied' : `Copy: ${value}`}
       aria-label={`Copy ${value}`}
       className={twMerge(
-        'group inline-flex max-w-full items-center gap-1 font-mono text-sm tabular-nums text-foreground transition-colors hover:text-[color:var(--border-accent-hover)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[color:var(--border-accent-hover)]',
+        'group inline-flex max-w-full items-center gap-1 font-mono text-sm tabular-nums text-mono-200 dark:text-mono-0 transition-colors hover:text-[color:var(--border-accent-hover)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[color:var(--border-accent-hover)]',
         className,
       )}
     >
       <span className="truncate">{shown}</span>
       <span
         aria-hidden
-        className="shrink-0 text-muted-foreground/60 transition-colors group-hover:text-[color:var(--border-accent-hover)]"
+        className="shrink-0 text-mono-120 dark:text-mono-100/60 transition-colors group-hover:text-[color:var(--border-accent-hover)]"
       >
         {copied ? (
           <svg viewBox="0 0 16 16" fill="none" className="h-3 w-3" aria-hidden>

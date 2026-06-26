@@ -47,7 +47,7 @@ const SHORTCUTS: Array<{
 ];
 
 const Kbd: FC<{ children: string }> = ({ children }) => (
-  <kbd className="inline-flex h-6 min-w-[24px] items-center justify-center rounded border border-border bg-[color:var(--bg-elevated)]/60 px-1.5 font-mono text-xs text-foreground">
+  <kbd className="inline-flex h-6 min-w-[24px] items-center justify-center rounded border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)]/60 px-1.5 font-mono text-xs text-mono-200 dark:text-mono-0">
     {children}
   </kbd>
 );
@@ -59,7 +59,7 @@ const Kbd: FC<{ children: string }> = ({ children }) => (
  */
 const ShortcutsHelp: FC<Props> = ({ open, onOpenChange }) => (
   <Dialog open={open} onOpenChange={onOpenChange}>
-    <DialogContent className="max-w-[480px] gap-0 border border-border bg-[color:var(--bg-card)] p-6">
+    <DialogContent className="max-w-[480px] gap-0 border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-mono-0 dark:bg-mono-180)] p-6">
       <DialogHeader>
         <DialogTitle className={twMerge(typeRole.section)}>
           Keyboard shortcuts
@@ -75,7 +75,7 @@ const ShortcutsHelp: FC<Props> = ({ open, onOpenChange }) => (
               {section.rows.map((row, i) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between gap-3 rounded-md px-2 py-1 text-sm text-foreground"
+                  className="flex items-center justify-between gap-3 rounded-md px-2 py-1 text-sm text-mono-200 dark:text-mono-0"
                 >
                   <span>{row.label}</span>
                   <span className="flex items-center gap-1">

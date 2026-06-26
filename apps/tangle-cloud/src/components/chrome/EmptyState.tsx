@@ -35,7 +35,7 @@ const KIND_DEFAULTS: Record<
   'no-data': {
     title: 'Nothing here yet',
     description: 'There is no data for this view. Get started below.',
-    dotClass: 'bg-muted-foreground/40',
+    dotClass: 'bg-mono-20 dark:bg-mono-190-foreground/40',
   },
   'no-match': {
     title: 'No matches',
@@ -50,7 +50,7 @@ const KIND_DEFAULTS: Record<
   loading: {
     title: 'Loading',
     description: 'Fetching data from the indexer.',
-    dotClass: 'bg-muted-foreground/40',
+    dotClass: 'bg-mono-20 dark:bg-mono-190-foreground/40',
   },
   'no-permission': {
     title: 'No access',

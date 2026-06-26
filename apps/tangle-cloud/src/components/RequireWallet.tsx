@@ -52,7 +52,7 @@ const RequireWallet: FC<Props> = ({
               {checks.map((check) => (
                 <span
                   key={check}
-                  className="rounded-full border border-border bg-transparent px-2.5 py-0.5 text-xs text-foreground"
+                  className="rounded-full border border-mono-60 dark:border-mono-170 bg-transparent px-2.5 py-0.5 text-xs text-mono-200 dark:text-mono-0"
                 >
                   {check}
                 </span>

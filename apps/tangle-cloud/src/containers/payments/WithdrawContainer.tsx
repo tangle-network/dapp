@@ -31,7 +31,7 @@ const WithdrawContainer: FC = () => {
           Withdraw from Shielded Pool
         </Text>
 
-        <Text variant="body2" className="mt-1 text-muted-foreground">
+        <Text variant="body2" className="mt-1 text-mono-120 dark:text-mono-100">
           Withdraw shielded tokens to a public address. Notes are selected
           automatically (FIFO). Change is returned as a new note.
         </Text>
@@ -59,7 +59,7 @@ const WithdrawContainer: FC = () => {
             {confirmedNotes.length > 5 && (
               <Text
                 variant="body3"
-                className="self-center text-muted-foreground"
+                className="self-center text-mono-120 dark:text-mono-100"
               >
                 +{confirmedNotes.length - 5} more
               </Text>
@@ -78,7 +78,11 @@ const WithdrawContainer: FC = () => {
       />
 
       <div className="space-y-1">
-        <Text variant="body2" fw="semibold" className="text-muted-foreground">
+        <Text
+          variant="body2"
+          fw="semibold"
+          className="text-mono-120 dark:text-mono-100"
+        >
           Recipient Address
         </Text>
 

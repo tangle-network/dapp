@@ -277,24 +277,33 @@ const OperatorExitPanel: FC<Props> = ({
       <div className="space-y-4">
         {/* Exit Config Info */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <div className="p-3 rounded-lg bg-muted/40">
-            <Text variant="body3" className="text-muted-foreground mb-1">
+          <div className="p-3 rounded-lg bg-mono-20/50 dark:bg-mono-190/50">
+            <Text
+              variant="body3"
+              className="text-mono-120 dark:text-mono-100 mb-1"
+            >
               Exit Queue Duration
             </Text>
             <Text variant="body1" fw="semibold">
               {formatDuration(exitConfig?.exitQueueDuration ?? BigInt(0))}
             </Text>
           </div>
-          <div className="p-3 rounded-lg bg-muted/40">
-            <Text variant="body3" className="text-muted-foreground mb-1">
+          <div className="p-3 rounded-lg bg-mono-20/50 dark:bg-mono-190/50">
+            <Text
+              variant="body3"
+              className="text-mono-120 dark:text-mono-100 mb-1"
+            >
               Min Commitment
             </Text>
             <Text variant="body1" fw="semibold">
               {formatDuration(exitConfig?.minCommitmentDuration ?? BigInt(0))}
             </Text>
           </div>
-          <div className="p-3 rounded-lg bg-muted/40">
-            <Text variant="body3" className="text-muted-foreground mb-1">
+          <div className="p-3 rounded-lg bg-mono-20/50 dark:bg-mono-190/50">
+            <Text
+              variant="body3"
+              className="text-mono-120 dark:text-mono-100 mb-1"
+            >
               Force Exit Allowed
             </Text>
             <Text variant="body1" fw="semibold">
@@ -308,7 +317,10 @@ const OperatorExitPanel: FC<Props> = ({
           <div className="space-y-3">
             {canScheduleExit?.canExit ? (
               <div>
-                <Text variant="body2" className="text-muted-foreground mb-3">
+                <Text
+                  variant="body2"
+                  className="text-mono-120 dark:text-mono-100 mb-3"
+                >
                   You can schedule an exit from this service. After scheduling,
                   you will need to wait for the exit queue duration before
                   executing your exit.
@@ -334,7 +346,7 @@ const OperatorExitPanel: FC<Props> = ({
         )}
 
         {exitStatus !== ExitStatus.None && exitStatus !== undefined && (
-          <div className="p-4 rounded-lg border border-border">
+          <div className="p-4 rounded-lg border border-mono-60 dark:border-mono-170">
             <div className="flex items-center justify-between mb-2">
               <Text variant="body2" fw="semibold">
                 Your Exit Status
@@ -346,7 +358,9 @@ const OperatorExitPanel: FC<Props> = ({
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="text-muted-foreground">Scheduled At:</span>
+                    <span className="text-mono-120 dark:text-mono-100">
+                      Scheduled At:
+                    </span>
                     <span className="block font-semibold">
                       {new Date(
                         Number(exitRequest.scheduledAt) * 1000,
@@ -354,7 +368,7 @@ const OperatorExitPanel: FC<Props> = ({
                     </span>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">
+                    <span className="text-mono-120 dark:text-mono-100">
                       Execute After:
                     </span>
                     <span className="block font-semibold">
@@ -366,10 +380,10 @@ const OperatorExitPanel: FC<Props> = ({
                 </div>
 
                 {!canExecuteNow && countdown && (
-                  <div className="p-3 rounded-lg bg-primary/10 border border-primary/20">
+                  <div className="p-3 rounded-lg bg-purple-40/10 border border-purple-40/20">
                     <div className="flex items-center gap-2">
-                      <TimeLineIcon className="w-4 h-4 text-primary" />
-                      <Text variant="body2" className="text-primary">
+                      <TimeLineIcon className="w-4 h-4 text-purple-40" />
+                      <Text variant="body2" className="text-purple-40">
                         Time remaining:{' '}
                         <span className="font-semibold">{countdown}</span>
                       </Text>
@@ -455,7 +469,10 @@ const OperatorExitPanel: FC<Props> = ({
                   Force Exit Operator (Owner Only)
                 </Text>
               </div>
-              <Text variant="body3" className="text-muted-foreground mb-3">
+              <Text
+                variant="body3"
+                className="text-mono-120 dark:text-mono-100 mb-3"
+              >
                 As the service owner, you can force-exit an operator from this
                 service. Use this carefully as it will immediately remove the
                 operator.
@@ -510,9 +527,9 @@ const ExitStatusBadge: FC<{ status: ExitStatus }> = ({ status }) => {
       case ExitStatus.Executable:
         return 'bg-green-500/20 text-green-400';
       case ExitStatus.Completed:
-        return 'bg-primary/20 text-primary';
+        return 'bg-purple-40/20 text-purple-40';
       default:
-        return 'bg-muted text-muted-foreground';
+        return 'bg-mono-20 dark:bg-mono-190 text-mono-120 dark:text-mono-100';
     }
   };
 

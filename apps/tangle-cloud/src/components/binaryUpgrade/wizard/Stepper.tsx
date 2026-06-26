@@ -40,10 +40,10 @@ export const Stepper: FC<StepperProps> = ({
               className={[
                 'flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold',
                 isCurrent
-                  ? 'bg-primary text-primary-foreground'
+                  ? 'bg-purple-40 text-purple-40-foreground'
                   : isPast
                     ? 'bg-success/20 text-success'
-                    : 'bg-muted text-muted-foreground',
+                    : 'bg-mono-20 dark:bg-mono-190 text-mono-120 dark:text-mono-100',
               ].join(' ')}
             >
               {isPast ? '✓' : step.id}
@@ -51,7 +51,9 @@ export const Stepper: FC<StepperProps> = ({
             <span
               className={[
                 'text-xs font-semibold uppercase tracking-wider',
-                isCurrent ? 'text-foreground' : 'text-muted-foreground',
+                isCurrent
+                  ? 'text-mono-200 dark:text-mono-0'
+                  : 'text-mono-120 dark:text-mono-100',
               ].join(' ')}
             >
               {step.title}

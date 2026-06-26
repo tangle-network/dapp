@@ -71,9 +71,11 @@ const Money: FC<Props> = ({
       )}
       title={fullLabel}
     >
-      <span className="text-foreground">{money.display}</span>
+      <span className="text-mono-200 dark:text-mono-0">{money.display}</span>
       {showSymbol && money.symbol && !money.isEmpty && (
-        <span className="text-xs text-muted-foreground">{money.symbol}</span>
+        <span className="text-xs text-mono-120 dark:text-mono-100">
+          {money.symbol}
+        </span>
       )}
       {copyable && !money.isEmpty && (
         <button
@@ -81,7 +83,7 @@ const Money: FC<Props> = ({
           onClick={onCopy}
           title={`Copy full precision: ${fullLabel}`}
           aria-label={`Copy full precision value ${fullLabel}`}
-          className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded text-muted-foreground/70 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[color:var(--border-accent-hover)]"
+          className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded text-mono-120 dark:text-mono-100/70 transition-colors hover:text-mono-200 dark:text-mono-0 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[color:var(--border-accent-hover)]"
         >
           {copied ? <CheckGlyph /> : <CopyGlyph />}
         </button>

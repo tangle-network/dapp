@@ -20,7 +20,7 @@ const PaymentTermsSection: FC<Props> = ({
   if (isLoading) {
     return (
       <div className="space-y-2">
-        <Text variant="h5" className="text-foreground">
+        <Text variant="h5" className="text-mono-200 dark:text-mono-0">
           Payment Terms
         </Text>
 
@@ -42,20 +42,24 @@ const PaymentTermsSection: FC<Props> = ({
 
   return (
     <div className="space-y-2">
-      <Text variant="h5" className="text-foreground">
+      <Text variant="h5" className="text-mono-200 dark:text-mono-0">
         Payment Terms
       </Text>
 
       <div className="space-y-1">
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">Payment Token:</span>
+          <span className="text-sm text-mono-120 dark:text-mono-100">
+            Payment Token:
+          </span>
           <span className="text-sm font-semibold">
             {isNativePayment ? 'Native (ETH)' : tokenSymbol}
           </span>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">Payment Amount:</span>
+          <span className="text-sm text-mono-120 dark:text-mono-100">
+            Payment Amount:
+          </span>
           <span className="text-sm font-semibold">
             {formattedAmount} {tokenSymbol}
           </span>

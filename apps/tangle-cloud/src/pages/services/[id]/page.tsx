@@ -120,7 +120,9 @@ const Input: FC<InputProps> = ({
       }
     />
     {errorMessage && (
-      <p className="mt-1 text-destructive text-xs">{errorMessage}</p>
+      <p className="mt-1 text-red-500 dark:text-red-400 text-xs">
+        {errorMessage}
+      </p>
     )}
   </div>
 );
@@ -473,7 +475,7 @@ const ServiceDetailPage: FC = () => {
     return (
       <div className="text-center py-12">
         <Text variant="h4">Service Not Found</Text>
-        <Text variant="body1" className="text-muted-foreground mt-2">
+        <Text variant="body1" className="text-mono-120 dark:text-mono-100 mt-2">
           This service does not exist or may have been removed.
         </Text>
         <Button onClick={() => navigate(PagePath.INSTANCES)} className="mt-4">
@@ -499,7 +501,7 @@ const ServiceDetailPage: FC = () => {
             <Text variant="h4" fw="bold">
               Service #{serviceId.toString()}
             </Text>
-            <Text variant="body2" className="text-muted-foreground">
+            <Text variant="body2" className="text-mono-120 dark:text-mono-100">
               {blueprintResult?.details.name ?? 'Loading...'}
             </Text>
           </div>
@@ -535,7 +537,7 @@ const ServiceDetailPage: FC = () => {
                     ':id',
                     service.blueprintId.toString(),
                   )}
-                  className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors"
+                  className="inline-flex items-center gap-1 text-purple-40 hover:text-purple-40/80 transition-colors"
                 >
                   <Text variant="body1" fw="semibold">
                     {blueprintResult.details.name}
@@ -599,7 +601,7 @@ const ServiceDetailPage: FC = () => {
           <Text variant="h5" fw="bold">
             Service Settings: Permitted Callers
           </Text>
-          <Text variant="body2" className="text-muted-foreground">
+          <Text variant="body2" className="text-mono-120 dark:text-mono-100">
             Manage which addresses can submit jobs to this service at runtime.
           </Text>
         </div>
@@ -612,8 +614,11 @@ const ServiceDetailPage: FC = () => {
           </div>
         ) : (
           <>
-            <div className="rounded-lg border border-border p-3">
-              <Text variant="body2" className="text-muted-foreground">
+            <div className="rounded-lg border border-mono-60 dark:border-mono-170 p-3">
+              <Text
+                variant="body2"
+                className="text-mono-120 dark:text-mono-100"
+              >
                 Connected account access:{' '}
                 <StatusPill
                   tone={canSubmitJobs ? 'success' : 'warning'}
@@ -625,11 +630,17 @@ const ServiceDetailPage: FC = () => {
             </div>
 
             <div className="space-y-2">
-              <Text variant="body2" className="text-muted-foreground">
+              <Text
+                variant="body2"
+                className="text-mono-120 dark:text-mono-100"
+              >
                 Current permitted callers
               </Text>
               {permittedCallers.length === 0 ? (
-                <Text variant="body2" className="text-muted-foreground">
+                <Text
+                  variant="body2"
+                  className="text-mono-120 dark:text-mono-100"
+                >
                   No permitted callers configured.
                 </Text>
               ) : (
@@ -637,7 +648,7 @@ const ServiceDetailPage: FC = () => {
                   {permittedCallers.map((caller) => (
                     <div
                       key={caller}
-                      className="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2"
+                      className="flex items-center justify-between gap-3 rounded-lg border border-mono-60 dark:border-mono-170 px-3 py-2"
                     >
                       <div className="flex items-center gap-2">
                         <Text variant="body2" className="font-mono">
@@ -645,7 +656,7 @@ const ServiceDetailPage: FC = () => {
                         </Text>
                         {onChainDetails?.owner &&
                           addressesEqual(caller, onChainDetails.owner) && (
-                            <span className="px-2 py-0.5 rounded bg-primary/10 text-primary text-xs font-semibold">
+                            <span className="px-2 py-0.5 rounded bg-purple-40/10 text-purple-40 text-xs font-semibold">
                               Owner
                             </span>
                           )}
@@ -681,7 +692,10 @@ const ServiceDetailPage: FC = () => {
 
             {isOwner ? (
               <div className="space-y-2">
-                <Text variant="body2" className="text-muted-foreground">
+                <Text
+                  variant="body2"
+                  className="text-mono-120 dark:text-mono-100"
+                >
                   Add permitted caller
                 </Text>
                 <div className="flex flex-col md:flex-row gap-2">
@@ -710,7 +724,10 @@ const ServiceDetailPage: FC = () => {
               </div>
             ) : (
               <div className="space-y-2">
-                <Text variant="body2" className="text-muted-foreground">
+                <Text
+                  variant="body2"
+                  className="text-mono-120 dark:text-mono-100"
+                >
                   Add permitted caller
                 </Text>
                 <div className="p-4 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
@@ -799,7 +816,7 @@ const InfoItem: FC<{ label: string; value: ReactNode }> = ({
   value,
 }) => (
   <div>
-    <Text variant="body2" className="text-muted-foreground mb-1">
+    <Text variant="body2" className="text-mono-120 dark:text-mono-100 mb-1">
       {label}
     </Text>
     {typeof value === 'string' ? (
@@ -822,12 +839,12 @@ const PermissionDeniedMessage: FC = () => (
     </Text>
     <Text
       variant="body2"
-      className="text-center text-muted-foreground max-w-md"
+      className="text-center text-mono-120 dark:text-mono-100 max-w-md"
     >
       You are not authorized to submit jobs to this service. Only the service
       owner or addresses added as permitted callers can submit jobs.
     </Text>
-    <Text variant="body3" className="text-muted-foreground mt-4">
+    <Text variant="body3" className="text-mono-120 dark:text-mono-100 mt-4">
       Contact the service owner to request access.
     </Text>
   </div>

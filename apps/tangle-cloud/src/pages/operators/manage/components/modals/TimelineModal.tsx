@@ -54,7 +54,7 @@ const TimelineModal = ({
                 return (
                   <div
                     key={stage.key}
-                    className="flex items-start gap-3 rounded-lg border border-border p-3"
+                    className="flex items-start gap-3 rounded-lg border border-mono-60 dark:border-mono-170 p-3"
                   >
                     <Chip
                       color={colorByState[stage.state]}
@@ -66,11 +66,17 @@ const TimelineModal = ({
                       <Text variant="body2" fw="bold">
                         {stage.label}
                       </Text>
-                      <Text variant="body3" className="text-muted-foreground">
+                      <Text
+                        variant="body3"
+                        className="text-mono-120 dark:text-mono-100"
+                      >
                         {stage.description}
                       </Text>
                       {stage.timestamp !== null ? (
-                        <Text variant="body3" className="text-muted-foreground">
+                        <Text
+                          variant="body3"
+                          className="text-mono-120 dark:text-mono-100"
+                        >
                           {formatDateTime(stage.timestamp)}
                         </Text>
                       ) : null}

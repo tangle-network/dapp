@@ -35,7 +35,7 @@ export const BlueprintVisual = ({
   return (
     <div
       className={twMerge(
-        'relative isolate overflow-hidden rounded-xl border border-border bg-muted/40 shadow-[var(--shadow-card)]',
+        'relative isolate overflow-hidden rounded-xl border border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 shadow-sm',
         compact ? 'h-24' : 'h-44',
         className,
       )}

@@ -114,9 +114,11 @@ export const MetadataJsonInput: FC<Props> = ({
       <div>
         <Text variant="body2" className="mb-1">
           {label}{' '}
-          <span className="text-muted-foreground text-xs">(metadata_json)</span>
+          <span className="text-mono-120 dark:text-mono-100 text-xs">
+            (metadata_json)
+          </span>
         </Text>
-        <Text variant="body3" className="text-muted-foreground">
+        <Text variant="body3" className="text-mono-120 dark:text-mono-100">
           The operator parses this JSON server-side. Pick a runtime backend and
           add any extra fields (image, env, ports, ...) the blueprint
           recognises.
@@ -124,7 +126,7 @@ export const MetadataJsonInput: FC<Props> = ({
       </div>
 
       <div>
-        <Text variant="body3" className="mb-1 text-muted-foreground">
+        <Text variant="body3" className="mb-1 text-mono-120 dark:text-mono-100">
           Runtime Backend
         </Text>
         <Select
@@ -148,7 +150,7 @@ export const MetadataJsonInput: FC<Props> = ({
             ))}
           </SelectContent>
         </Select>
-        <Text variant="body3" className="mt-1 text-muted-foreground">
+        <Text variant="body3" className="mt-1 text-mono-120 dark:text-mono-100">
           {activeOption.description}
         </Text>
       </div>
@@ -165,8 +167,8 @@ export const MetadataJsonInput: FC<Props> = ({
       )}
 
       {currentBackend === 'tee' && (
-        <div className="rounded-lg border border-primary/30 bg-primary/10 p-3">
-          <Text variant="body3" className="text-primary">
+        <div className="rounded-lg border border-purple-40/30 bg-purple-40/10 p-3">
+          <Text variant="body3" className="text-purple-40">
             TEE-backed sandboxes provision into a confidential VM. The operator
             forces <code>tee_required=true</code> for this request; only
             TEE-capable operators will accept it.
@@ -175,23 +177,26 @@ export const MetadataJsonInput: FC<Props> = ({
       )}
 
       <div>
-        <Text variant="body3" className="mb-1 text-muted-foreground">
+        <Text variant="body3" className="mb-1 text-mono-120 dark:text-mono-100">
           Raw JSON (advanced)
         </Text>
         <Textarea
           id={path}
-          className="w-full h-32 p-3 rounded-lg border border-border bg-background font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring"
+          className="w-full h-32 p-3 rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-190 font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring"
           placeholder='{ "image": "ghcr.io/...", "env": { "FOO": "bar" } }'
           value={draftJson}
           onChange={handleJsonChange}
           aria-invalid={!parsed.ok ? 'true' : undefined}
         />
         {!parsed.ok ? (
-          <Text variant="body3" className="mt-1 text-destructive">
+          <Text variant="body3" className="mt-1 text-red-500 dark:text-red-400">
             {parsed.error}
           </Text>
         ) : (
-          <Text variant="body3" className="mt-1 text-muted-foreground">
+          <Text
+            variant="body3"
+            className="mt-1 text-mono-120 dark:text-mono-100"
+          >
             {parsed.empty
               ? 'Empty metadata is sent as an empty string. The operator will use its defaults.'
               : currentBackend === RUNTIME_BACKEND_DEFAULT

@@ -88,7 +88,7 @@ const Layout: FC<PropsWithChildren<Props>> = ({
       <div
         data-sandbox-ui
         data-sandbox-theme={theme === 'dark' ? 'tangle' : 'vault'}
-        className="tangle-cloud-shell flex h-screen bg-tangle text-foreground"
+        className="tangle-cloud-shell flex h-screen bg-tangle text-mono-200 dark:text-mono-0"
       >
         <Sidebar
           isExpandedByDefault={isSidebarExpanded}

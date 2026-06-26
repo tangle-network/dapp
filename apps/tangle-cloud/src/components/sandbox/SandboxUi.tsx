@@ -103,7 +103,7 @@ export const Avatar: FC<{
       alt={alt ?? ''}
       className={[
         sizeToClassName(size),
-        'rounded-full border border-border object-cover',
+        'rounded-full border border-mono-60 dark:border-mono-170 object-cover',
         className,
       ]
         .filter(Boolean)
@@ -113,7 +113,7 @@ export const Avatar: FC<{
     <div
       className={[
         sizeToClassName(size),
-        'flex shrink-0 items-center justify-center rounded-full border border-border bg-gradient-to-br from-primary/25 to-accent/25 font-mono text-xs text-foreground',
+        'flex shrink-0 items-center justify-center rounded-full border border-mono-60 dark:border-mono-170 bg-gradient-to-br from-primary/25 to-accent/25 font-mono text-xs text-mono-200 dark:text-mono-0',
         className,
       ]
         .filter(Boolean)
@@ -131,7 +131,7 @@ export const CircularProgress: FC<{
 }> = ({ progress, tooltip }) => (
   <span
     title={tooltip}
-    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-background text-[10px] text-muted-foreground"
+    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-190 text-[10px] text-mono-120 dark:text-mono-100"
   >
     {Math.round(progress * 100)}%
   </span>
@@ -244,7 +244,7 @@ export const Input: FC<InputProps> = ({
       }
     />
     {leftIcon && (
-      <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted-foreground">
+      <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-mono-120 dark:text-mono-100">
         {leftIcon}
       </div>
     )}
@@ -254,7 +254,9 @@ export const Input: FC<InputProps> = ({
       </div>
     )}
     {errorMessage && (
-      <p className="mt-1 text-destructive text-xs">{errorMessage}</p>
+      <p className="mt-1 text-red-500 dark:text-red-400 text-xs">
+        {errorMessage}
+      </p>
     )}
   </div>
 );
@@ -398,7 +400,10 @@ export const NativeCheckbox: FC<{
 }> = ({ checked, onChange, className = '' }) => (
   <input
     type="checkbox"
-    className={['h-4 w-4 rounded border-border accent-primary', className]
+    className={[
+      'h-4 w-4 rounded border-mono-60 dark:border-mono-170 accent-primary',
+      className,
+    ]
       .filter(Boolean)
       .join(' ')}
     checked={checked}
@@ -415,12 +420,12 @@ export const Alert: FC<{
 }> = ({ type = 'info', title, description, className = '', children }) => {
   const tone =
     type === 'error'
-      ? 'border-destructive/40 bg-destructive/10 text-destructive'
+      ? 'border-destructive/40 bg-destructive/10 text-red-500 dark:text-red-400'
       : type === 'warning'
         ? 'border-yellow-500/40 bg-yellow-500/10 text-yellow-700 dark:text-yellow-300'
         : type === 'success'
           ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
-          : 'border-border bg-muted/40 text-muted-foreground';
+          : 'border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 text-mono-120 dark:text-mono-100';
 
   return (
     <div

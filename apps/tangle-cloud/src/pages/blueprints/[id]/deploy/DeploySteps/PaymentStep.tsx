@@ -205,12 +205,15 @@ export const PaymentStep: FC<PaymentStepProps> = ({
   );
 
   return (
-    <Card className="overflow-hidden border-border bg-card">
+    <Card className="overflow-hidden border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180">
       <CardContent className="space-y-5 p-6">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <Text variant="h5">Checkout</Text>
-            <Text variant="body2" className="mt-1 text-muted-foreground">
+            <Text
+              variant="body2"
+              className="mt-1 text-mono-120 dark:text-mono-100"
+            >
               Choose how this service instance will be funded and verified.
             </Text>
           </div>
@@ -259,7 +262,7 @@ export const PaymentStep: FC<PaymentStepProps> = ({
         </div>
 
         {paymentMethod === 'shieldedCredits' ? (
-          <div className="space-y-4 rounded-xl border border-border bg-muted/30 p-4">
+          <div className="space-y-4 rounded-xl border border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 p-4">
             <div className="grid gap-3 lg:grid-cols-3">
               <TrustCell
                 label="Private"
@@ -281,12 +284,15 @@ export const PaymentStep: FC<PaymentStepProps> = ({
             {!address ? (
               <Alert description="Connect a wallet to unlock shielded keys and create credit accounts." />
             ) : !keypair || !isUnlocked ? (
-              <div className="flex flex-col gap-3 rounded-lg border border-border bg-card/70 p-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col gap-3 rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180/70 p-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <Text variant="body1" fw="semibold">
                     Unlock shielded account
                   </Text>
-                  <Text variant="body3" className="mt-1 text-muted-foreground">
+                  <Text
+                    variant="body3"
+                    className="mt-1 text-mono-120 dark:text-mono-100"
+                  >
                     Sign once. The derived key is encrypted locally and never
                     sent to a server.
                   </Text>
@@ -355,12 +361,15 @@ export const PaymentStep: FC<PaymentStepProps> = ({
             )}
 
             {selectedCreditAccount && (
-              <div className="space-y-3 rounded-lg border border-border bg-background/40 p-3">
+              <div className="space-y-3 rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-190/40 p-3">
                 <div>
-                  <Text variant="body3" className="text-muted-foreground">
+                  <Text
+                    variant="body3"
+                    className="text-mono-120 dark:text-mono-100"
+                  >
                     Selected commitment
                   </Text>
-                  <p className="mt-1 break-all font-mono text-foreground text-xs">
+                  <p className="mt-1 break-all font-mono text-mono-200 dark:text-mono-0 text-xs">
                     {selectedCreditAccount.commitment}
                   </p>
                 </div>
@@ -368,7 +377,10 @@ export const PaymentStep: FC<PaymentStepProps> = ({
                 {SHIELDED_CREDITS_ADDRESS && (
                   <div className="grid gap-3 md:grid-cols-[1fr_160px_auto] md:items-end">
                     <div className="space-y-2">
-                      <Text variant="body3" className="text-muted-foreground">
+                      <Text
+                        variant="body3"
+                        className="text-mono-120 dark:text-mono-100"
+                      >
                         Funding asset
                       </Text>
                       <Select
@@ -393,7 +405,10 @@ export const PaymentStep: FC<PaymentStepProps> = ({
                     </div>
 
                     <div className="space-y-2">
-                      <Text variant="body3" className="text-muted-foreground">
+                      <Text
+                        variant="body3"
+                        className="text-mono-120 dark:text-mono-100"
+                      >
                         Amount
                       </Text>
                       <Input
@@ -441,7 +456,7 @@ export const PaymentStep: FC<PaymentStepProps> = ({
             {creditError && <Alert type="error" description={creditError} />}
           </div>
         ) : (
-          <div className="grid gap-6 rounded-xl border border-border bg-muted/30 p-4 md:grid-cols-2">
+          <div className="grid gap-6 rounded-xl border border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 p-4 md:grid-cols-2">
             <div className="space-y-2">
               <Text variant="body1">Payment asset</Text>
               <Select
@@ -528,7 +543,7 @@ const PaymentMethodCard = ({
       'rounded-xl border p-4 text-left transition-colors',
       isActive
         ? 'border-[var(--border-accent-hover)] bg-[var(--bg-selection)]'
-        : 'border-border bg-muted/30 hover:border-[var(--border-hover)] hover:bg-muted/50',
+        : 'border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 hover:border-[var(--border-hover)] hover:bg-mono-20 dark:hover:bg-mono-190/50',
     )}
   >
     <div className="flex items-center justify-between gap-3">
@@ -539,19 +554,19 @@ const PaymentMethodCard = ({
         className={twMerge(
           'h-3 w-3 rounded-full border',
           isActive
-            ? 'border-primary bg-primary'
-            : 'border-border bg-background',
+            ? 'border-purple-40 bg-purple-40'
+            : 'border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-190',
         )}
       />
     </div>
-    <Text variant="body3" className="mt-2 text-muted-foreground">
+    <Text variant="body3" className="mt-2 text-mono-120 dark:text-mono-100">
       {description}
     </Text>
     <div className="mt-4 flex flex-wrap gap-2">
       {facts.map((fact) => (
         <span
           key={fact}
-          className="rounded-full border border-border bg-background/50 px-2 py-1 text-muted-foreground text-xs"
+          className="rounded-full border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-190/50 px-2 py-1 text-mono-120 dark:text-mono-100 text-xs"
         >
           {fact}
         </span>
@@ -569,13 +584,13 @@ const TrustCell = ({
   value: string;
   detail: string;
 }) => (
-  <div className="rounded-lg border border-border bg-card/70 p-3">
-    <p className="font-medium text-muted-foreground text-[10px] uppercase tracking-wider">
+  <div className="rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180/70 p-3">
+    <p className="font-medium text-mono-120 dark:text-mono-100 text-[10px] uppercase tracking-wider">
       {label}
     </p>
-    <p className="mt-1 font-display font-bold text-foreground text-sm">
+    <p className="mt-1 font-display font-bold text-mono-200 dark:text-mono-0 text-sm">
       {value}
     </p>
-    <p className="mt-1 text-muted-foreground text-xs">{detail}</p>
+    <p className="mt-1 text-mono-120 dark:text-mono-100 text-xs">{detail}</p>
   </div>
 );

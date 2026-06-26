@@ -20,7 +20,7 @@ const EarningsErrorState: FC<EarningsErrorStateProps> = ({
   return (
     <Card variant="sandbox">
       <CardContent className="p-6">
-        <h2 className="mb-3 font-display font-bold text-foreground text-xl">
+        <h2 className="mb-3 font-display font-bold text-mono-200 dark:text-mono-0 text-xl">
           {isUnsupportedSchema
             ? 'Earnings Unavailable on Current Indexer Schema'
             : 'Could Not Load Earnings'}
@@ -35,11 +35,11 @@ const EarningsErrorState: FC<EarningsErrorStateProps> = ({
         </ErrorMessage>
 
         {diagnostics && (
-          <div className="mt-4 space-y-1 text-muted-foreground text-sm">
+          <div className="mt-4 space-y-1 text-mono-120 dark:text-mono-100 text-sm">
             <p>Expected indexer network: {diagnostics.expectedNetwork}</p>
             <p className="break-all">Endpoint: {diagnostics.endpoint}</p>
             {hasMismatch && (
-              <p className="text-destructive">
+              <p className="text-red-500 dark:text-red-400">
                 Endpoint appears to target `{diagnostics.endpointNetwork}` while
                 wallet chain expects `{diagnostics.expectedNetwork}`.
               </p>

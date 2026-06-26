@@ -82,10 +82,10 @@ export const Step3Attestation: FC<Step3Props> = ({ state, setState }) => {
   return (
     <div className="space-y-5">
       <div className="space-y-2">
-        <p className="font-semibold text-[10px] text-muted-foreground uppercase tracking-wider">
+        <p className="font-semibold text-[10px] text-mono-120 dark:text-mono-100 uppercase tracking-wider">
           Attestation (optional)
         </p>
-        <p className="text-muted-foreground text-xs">
+        <p className="text-mono-120 dark:text-mono-100 text-xs">
           An attestation bundle (SLSA, sigstore, etc.) lets auditors and
           operators verify the build provenance. Zero means "no bundle" and is
           accepted by the contract.
@@ -125,7 +125,7 @@ export const Step3Attestation: FC<Step3Props> = ({ state, setState }) => {
             }}
           />
           {state.attestationFile && (
-            <p className="break-all font-mono text-foreground text-xs">
+            <p className="break-all font-mono text-mono-200 dark:text-mono-0 text-xs">
               sha256 {state.attestationHash}
             </p>
           )}
@@ -147,14 +147,14 @@ export const Step3Attestation: FC<Step3Props> = ({ state, setState }) => {
             }
           />
           <div className="flex items-center justify-between">
-            <p className="font-mono text-foreground text-xs">
+            <p className="font-mono text-mono-200 dark:text-mono-0 text-xs">
               {state.attestationHash === ZERO_BYTES32
                 ? 'sha256 — not yet computed'
                 : `sha256 ${state.attestationHash}`}
             </p>
             <button
               type="button"
-              className="text-primary text-xs hover:underline"
+              className="text-purple-40 text-xs hover:underline"
               onClick={() => void handleHashFromUrl()}
             >
               Fetch + hash
@@ -176,8 +176,8 @@ const AttestationOption: FC<{
     className={[
       'flex cursor-pointer items-start gap-3 rounded-lg border p-3',
       selected
-        ? 'border-primary/50 bg-primary/5'
-        : 'border-border bg-card hover:border-primary/30',
+        ? 'border-purple-40/50 bg-purple-40/5'
+        : 'border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 hover:border-purple-40/30',
     ].join(' ')}
   >
     <input
@@ -187,10 +187,10 @@ const AttestationOption: FC<{
       className="mt-1"
     />
     <span>
-      <span className="font-display font-bold text-foreground text-sm">
+      <span className="font-display font-bold text-mono-200 dark:text-mono-0 text-sm">
         {label}
       </span>
-      <span className="mt-0.5 block text-muted-foreground text-xs">
+      <span className="mt-0.5 block text-mono-120 dark:text-mono-100 text-xs">
         {description}
       </span>
     </span>

@@ -165,15 +165,15 @@ const BlueprintAppLandingPage: FC<Props> = ({ entry }) => {
           <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
             <div className="max-w-3xl space-y-4">
               <div className="space-y-2">
-                <h1 className="font-display text-4xl font-extrabold leading-tight tracking-[-0.04em] text-foreground md:text-5xl">
+                <h1 className="font-display text-4xl font-extrabold leading-tight tracking-[-0.04em] text-mono-200 dark:text-mono-0 md:text-5xl">
                   {view.manifest.displayName}
                 </h1>
-                <p className="max-w-2xl text-base leading-7 text-muted-foreground">
+                <p className="max-w-2xl text-base leading-7 text-mono-120 dark:text-mono-100">
                   {view.manifest.tagline}
                 </p>
               </div>
 
-              <p className="max-w-3xl text-base leading-7 text-foreground/90">
+              <p className="max-w-3xl text-base leading-7 text-mono-200 dark:text-mono-0/90">
                 {view.manifest.description}
               </p>
 
@@ -216,8 +216,8 @@ const BlueprintAppLandingPage: FC<Props> = ({ entry }) => {
               </div>
             </div>
 
-            <div className="space-y-4 rounded-3xl border border-border bg-[color:var(--bg-elevated)] p-5">
-              <h2 className="font-display text-xl font-extrabold tracking-tight text-foreground">
+            <div className="space-y-4 rounded-3xl border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)] p-5">
+              <h2 className="font-display text-xl font-extrabold tracking-tight text-mono-200 dark:text-mono-0">
                 Checkout path
               </h2>
               <div className="grid gap-3">
@@ -277,22 +277,27 @@ const Step = ({
   title: string;
   description?: string;
 }) => (
-  <div className="flex items-start gap-3 rounded-xl border border-border bg-[color:var(--bg-card)] p-3">
-    <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+  <div className="flex items-start gap-3 rounded-xl border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-mono-0 dark:bg-mono-180)] p-3">
+    <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-purple-40 text-xs font-bold text-purple-40-foreground">
       {index}
     </span>
     <div className="space-y-0.5">
-      <p className="text-sm font-semibold text-foreground">{title}</p>
+      <p className="text-sm font-semibold text-mono-200 dark:text-mono-0">
+        {title}
+      </p>
       {description && (
-        <p className="text-xs leading-5 text-muted-foreground">{description}</p>
+        <p className="text-xs leading-5 text-mono-120 dark:text-mono-100">
+          {description}
+        </p>
       )}
     </div>
   </div>
 );
 
 const TONE_BADGE: Record<BlueprintUiCardTone, string> = {
-  neutral: 'border-border text-muted-foreground',
-  info: 'border-[color:var(--border-accent)] text-foreground',
+  neutral:
+    'border-mono-60 dark:border-mono-170 text-mono-120 dark:text-mono-100',
+  info: 'border-[color:var(--border-accent)] text-mono-200 dark:text-mono-0',
   success:
     'border-[color:var(--md3-tertiary,#10B981)]/40 text-[color:var(--md3-tertiary,#10B981)]',
   warning:
@@ -356,12 +361,12 @@ const OverviewCard = ({ card }: { card: BlueprintUiOverviewCard }) => {
               {card.title}
             </Badge>
             {card.value && (
-              <p className="font-display text-3xl font-extrabold leading-none tracking-tight text-foreground">
+              <p className="font-display text-3xl font-extrabold leading-none tracking-tight text-mono-200 dark:text-mono-0">
                 {card.value}
               </p>
             )}
             {card.description && (
-              <p className="text-sm leading-6 text-muted-foreground">
+              <p className="text-sm leading-6 text-mono-120 dark:text-mono-100">
                 {card.description}
               </p>
             )}
@@ -376,7 +381,7 @@ const OverviewCard = ({ card }: { card: BlueprintUiOverviewCard }) => {
               {card.title}
             </Badge>
             {card.description && (
-              <p className="text-sm leading-6 text-muted-foreground">
+              <p className="text-sm leading-6 text-mono-120 dark:text-mono-100">
                 {card.description}
               </p>
             )}
@@ -388,7 +393,7 @@ const OverviewCard = ({ card }: { card: BlueprintUiOverviewCard }) => {
                       href={l.href}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+                      className="inline-flex items-center gap-1 text-sm font-medium text-purple-40 hover:underline"
                     >
                       {l.label}
                       <span aria-hidden>→</span>
@@ -408,15 +413,15 @@ const OverviewCard = ({ card }: { card: BlueprintUiOverviewCard }) => {
               {card.title}
             </Badge>
             {card.description && (
-              <p className="text-sm leading-6 text-muted-foreground">
+              <p className="text-sm leading-6 text-mono-120 dark:text-mono-100">
                 {card.description}
               </p>
             )}
             {card.items && card.items.length > 0 && (
-              <ul className="space-y-1.5 pt-1 text-sm leading-6 text-foreground/90">
+              <ul className="space-y-1.5 pt-1 text-sm leading-6 text-mono-200 dark:text-mono-0/90">
                 {card.items.map((item, i) => (
                   <li key={i} className="flex items-start gap-2">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-40" />
                     <span>{item}</span>
                   </li>
                 ))}
@@ -434,7 +439,7 @@ const OverviewCard = ({ card }: { card: BlueprintUiOverviewCard }) => {
               {card.title}
             </Badge>
             {card.description && (
-              <p className="text-sm leading-6 text-muted-foreground">
+              <p className="text-sm leading-6 text-mono-120 dark:text-mono-100">
                 {card.description}
               </p>
             )}
@@ -456,7 +461,9 @@ const SummaryCard = ({
       <Badge variant="sandbox" className="w-fit">
         {badge}
       </Badge>
-      <p className="text-sm leading-6 text-muted-foreground">{description}</p>
+      <p className="text-sm leading-6 text-mono-120 dark:text-mono-100">
+        {description}
+      </p>
     </CardContent>
   </Card>
 );
@@ -482,10 +489,10 @@ const ActionLauncher = ({
     <Card variant="sandbox" className="rounded-3xl">
       <CardContent className="space-y-4 p-6">
         <div className="flex items-center justify-between">
-          <h2 className="font-display text-xl font-extrabold tracking-tight text-foreground">
+          <h2 className="font-display text-xl font-extrabold tracking-tight text-mono-200 dark:text-mono-0">
             What you can do
           </h2>
-          <p className="text-xs uppercase tracking-wider text-muted-foreground">
+          <p className="text-xs uppercase tracking-wider text-mono-120 dark:text-mono-100">
             {actions.length} action{actions.length === 1 ? '' : 's'}
           </p>
         </div>
@@ -515,16 +522,18 @@ const ActionCard = ({
 }) => {
   const submitLabel = action.submitLabel ?? action.label;
   const body = (
-    <div className="flex items-start justify-between gap-3 rounded-2xl border border-border bg-[color:var(--bg-card)] p-4 transition-colors hover:border-[color:var(--border-hover)] hover:bg-[color:var(--bg-hover)]">
+    <div className="flex items-start justify-between gap-3 rounded-2xl border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-mono-0 dark:bg-mono-180)] p-4 transition-colors hover:border-[color:var(--border-hover)] hover:bg-[color:var(--bg-hover)]">
       <div className="space-y-1">
-        <p className="text-sm font-semibold text-foreground">{action.label}</p>
+        <p className="text-sm font-semibold text-mono-200 dark:text-mono-0">
+          {action.label}
+        </p>
         {action.description && (
-          <p className="text-xs leading-5 text-muted-foreground">
+          <p className="text-xs leading-5 text-mono-120 dark:text-mono-100">
             {action.description}
           </p>
         )}
       </div>
-      <span className="shrink-0 text-xs font-semibold text-primary">
+      <span className="shrink-0 text-xs font-semibold text-purple-40">
         {submitLabel} →
       </span>
     </div>

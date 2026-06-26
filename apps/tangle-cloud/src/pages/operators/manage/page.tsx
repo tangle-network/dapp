@@ -225,7 +225,7 @@ const CopyWithTooltip: FC<{
 }> = ({ textToCopy }) => (
   <button
     type="button"
-    className="text-muted-foreground text-xs underline-offset-4 hover:text-foreground hover:underline"
+    className="text-mono-120 dark:text-mono-100 text-xs underline-offset-4 hover:text-mono-200 dark:text-mono-0 hover:underline"
     onClick={() => void navigator.clipboard?.writeText(textToCopy)}
   >
     Copy
@@ -858,7 +858,7 @@ const Page: FC = () => {
               variant="utility"
               size="sm"
               isDisabled={!actionState.canUnregister}
-              className="uppercase body4 bg-destructive/10 text-destructive hover:bg-destructive/15 border border-destructive/20 disabled:!opacity-100 disabled:!text-muted-foreground disabled:!border-border disabled:!bg-transparent dark:disabled:!text-muted-foreground  disabled:cursor-not-allowed"
+              className="uppercase body4 bg-destructive/10 text-red-500 dark:text-red-400 hover:bg-destructive/15 border border-destructive/20 disabled:!opacity-100 disabled:!text-mono-120 dark:text-mono-100 disabled:!border-mono-60 dark:border-mono-170 disabled:!bg-transparent dark:disabled:!text-mono-120 dark:text-mono-100  disabled:cursor-not-allowed"
               onClick={(event: MouseEvent<HTMLButtonElement>) => {
                 event.stopPropagation();
                 setSelectedRegistration(info.row.original);
@@ -877,7 +877,7 @@ const Page: FC = () => {
                     <Button
                       variant="utility"
                       size="sm"
-                      className="uppercase body4 bg-primary/10 text-primary hover:bg-primary/15 border border-primary/20"
+                      className="uppercase body4 bg-purple-40/10 text-purple-40 hover:bg-purple-40/15 border border-purple-40/20"
                       onClick={(event: MouseEvent<HTMLButtonElement>) => {
                         event.stopPropagation();
                         setSelectedRegistration(info.row.original);
@@ -1089,7 +1089,7 @@ const Page: FC = () => {
                     variant="utility"
                     size="sm"
                     isDisabled={!permissions.canDispute}
-                    className="uppercase body4 bg-primary/10 text-primary hover:bg-primary/15 border border-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="uppercase body4 bg-purple-40/10 text-purple-40 hover:bg-purple-40/15 border border-purple-40/20 disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={(event: MouseEvent<HTMLButtonElement>) => {
                       event.stopPropagation();
                       clearActionError('dispute');
@@ -1108,7 +1108,7 @@ const Page: FC = () => {
                     variant="utility"
                     size="sm"
                     isDisabled={!permissions.canCancel}
-                    className="uppercase body4 bg-destructive/10 text-destructive hover:bg-destructive/15 border border-destructive/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="uppercase body4 bg-destructive/10 text-red-500 dark:text-red-400 hover:bg-destructive/15 border border-destructive/20 disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={(event: MouseEvent<HTMLButtonElement>) => {
                       event.stopPropagation();
                       clearActionError('cancel');
@@ -1232,7 +1232,10 @@ const Page: FC = () => {
           <Text variant="h4" fw="bold">
             Operator management
           </Text>
-          <Text variant="body1" className="text-muted-foreground mt-1">
+          <Text
+            variant="body1"
+            className="text-mono-120 dark:text-mono-100 mt-1"
+          >
             Review operator registrations, disputes, and slash actions for the
             connected wallet.
           </Text>
@@ -1253,7 +1256,7 @@ const Page: FC = () => {
         <Text variant="h4" fw="bold">
           Operator management
         </Text>
-        <Text variant="body1" className="text-muted-foreground mt-1">
+        <Text variant="body1" className="text-mono-120 dark:text-mono-100 mt-1">
           Review registrations, propose slash actions, dispute claims, execute
           finalized slashes, or cancel proposals.
         </Text>
@@ -1283,14 +1286,20 @@ const Page: FC = () => {
               <Text variant="body2" fw="bold">
                 Dispute bond refund available
               </Text>
-              <Text variant="body3" className="text-muted-foreground mt-1">
+              <Text
+                variant="body3"
+                className="text-mono-120 dark:text-mono-100 mt-1"
+              >
                 {pendingDisputeBondRefund &&
                 pendingDisputeBondRefund > BigInt(0)
                   ? `${formatEthAmount(pendingDisputeBondRefund)} ETH is ready to claim from cancelled disputes.`
                   : 'Refresh the refund balance after the previous claim attempt.'}
               </Text>
               {claimDisputeBondError ? (
-                <Text variant="body3" className="mt-2 !text-destructive">
+                <Text
+                  variant="body3"
+                  className="mt-2 !text-red-500 dark:text-red-400"
+                >
                   {claimDisputeBondError.message ||
                     'Failed to claim dispute bond refund.'}
                 </Text>
@@ -1325,7 +1334,7 @@ const Page: FC = () => {
 
       {clockError ? (
         <Card className="p-4 border border-yellow-500/20 bg-yellow-500/10">
-          <Text variant="body2" className="text-muted-foreground">
+          <Text variant="body2" className="text-mono-120 dark:text-mono-100">
             {clockError}
           </Text>
           <div className="mt-3">
@@ -1342,7 +1351,7 @@ const Page: FC = () => {
 
       {isActiveServicePrecheckUnavailable ? (
         <Card className="p-4 border border-yellow-500/20 bg-yellow-500/10">
-          <Text variant="body2" className="text-muted-foreground">
+          <Text variant="body2" className="text-mono-120 dark:text-mono-100">
             Active service precheck is unavailable. Unregister actions are
             temporarily disabled until indexer/service data can be fetched.
           </Text>
@@ -1413,7 +1422,10 @@ const Page: FC = () => {
               Are you sure you want to unregister from{' '}
               <strong>{selectedRegistration?.blueprintName}</strong>?
             </Text>
-            <Text variant="body2" className="text-muted-foreground mt-2">
+            <Text
+              variant="body2"
+              className="text-mono-120 dark:text-mono-100 mt-2"
+            >
               This action removes your operator registration from this blueprint
               after chain checks pass.
             </Text>
@@ -1440,7 +1452,8 @@ const Page: FC = () => {
             <div className="space-y-4">
               <div>
                 <Text variant="body2" className="mb-1">
-                  RPC Endpoint <span className="text-destructive">*</span>
+                  RPC Endpoint{' '}
+                  <span className="text-red-500 dark:text-red-400">*</span>
                 </Text>
                 <Input
                   id="rpcAddress"
@@ -1450,7 +1463,10 @@ const Page: FC = () => {
                   placeholder="https://your-node.example.com"
                 />
                 {rpcAddressError ? (
-                  <Text variant="body3" className="mt-1 !text-destructive">
+                  <Text
+                    variant="body3"
+                    className="mt-1 !text-red-500 dark:text-red-400"
+                  >
                     {rpcAddressError}
                   </Text>
                 ) : null}
@@ -1466,11 +1482,17 @@ const Page: FC = () => {
                   onChange={(value) => setNewEcdsaPublicKey(value)}
                   placeholder="0x... (65-byte uncompressed key)"
                 />
-                <Text variant="body3" className="text-muted-foreground mt-1">
+                <Text
+                  variant="body3"
+                  className="text-mono-120 dark:text-mono-100 mt-1"
+                >
                   Leave empty to keep your current key.
                 </Text>
                 {ecdsaPublicKeyError ? (
-                  <Text variant="body3" className="mt-1 !text-destructive">
+                  <Text
+                    variant="body3"
+                    className="mt-1 !text-red-500 dark:text-red-400"
+                  >
                     {ecdsaPublicKeyError}
                   </Text>
                 ) : null}

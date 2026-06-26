@@ -20,19 +20,21 @@ export const AccountStatsCardBody: FC<AccountStatsCardBodyProps> = ({
           return item ? (
             <div
               key={index}
-              className={cx('gap-0 border-border p-2', {
+              className={cx('gap-0 border-mono-60 dark:border-mono-170 p-2', {
                 'border-r': isLeftColumn,
                 'border-b': isTopRow,
                 'pl-5': !isLeftColumn,
               })}
             >
-              <p className="text-muted-foreground text-xs">{item.title}</p>
+              <p className="text-mono-120 dark:text-mono-100 text-xs">
+                {item.title}
+              </p>
               {item.children}
             </div>
           ) : (
             <div
               key={`placeholder-${index}`}
-              className={cx('border-border p-2', {
+              className={cx('border-mono-60 dark:border-mono-170 p-2', {
                 'border-r': isLeftColumn,
                 'border-b': isTopRow,
                 'pl-5': !isLeftColumn,
@@ -50,7 +52,7 @@ export const AccountStatsCardBody: FC<AccountStatsCardBodyProps> = ({
               href={link.href}
               target="_blank"
               rel="noreferrer"
-              className="rounded-full border border-border px-3 py-1 text-muted-foreground text-xs hover:text-foreground"
+              className="rounded-full border border-mono-60 dark:border-mono-170 px-3 py-1 text-mono-120 dark:text-mono-100 text-xs hover:text-mono-200 dark:text-mono-0"
             >
               {link.name ?? 'Link'}
             </a>

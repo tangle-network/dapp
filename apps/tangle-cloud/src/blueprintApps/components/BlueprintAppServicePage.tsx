@@ -103,10 +103,10 @@ const BlueprintAppServicePage: FC<Props> = ({
             </Badge>
 
             <div className="space-y-3">
-              <h1 className="font-display text-4xl font-extrabold leading-tight tracking-[-0.04em] text-foreground md:text-5xl">
+              <h1 className="font-display text-4xl font-extrabold leading-tight tracking-[-0.04em] text-mono-200 dark:text-mono-0 md:text-5xl">
                 {view.manifest.displayName} service #{serviceId}
               </h1>
-              <p className="max-w-3xl text-base leading-7 text-muted-foreground">
+              <p className="max-w-3xl text-base leading-7 text-mono-120 dark:text-mono-100">
                 Manage this live {serviceNoun.toLowerCase()}: check access,
                 inspect callable jobs, review recent activity, and open the full
                 service console when you need to operate the instance.
@@ -167,47 +167,47 @@ const BlueprintAppServicePage: FC<Props> = ({
           {liveDetails && (
             <Card variant="sandbox" className="rounded-3xl">
               <CardContent className="p-6">
-                <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground">
+                <h2 className="font-display text-2xl font-extrabold tracking-tight text-mono-200 dark:text-mono-0">
                   Live service access
                 </h2>
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                    <p className="text-xs font-bold uppercase tracking-widest text-mono-120 dark:text-mono-100">
                       Status
                     </p>
-                    <p className="mt-1 text-sm font-semibold text-foreground">
+                    <p className="mt-1 text-sm font-semibold text-mono-200 dark:text-mono-0">
                       {liveDetails.status}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                    <p className="text-xs font-bold uppercase tracking-widest text-mono-120 dark:text-mono-100">
                       Owner
                     </p>
-                    <p className="mt-1 break-all text-sm font-semibold text-foreground">
+                    <p className="mt-1 break-all text-sm font-semibold text-mono-200 dark:text-mono-0">
                       {liveDetails.owner}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                    <p className="text-xs font-bold uppercase tracking-widest text-mono-120 dark:text-mono-100">
                       Operators
                     </p>
-                    <p className="mt-1 text-sm font-semibold text-foreground">
+                    <p className="mt-1 text-sm font-semibold text-mono-200 dark:text-mono-0">
                       {liveDetails.operators.length}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                    <p className="text-xs font-bold uppercase tracking-widest text-mono-120 dark:text-mono-100">
                       Permitted callers
                     </p>
-                    <p className="mt-1 text-sm font-semibold text-foreground">
+                    <p className="mt-1 text-sm font-semibold text-mono-200 dark:text-mono-0">
                       {liveDetails.permittedCallers.length}
                     </p>
                   </div>
                   <div className="sm:col-span-2">
-                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                    <p className="text-xs font-bold uppercase tracking-widest text-mono-120 dark:text-mono-100">
                       Connected wallet access
                     </p>
-                    <p className="mt-1 text-sm font-semibold capitalize text-foreground">
+                    <p className="mt-1 text-sm font-semibold capitalize text-mono-200 dark:text-mono-0">
                       {liveDetails.viewerAccess ?? 'public'}
                     </p>
                   </div>
@@ -219,16 +219,16 @@ const BlueprintAppServicePage: FC<Props> = ({
           {requestSchemaFields && requestSchemaFields.length > 0 && (
             <Card variant="sandbox" className="rounded-3xl">
               <CardContent className="p-6">
-                <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground">
+                <h2 className="font-display text-2xl font-extrabold tracking-tight text-mono-200 dark:text-mono-0">
                   Request schema
                 </h2>
                 <div className="mt-4 flex flex-col gap-2">
                   {requestSchemaFields.map((field) => (
                     <div
                       key={`${field.name}-${field.kind}-${field.arrayLength}`}
-                      className="rounded-xl border border-border bg-[color:var(--bg-elevated)] px-4 py-3"
+                      className="rounded-xl border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)] px-4 py-3"
                     >
-                      <p className="text-sm font-semibold text-foreground">
+                      <p className="text-sm font-semibold text-mono-200 dark:text-mono-0">
                         {formatSchemaField(field)}
                       </p>
                     </div>
@@ -245,10 +245,10 @@ const BlueprintAppServicePage: FC<Props> = ({
           <CardContent className="p-6">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground">
+                <h2 className="font-display text-2xl font-extrabold tracking-tight text-mono-200 dark:text-mono-0">
                   Supported actions
                 </h2>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-mono-120 dark:text-mono-100">
                   Valid onchain jobs are callable from the service console. A
                   richer blueprint module can improve the form later, but the
                   service remains operable now.
@@ -262,21 +262,21 @@ const BlueprintAppServicePage: FC<Props> = ({
               {jobs.map((job, index) => (
                 <div
                   key={`${job.name}-${index}`}
-                  className="rounded-xl border border-border bg-[color:var(--bg-elevated)] p-4"
+                  className="rounded-xl border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)] p-4"
                 >
-                  <h3 className="font-display text-lg font-bold text-foreground">
+                  <h3 className="font-display text-lg font-bold text-mono-200 dark:text-mono-0">
                     {job.name || `Job #${index}`}
                   </h3>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                  <p className="mt-2 text-sm leading-6 text-mono-120 dark:text-mono-100">
                     {job.description || 'No job description published.'}
                   </p>
                   <div className="mt-3 space-y-2">
-                    <p className="text-xs font-semibold text-muted-foreground">
+                    <p className="text-xs font-semibold text-mono-120 dark:text-mono-100">
                       Params:{' '}
                       {job.hasParamsSchema ? job.parsedParamsSchema.length : 0}{' '}
                       fields
                     </p>
-                    <p className="text-xs font-semibold text-muted-foreground">
+                    <p className="text-xs font-semibold text-mono-120 dark:text-mono-100">
                       Result:{' '}
                       {job.hasResultSchema ? job.parsedResultSchema.length : 0}{' '}
                       fields
@@ -294,10 +294,10 @@ const BlueprintAppServicePage: FC<Props> = ({
           <CardContent className="p-6">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground">
+                <h2 className="font-display text-2xl font-extrabold tracking-tight text-mono-200 dark:text-mono-0">
                   Recent service activity
                 </h2>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-mono-120 dark:text-mono-100">
                   Indexed job traffic gives generic blueprint pages enough
                   signal to show whether a service is idle or actively being
                   used.
@@ -311,19 +311,19 @@ const BlueprintAppServicePage: FC<Props> = ({
               {recentCalls.slice(0, 5).map((call) => (
                 <div
                   key={call.id}
-                  className="rounded-xl border border-border bg-[color:var(--bg-elevated)] px-4 py-3"
+                  className="rounded-xl border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)] px-4 py-3"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-3">
-                    <p className="text-sm font-semibold text-foreground">
+                    <p className="text-sm font-semibold text-mono-200 dark:text-mono-0">
                       Job #{call.jobIndex} · Call {call.callId.toString()}
                     </p>
-                    <p className="text-xs font-semibold text-muted-foreground">
+                    <p className="text-xs font-semibold text-mono-120 dark:text-mono-100">
                       {call.completed ? 'Completed' : 'Pending'} ·{' '}
                       {call.resultCount} result
                       {call.resultCount === 1 ? '' : 's'}
                     </p>
                   </div>
-                  <p className="mt-2 break-all text-xs font-semibold text-muted-foreground">
+                  <p className="mt-2 break-all text-xs font-semibold text-mono-120 dark:text-mono-100">
                     Submitter: {call.submitter}
                   </p>
                 </div>
@@ -337,12 +337,12 @@ const BlueprintAppServicePage: FC<Props> = ({
 };
 
 const ServiceMetric = ({ label, value }: { label: string; value: string }) => (
-  <div className="rounded-xl border border-border bg-[color:var(--bg-elevated)] p-4">
-    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+  <div className="rounded-xl border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)] p-4">
+    <p className="text-xs font-bold uppercase tracking-widest text-mono-120 dark:text-mono-100">
       {label}
     </p>
     <p
-      className="mt-2 truncate text-sm font-semibold text-foreground"
+      className="mt-2 truncate text-sm font-semibold text-mono-200 dark:text-mono-0"
       title={value}
     >
       {value}
@@ -359,10 +359,12 @@ const ServiceCard = ({
 }) => (
   <Card variant="sandbox" className="rounded-3xl">
     <CardContent className="space-y-3 p-6">
-      <h2 className="font-display text-xl font-extrabold tracking-tight text-foreground">
+      <h2 className="font-display text-xl font-extrabold tracking-tight text-mono-200 dark:text-mono-0">
         {title}
       </h2>
-      <p className="text-sm leading-6 text-muted-foreground">{description}</p>
+      <p className="text-sm leading-6 text-mono-120 dark:text-mono-100">
+        {description}
+      </p>
     </CardContent>
   </Card>
 );

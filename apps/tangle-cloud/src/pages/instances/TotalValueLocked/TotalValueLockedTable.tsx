@@ -224,8 +224,8 @@ export const TotalValueLockedTable: FC<Props> = ({
       tableConfig={{
         tableClassName: 'min-w-[1000px]',
         expandedRowClassName: twMerge(
-          'bg-background',
-          'peer-[&[data-expanded="true"]:hover]:bg-muted/40',
+          'bg-mono-0 dark:bg-mono-190',
+          'peer-[&[data-expanded="true"]:hover]:bg-mono-20/50 dark:bg-mono-190/50',
         ),
         ...tableConfig,
       }}

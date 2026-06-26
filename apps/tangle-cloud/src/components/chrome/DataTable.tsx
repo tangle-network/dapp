@@ -98,14 +98,14 @@ function DataTable<T>({
   return (
     <div
       className={twMerge(
-        'overflow-x-auto rounded-lg border border-border',
+        'overflow-x-auto rounded-lg border border-mono-60 dark:border-mono-170',
         className,
       )}
     >
       <Table>
         {caption && <caption className="sr-only">{caption}</caption>}
         <TableHeader>
-          <TableRow className="border-b border-border hover:bg-transparent">
+          <TableRow className="border-b border-mono-60 dark:border-mono-170 hover:bg-transparent">
             {columns.map((col, i) => (
               <TableHead
                 key={i}
@@ -143,7 +143,7 @@ function DataTable<T>({
                     : undefined
                 }
                 className={twMerge(
-                  'border-b border-border/60 last:border-b-0',
+                  'border-b border-mono-60 dark:border-mono-170/60 last:border-b-0',
                   interactive &&
                     twMerge(
                       'cursor-pointer transition-colors hover:bg-[color:var(--bg-hover)]/60',

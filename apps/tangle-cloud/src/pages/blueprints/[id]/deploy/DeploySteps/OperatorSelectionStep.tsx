@@ -280,12 +280,12 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
                           className={[
                             'flex h-4 w-4 items-center justify-center rounded border',
                             isSelected
-                              ? 'border-primary bg-primary'
-                              : 'border-border',
+                              ? 'border-purple-40 bg-purple-40'
+                              : 'border-mono-60 dark:border-mono-170',
                           ].join(' ')}
                         >
                           {isSelected && (
-                            <CheckLineIcon className="size-3 text-primary-foreground" />
+                            <CheckLineIcon className="size-3 text-purple-40-foreground" />
                           )}
                         </span>
                         <LsTokenIcon name={symbol} size="md" />
@@ -350,8 +350,8 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
       )}
 
       {/* Approval Settings - Read-only based on blueprint configuration */}
-      <div className="mt-5 border border-border bg-muted/40 p-4">
-        <Text variant="body1" className="text-muted-foreground mb-3">
+      <div className="mt-5 border border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 p-4">
+        <Text variant="body1" className="text-mono-120 dark:text-mono-100 mb-3">
           Approval Requirements (defined by blueprint)
         </Text>
 
@@ -363,7 +363,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
         ) : (
           <div className="flex flex-wrap gap-x-8 gap-y-3">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">
+              <span className="text-sm text-mono-120 dark:text-mono-100">
                 Membership Model:
               </span>
               <Chip
@@ -380,14 +380,14 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">
+              <span className="text-sm text-mono-120 dark:text-mono-100">
                 Min. Approvals Required:
               </span>
               <span className="text-sm font-semibold">
                 {minApprovalsRequired !== null ? (
                   minApprovalsRequired
                 ) : (
-                  <span className="text-muted-foreground font-normal">
+                  <span className="text-mono-120 dark:text-mono-100 font-normal">
                     Select operators to see requirements
                   </span>
                 )}
@@ -406,7 +406,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
 
             {selectedOperatorsCount > 0 && (
               <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">
+                <span className="text-sm text-mono-120 dark:text-mono-100">
                   Selected Operators:
                 </span>
                 <span className="text-sm font-semibold">

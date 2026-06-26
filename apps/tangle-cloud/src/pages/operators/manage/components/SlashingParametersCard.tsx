@@ -80,7 +80,7 @@ const SlashingParametersCard = ({
   if (isLoading || !config) {
     return (
       <Card className="p-4">
-        <Text variant="body3" className="text-muted-foreground">
+        <Text variant="body3" className="text-mono-120 dark:text-mono-100">
           Loading slashing parameters...
         </Text>
       </Card>
@@ -93,14 +93,14 @@ const SlashingParametersCard = ({
         <Text variant="body2" fw="bold">
           Slashing parameters
         </Text>
-        <Text variant="body3" className="text-muted-foreground">
+        <Text variant="body3" className="text-mono-120 dark:text-mono-100">
           Protocol-wide settings from the active SlashConfig. Proposals,
           disputes, and execution all enforce these.
         </Text>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-2">
         <div>
-          <Text variant="body3" className="text-muted-foreground">
+          <Text variant="body3" className="text-mono-120 dark:text-mono-100">
             Maximum slash per proposal
           </Text>
           <Text variant="body2" fw="semibold">
@@ -108,7 +108,7 @@ const SlashingParametersCard = ({
           </Text>
         </div>
         <div>
-          <Text variant="body3" className="text-muted-foreground">
+          <Text variant="body3" className="text-mono-120 dark:text-mono-100">
             Dispute window
           </Text>
           <Text variant="body2" fw="semibold">
@@ -116,7 +116,7 @@ const SlashingParametersCard = ({
           </Text>
         </div>
         <div>
-          <Text variant="body3" className="text-muted-foreground">
+          <Text variant="body3" className="text-mono-120 dark:text-mono-100">
             Dispute resolution deadline
           </Text>
           <Text variant="body2" fw="semibold">
@@ -124,7 +124,7 @@ const SlashingParametersCard = ({
           </Text>
         </div>
         <div>
-          <Text variant="body3" className="text-muted-foreground">
+          <Text variant="body3" className="text-mono-120 dark:text-mono-100">
             Required dispute bond
           </Text>
           <Text variant="body2" fw="semibold">
@@ -134,7 +134,7 @@ const SlashingParametersCard = ({
           </Text>
         </div>
         <div>
-          <Text variant="body3" className="text-muted-foreground">
+          <Text variant="body3" className="text-mono-120 dark:text-mono-100">
             Max pending slashes per operator
           </Text>
           <Text variant="body2" fw="semibold">
@@ -144,7 +144,7 @@ const SlashingParametersCard = ({
           </Text>
         </div>
         <div>
-          <Text variant="body3" className="text-muted-foreground">
+          <Text variant="body3" className="text-mono-120 dark:text-mono-100">
             Instant slash
           </Text>
           <Text variant="body2" fw="semibold">

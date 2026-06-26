@@ -333,10 +333,10 @@ export const ServiceUpgradePanel: FC<ServiceUpgradePanelProps> = ({
     return (
       <Card variant="elevated">
         <CardContent className="p-5 md:p-6">
-          <h2 className="font-display font-extrabold text-foreground text-xl">
+          <h2 className="font-display font-extrabold text-mono-200 dark:text-mono-0 text-xl">
             Upgrade control
           </h2>
-          <p className="mt-2 text-muted-foreground text-sm">
+          <p className="mt-2 text-mono-120 dark:text-mono-100 text-sm">
             This service&apos;s blueprint has no published binary versions yet.
             The upgrade flow will activate once the blueprint owner publishes a
             build.
@@ -357,10 +357,10 @@ export const ServiceUpgradePanel: FC<ServiceUpgradePanelProps> = ({
               ? `Upgrade available: v${availableVersion.versionId.toString()}`
               : 'Up to date'}
           </Badge>
-          <h2 className="mt-2 font-display font-extrabold text-2xl text-foreground tracking-tight">
+          <h2 className="mt-2 font-display font-extrabold text-2xl text-mono-200 dark:text-mono-0 tracking-tight">
             Upgrade control
           </h2>
-          <p className="mt-1 max-w-2xl text-muted-foreground text-sm">
+          <p className="mt-1 max-w-2xl text-mono-120 dark:text-mono-100 text-sm">
             Compare the binary this service is running against the
             blueprint&apos;s current active version, then choose how upgrades
             roll out.
@@ -388,8 +388,8 @@ export const ServiceUpgradePanel: FC<ServiceUpgradePanelProps> = ({
               <TrustScoreGauge breakdown={targetBreakdown} />
             </VersionCard>
           ) : (
-            <div className="flex items-center justify-center rounded-lg border border-border border-dashed bg-card p-6 text-center">
-              <p className="text-muted-foreground text-sm">
+            <div className="flex items-center justify-center rounded-lg border border-mono-60 dark:border-mono-170 border-dashed bg-mono-0 dark:bg-mono-180 p-6 text-center">
+              <p className="text-mono-120 dark:text-mono-100 text-sm">
                 No newer version is available. The service is on the latest
                 non-deprecated build.
               </p>
@@ -398,7 +398,7 @@ export const ServiceUpgradePanel: FC<ServiceUpgradePanelProps> = ({
         </div>
 
         <fieldset className="space-y-2">
-          <legend className="font-semibold text-[10px] text-muted-foreground uppercase tracking-wider">
+          <legend className="font-semibold text-[10px] text-mono-120 dark:text-mono-100 uppercase tracking-wider">
             Upgrade policy
           </legend>
           {POLICY_OPTIONS.map((option) => {
@@ -425,7 +425,7 @@ export const ServiceUpgradePanel: FC<ServiceUpgradePanelProps> = ({
             );
           })}
           {!isOperator && (
-            <p className="text-muted-foreground text-xs">
+            <p className="text-mono-120 dark:text-mono-100 text-xs">
               Connect a wallet that is an active operator of this service to
               change the upgrade policy.
             </p>
@@ -452,12 +452,12 @@ export const ServiceUpgradePanel: FC<ServiceUpgradePanelProps> = ({
         )}
 
         {upgradeAvailable && selectedUiPolicy !== 'MANUAL_ASSIST' && (
-          <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
+          <div className="flex items-center justify-between rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 p-4">
             <div>
-              <p className="font-display font-bold text-foreground text-sm">
+              <p className="font-display font-bold text-mono-200 dark:text-mono-0 text-sm">
                 Approve & install v{availableVersion.versionId.toString()}
               </p>
-              <p className="text-muted-foreground text-xs">
+              <p className="text-mono-120 dark:text-mono-100 text-xs">
                 Submits `ackBinaryVersion` against this service. Required under
                 APPROVE policy; informational under AUTO.
               </p>
@@ -487,10 +487,10 @@ const ManagerUrlPrompt: FC<{ onSaved: () => void }> = ({ onSaved }) => {
   const [open, setOpen] = useState(false);
   const [url, setUrl] = useState('');
   return (
-    <div className="rounded-lg border border-border border-dashed bg-card p-3">
+    <div className="rounded-lg border border-mono-60 dark:border-mono-170 border-dashed bg-mono-0 dark:bg-mono-180 p-3">
       {!open ? (
         <div className="flex items-center justify-between gap-3">
-          <p className="text-muted-foreground text-xs">
+          <p className="text-mono-120 dark:text-mono-100 text-xs">
             MANUAL+assist requires a connected blueprint-manager URL. Set it
             once and the local pin/whitelist/skip controls light up.
           </p>
@@ -573,13 +573,13 @@ const ManagerAssistSection: FC<{
   );
 
   return (
-    <div className="space-y-3 rounded-lg border border-primary/30 bg-primary/5 p-4">
+    <div className="space-y-3 rounded-lg border border-purple-40/30 bg-purple-40/5 p-4">
       <div className="flex items-center justify-between">
         <div>
-          <p className="font-display font-bold text-foreground text-sm">
+          <p className="font-display font-bold text-mono-200 dark:text-mono-0 text-sm">
             Local manager authz
           </p>
-          <p className="text-muted-foreground text-xs">
+          <p className="text-mono-120 dark:text-mono-100 text-xs">
             On-chain policy stays MANUAL. Your manager swaps binaries based on
             the lists below.
           </p>
@@ -588,17 +588,17 @@ const ManagerAssistSection: FC<{
       </div>
 
       {error && (
-        <p className="text-destructive text-xs">
+        <p className="text-red-500 dark:text-red-400 text-xs">
           Manager RPC error: {error.message}
         </p>
       )}
 
       <div className="space-y-2">
-        <p className="font-semibold text-[10px] text-muted-foreground uppercase tracking-wider">
+        <p className="font-semibold text-[10px] text-mono-120 dark:text-mono-100 uppercase tracking-wider">
           Available newer versions ({available.length})
         </p>
         {available.length === 0 ? (
-          <p className="text-muted-foreground text-xs">
+          <p className="text-mono-120 dark:text-mono-100 text-xs">
             No newer versions are available right now.
           </p>
         ) : (
@@ -611,14 +611,14 @@ const ManagerAssistSection: FC<{
               return (
                 <li
                   key={idStr}
-                  className="flex items-center justify-between gap-3 rounded-lg border border-border bg-card p-3"
+                  className="flex items-center justify-between gap-3 rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 p-3"
                 >
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-display font-bold text-foreground text-sm">
+                      <span className="font-display font-bold text-mono-200 dark:text-mono-0 text-sm">
                         v{idStr}
                       </span>
-                      <span className="text-muted-foreground text-xs">
+                      <span className="text-mono-120 dark:text-mono-100 text-xs">
                         {v.attestationCount} attestation
                         {v.attestationCount === 1 ? '' : 's'} · trust{' '}
                         {v.trustScore}
@@ -631,7 +631,7 @@ const ManagerAssistSection: FC<{
                         <Badge variant="destructive">skipped</Badge>
                       )}
                     </div>
-                    <p className="break-all font-mono text-muted-foreground text-xs">
+                    <p className="break-all font-mono text-mono-120 dark:text-mono-100 text-xs">
                       {v.binaryUri}
                     </p>
                   </div>
@@ -686,20 +686,20 @@ const VersionCard: FC<{
   <div
     className={
       highlight
-        ? 'rounded-lg border border-success/40 bg-card p-4'
-        : 'rounded-lg border border-border bg-card p-4'
+        ? 'rounded-lg border border-success/40 bg-mono-0 dark:bg-mono-180 p-4'
+        : 'rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 p-4'
     }
   >
     <div className="flex items-baseline justify-between">
       <Badge variant={highlight ? 'success' : 'outline'}>{label}</Badge>
-      <span className="font-display font-extrabold text-foreground text-2xl">
+      <span className="font-display font-extrabold text-mono-200 dark:text-mono-0 text-2xl">
         {version}
       </span>
     </div>
-    <p className="mt-2 truncate font-mono text-muted-foreground text-xs">
+    <p className="mt-2 truncate font-mono text-mono-120 dark:text-mono-100 text-xs">
       sha256 {sha256.slice(0, 14)}…{sha256.slice(-8)}
     </p>
-    <p className="mt-1 text-muted-foreground text-xs">
+    <p className="mt-1 text-mono-120 dark:text-mono-100 text-xs">
       published {new Date(Number(publishedAt) * 1000).toLocaleString()}
     </p>
     <div className="mt-3">{children}</div>
@@ -717,10 +717,10 @@ const PolicyOption: FC<{
     title={disabled ? disabledReason : undefined}
     className={
       selected
-        ? 'flex cursor-pointer items-start gap-3 rounded-lg border border-primary/50 bg-primary/5 p-3'
+        ? 'flex cursor-pointer items-start gap-3 rounded-lg border border-purple-40/50 bg-purple-40/5 p-3'
         : disabled
-          ? 'flex cursor-not-allowed items-start gap-3 rounded-lg border border-border bg-card p-3 opacity-60'
-          : 'flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-card p-3 hover:border-primary/30'
+          ? 'flex cursor-not-allowed items-start gap-3 rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 p-3 opacity-60'
+          : 'flex cursor-pointer items-start gap-3 rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 p-3 hover:border-purple-40/30'
     }
   >
     <input
@@ -731,10 +731,10 @@ const PolicyOption: FC<{
       className="mt-1"
     />
     <span>
-      <span className="font-display font-bold text-foreground text-sm">
+      <span className="font-display font-bold text-mono-200 dark:text-mono-0 text-sm">
         {option.label}
       </span>
-      <span className="mt-0.5 block text-muted-foreground text-xs">
+      <span className="mt-0.5 block text-mono-120 dark:text-mono-100 text-xs">
         {option.helper}
       </span>
     </span>

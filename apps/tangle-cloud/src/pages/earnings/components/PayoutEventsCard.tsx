@@ -71,7 +71,7 @@ const PayoutEventAmountCell: FC<{ token: Address; amount: bigint }> = ({
         {iconSymbol ? (
           <TokenIcon name={iconSymbol} size="lg" />
         ) : (
-          <span className="grid h-5 w-5 place-items-center rounded border border-border bg-muted font-mono text-[9px] text-foreground">
+          <span className="grid h-5 w-5 place-items-center rounded border border-mono-60 dark:border-mono-170 bg-mono-20 dark:bg-mono-190 font-mono text-[9px] text-mono-200 dark:text-mono-0">
             {token.slice(2, 4).toUpperCase()}
           </span>
         )}
@@ -97,13 +97,13 @@ const PayoutEventsCard: FC<PayoutEventsCardProps> = ({
   return (
     <Card variant="sandbox">
       <CardContent className="p-6">
-        <h2 className="mb-4 font-display font-bold text-foreground text-xl">
+        <h2 className="mb-4 font-display font-bold text-mono-200 dark:text-mono-0 text-xl">
           Developer Payout Events
         </h2>
 
         {events.length === 0 ? (
           <div className="py-6 text-center">
-            <p className="text-muted-foreground text-sm">
+            <p className="text-mono-120 dark:text-mono-100 text-sm">
               No developer payout events found for this wallet context.
             </p>
             <div className="mt-4 flex flex-wrap justify-center gap-3">
@@ -149,7 +149,7 @@ const PayoutEventsCard: FC<PayoutEventsCardProps> = ({
                           ':id',
                           entry.blueprintId.toString(),
                         )}
-                        className="text-primary underline"
+                        className="text-purple-40 underline"
                       >
                         #{entry.blueprintId.toString()}
                       </Link>
@@ -160,13 +160,13 @@ const PayoutEventsCard: FC<PayoutEventsCardProps> = ({
                           ':id',
                           entry.serviceId.toString(),
                         )}
-                        className="text-primary underline"
+                        className="text-purple-40 underline"
                       >
                         #{entry.serviceId.toString()}
                       </Link>
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-2 text-muted-foreground">
+                      <div className="flex items-center gap-2 text-mono-120 dark:text-mono-100">
                         <span className="font-mono text-xs">
                           {shortenHex(entry.txHash, 6)}
                         </span>
@@ -179,7 +179,7 @@ const PayoutEventsCard: FC<PayoutEventsCardProps> = ({
                             href={`${txExplorerUrl}/tx/${entry.txHash}`}
                             target="_blank"
                             rel="noreferrer"
-                            className="text-muted-foreground transition-colors hover:text-primary"
+                            className="text-mono-120 dark:text-mono-100 transition-colors hover:text-purple-40"
                             aria-label="View transaction on block explorer"
                           >
                             <ExternalLinkLine className="h-4 w-4 fill-current" />
@@ -193,7 +193,7 @@ const PayoutEventsCard: FC<PayoutEventsCardProps> = ({
             </Table>
 
             {totalEventPages > 1 && (
-              <div className="mt-4 flex items-center justify-between gap-3 border-border border-t pt-4 text-muted-foreground text-sm">
+              <div className="mt-4 flex items-center justify-between gap-3 border-mono-60 dark:border-mono-170 border-t pt-4 text-mono-120 dark:text-mono-100 text-sm">
                 <span>
                   Showing {eventsPageIndex * pageSize + 1}-
                   {Math.min((eventsPageIndex + 1) * pageSize, events.length)} of{' '}
@@ -244,7 +244,7 @@ const CopyIconButton: FC<{ value: string; label: string }> = ({
   <button
     type="button"
     aria-label={label}
-    className="inline-flex text-muted-foreground transition-colors hover:text-primary"
+    className="inline-flex text-mono-120 dark:text-mono-100 transition-colors hover:text-purple-40"
     onClick={() => void navigator.clipboard?.writeText(value)}
   >
     <FileCopyLine className="h-4 w-4 fill-current" />

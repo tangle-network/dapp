@@ -53,7 +53,7 @@ const SecurityRequirementsSection: FC<Props> = ({
   if (isLoading || isLoadingMetadata) {
     return (
       <div className="space-y-2">
-        <Text variant="h5" className="text-foreground">
+        <Text variant="h5" className="text-mono-200 dark:text-mono-0">
           Security Requirements
         </Text>
 
@@ -68,7 +68,7 @@ const SecurityRequirementsSection: FC<Props> = ({
 
   return (
     <div className="space-y-2">
-      <Text variant="h5" className="text-foreground">
+      <Text variant="h5" className="text-mono-200 dark:text-mono-0">
         Security Requirements
       </Text>
 
@@ -76,13 +76,13 @@ const SecurityRequirementsSection: FC<Props> = ({
         {securityRequirements.map((req, index) => (
           <div
             key={index}
-            className="flex items-center justify-between p-2 rounded-lg bg-muted/40"
+            className="flex items-center justify-between p-2 rounded-lg bg-mono-20/50 dark:bg-mono-190/50"
           >
             <span className="text-sm font-semibold">
               {getAssetLabel(index)}
             </span>
 
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-mono-120 dark:text-mono-100">
               {formatBps(req.minExposureBps)} - {formatBps(req.maxExposureBps)}
             </span>
           </div>

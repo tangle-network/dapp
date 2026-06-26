@@ -76,7 +76,7 @@ export const OperatorTable: FC<Props> = ({
   };
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-card/70">
+    <div className="overflow-hidden rounded-xl border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180/70">
       <Table>
         <TableHeader>
           <TableRow>
@@ -92,7 +92,7 @@ export const OperatorTable: FC<Props> = ({
             <TableRow>
               <TableCell
                 colSpan={5}
-                className="py-10 text-center text-muted-foreground"
+                className="py-10 text-center text-mono-120 dark:text-mono-100"
               >
                 No operators match the current filters.
               </TableCell>
@@ -119,7 +119,7 @@ export const OperatorTable: FC<Props> = ({
                           onChange={() => toggleRow(row.address)}
                         />
                       )}
-                      <div className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-gradient-to-br from-primary/25 to-accent/25 font-mono text-xs text-foreground">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-full border border-mono-60 dark:border-mono-170 bg-gradient-to-br from-primary/25 to-accent/25 font-mono text-xs text-mono-200 dark:text-mono-0">
                         {row.address.slice(2, 4).toUpperCase()}
                       </div>
                       <div className="min-w-0">
@@ -129,7 +129,7 @@ export const OperatorTable: FC<Props> = ({
                         {row.identityName && (
                           <Text
                             variant="body3"
-                            className="font-mono text-muted-foreground"
+                            className="font-mono text-mono-120 dark:text-mono-100"
                           >
                             {shortenAddress(row.address)}
                           </Text>
@@ -153,7 +153,9 @@ export const OperatorTable: FC<Props> = ({
                         <VaultsDropdown vaultTokens={tokensList} />
                       </div>
                     ) : (
-                      <span className="text-muted-foreground">No vaults</span>
+                      <span className="text-mono-120 dark:text-mono-100">
+                        No vaults
+                      </span>
                     )}
                   </TableCell>
                 </TableRow>

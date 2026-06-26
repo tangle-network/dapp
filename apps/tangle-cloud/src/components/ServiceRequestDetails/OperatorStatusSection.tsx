@@ -77,7 +77,7 @@ const OperatorStatusSection: FC<Props> = ({
   if (isLoading) {
     return (
       <div className="space-y-2">
-        <Text variant="h5" className="text-foreground">
+        <Text variant="h5" className="text-mono-200 dark:text-mono-0">
           Operator Status
         </Text>
 
@@ -95,12 +95,14 @@ const OperatorStatusSection: FC<Props> = ({
 
   return (
     <div className="space-y-2">
-      <Text variant="h5" className="text-foreground">
+      <Text variant="h5" className="text-mono-200 dark:text-mono-0">
         Operator Status
       </Text>
 
       <div className="flex items-center gap-2 mb-2">
-        <span className="text-sm text-muted-foreground">Progress:</span>
+        <span className="text-sm text-mono-120 dark:text-mono-100">
+          Progress:
+        </span>
 
         <span className="text-sm font-semibold">
           {approvalCount}/{totalOperators} operators approved
@@ -117,12 +119,12 @@ const OperatorStatusSection: FC<Props> = ({
               key={address}
               className={`flex items-center justify-between p-2 rounded-lg ${
                 isCurrentOperator
-                  ? 'bg-primary/10 border border-primary/20'
-                  : 'bg-muted/40'
+                  ? 'bg-purple-40/10 border border-purple-40/20'
+                  : 'bg-mono-20/50 dark:bg-mono-190/50'
               }`}
             >
               <div className="flex items-center gap-2">
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-muted font-mono text-[10px] text-muted-foreground">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-mono-20 dark:bg-mono-190 font-mono text-[10px] text-mono-120 dark:text-mono-100">
                   {address.slice(2, 4).toUpperCase()}
                 </span>
 
@@ -131,7 +133,7 @@ const OperatorStatusSection: FC<Props> = ({
                 </span>
 
                 {isCurrentOperator && (
-                  <span className="text-xs text-primary">(You)</span>
+                  <span className="text-xs text-purple-40">(You)</span>
                 )}
               </div>
 

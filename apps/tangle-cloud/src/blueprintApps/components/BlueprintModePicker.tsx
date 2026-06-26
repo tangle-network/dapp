@@ -40,13 +40,13 @@ const BlueprintModePicker: FC<Props> = ({
     // current theme's tokens under this section.
     <section aria-label="Deployment mode" className="space-y-3">
       <header className="space-y-1">
-        <p className="font-semibold text-muted-foreground text-xs uppercase tracking-wider">
+        <p className="font-semibold text-mono-120 dark:text-mono-100 text-xs uppercase tracking-wider">
           Deployment mode
         </p>
-        <h2 className="font-display font-extrabold text-foreground text-lg">
+        <h2 className="font-display font-extrabold text-mono-200 dark:text-mono-0 text-lg">
           Pick how this blueprint runs for you
         </h2>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-mono-120 dark:text-mono-100 text-sm">
           Each mode targets a different on-chain deployment with its own
           operator set, isolation guarantees, and attestation requirements.
         </p>
@@ -63,7 +63,7 @@ const BlueprintModePicker: FC<Props> = ({
               className={twMerge(
                 'relative cursor-pointer transition-colors',
                 isSelected &&
-                  'border-primary shadow-[var(--shadow-accent),0_0_0_1px_var(--border-accent)]',
+                  'border-purple-40 shadow-[var(--shadow-accent),0_0_0_1px_var(--border-accent)]',
               )}
               onClick={() => onSelect(mode)}
             >
@@ -72,7 +72,7 @@ const BlueprintModePicker: FC<Props> = ({
                   className="pointer-events-none absolute right-3 top-3 rounded-full border bg-[var(--accent-surface-soft)] px-2.5 py-0.5 font-semibold text-[10px] uppercase tracking-wider"
                   style={{
                     borderColor: 'var(--border-accent)',
-                    color: 'var(--text-primary)',
+                    color: 'var(--text-purple-40)',
                   }}
                 >
                   {mode.tagline}
@@ -80,7 +80,7 @@ const BlueprintModePicker: FC<Props> = ({
               )}
               <CardContent className="space-y-3 p-5">
                 <div className="flex items-center gap-2">
-                  <h3 className="font-display font-bold text-foreground text-lg">
+                  <h3 className="font-display font-bold text-mono-200 dark:text-mono-0 text-lg">
                     {mode.label}
                   </h3>
                   {isSelected && (
@@ -90,12 +90,12 @@ const BlueprintModePicker: FC<Props> = ({
                   )}
                 </div>
                 {mode.description && (
-                  <p className="text-muted-foreground text-sm leading-relaxed">
+                  <p className="text-mono-120 dark:text-mono-100 text-sm leading-relaxed">
                     {mode.description}
                   </p>
                 )}
                 <div className="flex items-center justify-between gap-3 pt-1">
-                  <span className="font-mono text-muted-foreground text-[10px] uppercase tracking-wider">
+                  <span className="font-mono text-mono-120 dark:text-mono-100 text-[10px] uppercase tracking-wider">
                     Blueprint #{mode.blueprintId}
                   </span>
                   <Button

@@ -25,14 +25,17 @@ const ReviewStep: FC<ReviewStepProps> = ({
           Review Registration
         </Text>
 
-        <Text variant="body2" className="text-muted-foreground">
+        <Text variant="body2" className="text-mono-120 dark:text-mono-100">
           Review your registration details before submitting.
         </Text>
       </div>
 
       {rpcUrl && (
-        <div className="p-4 bg-muted/40 rounded-lg">
-          <Text variant="body3" className="text-muted-foreground mb-1">
+        <div className="p-4 bg-mono-20/50 dark:bg-mono-190/50 rounded-lg">
+          <Text
+            variant="body3"
+            className="text-mono-120 dark:text-mono-100 mb-1"
+          >
             RPC URL
           </Text>
           <Text variant="body2" fw="bold" className="break-all">
@@ -55,7 +58,7 @@ const ReviewStep: FC<ReviewStepProps> = ({
             return (
               <div
                 key={blueprintId}
-                className="p-4 border border-border rounded-lg bg-card/70"
+                className="p-4 border border-mono-60 dark:border-mono-170 rounded-lg bg-mono-0 dark:bg-mono-180/70"
               >
                 <div className="flex items-center gap-3">
                   {blueprint.imgUrl && (
@@ -72,14 +75,20 @@ const ReviewStep: FC<ReviewStepProps> = ({
                     <Text variant="body2" fw="bold" className="truncate">
                       {blueprint.name}
                     </Text>
-                    <Text variant="body3" className="text-muted-foreground">
+                    <Text
+                      variant="body3"
+                      className="text-mono-120 dark:text-mono-100"
+                    >
                       {blueprint.author}
                     </Text>
                   </div>
 
                   {paramsCount > 0 && (
                     <div className="text-right">
-                      <Text variant="body3" className="text-muted-foreground">
+                      <Text
+                        variant="body3"
+                        className="text-mono-120 dark:text-mono-100"
+                      >
                         {paramsCount} param{paramsCount > 1 ? 's' : ''}
                       </Text>
                     </div>
@@ -92,7 +101,10 @@ const ReviewStep: FC<ReviewStepProps> = ({
       </div>
 
       {isSubmitting && (
-        <Text variant="body2" className="text-muted-foreground text-center">
+        <Text
+          variant="body2"
+          className="text-mono-120 dark:text-mono-100 text-center"
+        >
           Registering as operator for {blueprints.length} blueprint
           {blueprints.length > 1 ? 's' : ''}...
         </Text>

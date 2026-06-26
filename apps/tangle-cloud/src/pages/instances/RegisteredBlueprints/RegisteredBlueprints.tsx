@@ -106,7 +106,7 @@ export const RegisteredBlueprints: FC = () => {
               <Text
                 variant="body1"
                 fw="semibold"
-                className="text-muted-foreground"
+                className="text-mono-120 dark:text-mono-100"
               >
                 {props.row.original.serviceCount?.toLocaleString() ??
                   EMPTY_VALUE_PLACEHOLDER}
@@ -123,7 +123,7 @@ export const RegisteredBlueprints: FC = () => {
               <Text
                 variant="body1"
                 fw="semibold"
-                className="text-muted-foreground"
+                className="text-mono-120 dark:text-mono-100"
               >
                 {Number(props.row.original.operatorCount ?? 0).toLocaleString()}
               </Text>

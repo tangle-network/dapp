@@ -55,7 +55,9 @@ const Input: FC<InputProps> = ({
       }
     />
     {errorMessage && (
-      <p className="mt-1 text-destructive text-xs">{errorMessage}</p>
+      <p className="mt-1 text-red-500 dark:text-red-400 text-xs">
+        {errorMessage}
+      </p>
     )}
   </div>
 );
@@ -135,7 +137,7 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
   if (kind === BlueprintFieldKind.Void) {
     return (
       <div className="py-1">
-        <Text variant="body3" className="text-muted-foreground">
+        <Text variant="body3" className="text-mono-120 dark:text-mono-100">
           {label} (void)
         </Text>
       </div>
@@ -147,7 +149,7 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
       <div className="flex items-center gap-2 py-1">
         <input
           type="checkbox"
-          className="h-4 w-4 rounded border-border accent-primary"
+          className="h-4 w-4 rounded border-mono-60 dark:border-mono-170 accent-primary"
           checked={value === true}
           onChange={() => onChange(!value)}
         />
@@ -163,7 +165,7 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
       <div className="py-1">
         <Text variant="body2" className="mb-1">
           {label}{' '}
-          <span className="text-muted-foreground text-xs">
+          <span className="text-mono-120 dark:text-mono-100 text-xs">
             ({kindLabel(kind)})
           </span>
         </Text>
@@ -185,7 +187,7 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
       <div className="py-1">
         <Text variant="body2" className="mb-1">
           {label}{' '}
-          <span className="text-muted-foreground text-xs">
+          <span className="text-mono-120 dark:text-mono-100 text-xs">
             ({kindLabel(kind)})
           </span>
         </Text>
@@ -213,7 +215,9 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
       <div className="py-1">
         <Text variant="body2" className="mb-1">
           {label}{' '}
-          <span className="text-muted-foreground text-xs">(Address)</span>
+          <span className="text-mono-120 dark:text-mono-100 text-xs">
+            (Address)
+          </span>
         </Text>
 
         <Input
@@ -240,7 +244,7 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
       <div className="py-1">
         <Text variant="body2" className="mb-1">
           {label}{' '}
-          <span className="text-muted-foreground text-xs">
+          <span className="text-mono-120 dark:text-mono-100 text-xs">
             ({kindLabel(kind)}, {expectedLen} bytes)
           </span>
         </Text>
@@ -276,7 +280,9 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
       <div className="py-1">
         <Text variant="body2" className="mb-1">
           {label}{' '}
-          <span className="text-muted-foreground text-xs">(String)</span>
+          <span className="text-mono-120 dark:text-mono-100 text-xs">
+            (String)
+          </span>
         </Text>
 
         <Input
@@ -295,7 +301,9 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
       <div className="py-1">
         <Text variant="body2" className="mb-1">
           {label}{' '}
-          <span className="text-muted-foreground text-xs">(Bytes, hex)</span>
+          <span className="text-mono-120 dark:text-mono-100 text-xs">
+            (Bytes, hex)
+          </span>
         </Text>
 
         <Input
@@ -316,11 +324,11 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
     const childSchema = field.children[0];
 
     return (
-      <div className="py-1 pl-3 border-l-2 border-border">
+      <div className="py-1 pl-3 border-l-2 border-mono-60 dark:border-mono-170">
         <div className="flex items-center gap-2 mb-1">
           <input
             type="checkbox"
-            className="h-4 w-4 rounded border-border accent-primary"
+            className="h-4 w-4 rounded border-mono-60 dark:border-mono-170 accent-primary"
             checked={optVal.present}
             onChange={() => {
               if (optVal.present) {
@@ -336,7 +344,9 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
 
           <Text variant="body2">
             {label}{' '}
-            <span className="text-muted-foreground text-xs">(Optional)</span>
+            <span className="text-mono-120 dark:text-mono-100 text-xs">
+              (Optional)
+            </span>
           </Text>
         </div>
 
@@ -426,10 +436,10 @@ const ArrayFieldInput: FC<SchemaFieldInputProps & { label: string }> = ({
   }
 
   return (
-    <div className="py-1 pl-3 border-l-2 border-border">
+    <div className="py-1 pl-3 border-l-2 border-mono-60 dark:border-mono-170">
       <Text variant="body2" className="mb-1">
         {label}{' '}
-        <span className="text-muted-foreground text-xs">
+        <span className="text-mono-120 dark:text-mono-100 text-xs">
           (Array[{field.arrayLength}])
         </span>
       </Text>
@@ -489,10 +499,10 @@ const ListFieldInput: FC<SchemaFieldInputProps & { label: string }> = ({
   }
 
   return (
-    <div className="py-1 pl-3 border-l-2 border-border">
+    <div className="py-1 pl-3 border-l-2 border-mono-60 dark:border-mono-170">
       <Text variant="body2" className="mb-1">
         {label}{' '}
-        <span className="text-muted-foreground text-xs">
+        <span className="text-mono-120 dark:text-mono-100 text-xs">
           (List, {elements.length} items)
         </span>
       </Text>
@@ -548,9 +558,12 @@ const StructFieldInput: FC<SchemaFieldInputProps & { label: string }> = ({
   );
 
   return (
-    <div className="py-1 pl-3 border-l-2 border-border">
+    <div className="py-1 pl-3 border-l-2 border-mono-60 dark:border-mono-170">
       <Text variant="body2" className="mb-1">
-        {label} <span className="text-muted-foreground text-xs">(Struct)</span>
+        {label}{' '}
+        <span className="text-mono-120 dark:text-mono-100 text-xs">
+          (Struct)
+        </span>
       </Text>
 
       {field.children.map((child, i) => (

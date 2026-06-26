@@ -39,11 +39,11 @@ posts the result back.
 
 ## Environment flags
 
-| Variable | Default | Purpose |
-|---|---|---|
-| `VITE_BLUEPRINT_IFRAME_ENABLED` | `false` | Same-day kill switch. When false, every iframe-mode manifest downgrades to link-out. |
-| `VITE_BLUEPRINT_IFRAME_PUBLISHERS` | `tangle,tangle-labs` (default) | Comma-separated publisher namespaces eligible for iframe rendering. Distinct from verified publishers. Adding entries is a governance call. |
-| `VITE_BLUEPRINT_IFRAME_HOST_SUFFIXES` | `.blueprint.tangle.tools,.blueprint.tangle.sh` | Wildcard host suffixes accepted as iframe sources. Each iframe app still needs a manifest entry; this just gates the URL shape. |
+| Variable                              | Default                                        | Purpose                                                                                                                                     |
+| ------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `VITE_BLUEPRINT_IFRAME_ENABLED`       | `false`                                        | Same-day kill switch. When false, every iframe-mode manifest downgrades to link-out.                                                        |
+| `VITE_BLUEPRINT_IFRAME_PUBLISHERS`    | `tangle,tangle-labs` (default)                 | Comma-separated publisher namespaces eligible for iframe rendering. Distinct from verified publishers. Adding entries is a governance call. |
+| `VITE_BLUEPRINT_IFRAME_HOST_SUFFIXES` | `.blueprint.tangle.tools,.blueprint.tangle.sh` | Wildcard host suffixes accepted as iframe sources. Each iframe app still needs a manifest entry; this just gates the URL shape.             |
 
 ## Local dev (running an iframe app from your machine)
 
@@ -144,18 +144,18 @@ The local URL map lives in `scripts/local-env/blueprint-ui-catalog.mjs`
 ## Manifest schema reference
 
 The `iframe` block is declarative — it defines what the iframe is
-*allowed* to ask the wallet to do. Anything outside is rejected
+_allowed_ to ask the wallet to do. Anything outside is rejected
 before the approval modal surfaces.
 
-| Field | Type | Effect |
-|---|---|---|
-| `appId` | string | Stable identifier emitted in handshake. |
-| `allowedChainIds` | number[] | If non-empty, signing requests on other chains are rejected. |
-| `contracts` | `{chainId, address, selectors?}[]` | Per-contract allowlist. `selectors` is optional 4-byte selector list; omit for full-contract trust. |
-| `messages` | `{chainId, prefixes?}[]` | EIP-191 sign-message allowlist. |
-| `allowReadAccount` | bool | Iframe can ask for the connected account/chain without user prompt. |
-| `allowChainSwitch` | bool | Iframe can prompt the user to switch chains. |
-| `allowPopups` | bool | Sets `allow-popups[-to-escape-sandbox]`. Required for OAuth-style flows; widens attack surface, default off. |
+| Field              | Type                               | Effect                                                                                                       |
+| ------------------ | ---------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `appId`            | string                             | Stable identifier emitted in handshake.                                                                      |
+| `allowedChainIds`  | number[]                           | If non-empty, signing requests on other chains are rejected.                                                 |
+| `contracts`        | `{chainId, address, selectors?}[]` | Per-contract allowlist. `selectors` is optional 4-byte selector list; omit for full-contract trust.          |
+| `messages`         | `{chainId, prefixes?}[]`           | EIP-191 sign-message allowlist.                                                                              |
+| `allowReadAccount` | bool                               | Iframe can ask for the connected account/chain without user prompt.                                          |
+| `allowChainSwitch` | bool                               | Iframe can prompt the user to switch chains.                                                                 |
+| `allowPopups`      | bool                               | Sets `allow-popups[-to-escape-sandbox]`. Required for OAuth-style flows; widens attack surface, default off. |
 
 ## Kill-switch flip (incident response)
 
@@ -182,10 +182,10 @@ TEE, validator, …) via `blueprintUi.modes[]`. The catalog collapses these
 into one card; the detail page renders a picker; the iframe receives the
 picked mode through reserved URL params:
 
-| Param         | Value                                       |
-|---------------|---------------------------------------------|
-| `mode`        | mode id from `modes[].id`, or `default`     |
-| `blueprintId` | on-chain id of the picked mode's blueprint  |
+| Param         | Value                                      |
+| ------------- | ------------------------------------------ |
+| `mode`        | mode id from `modes[].id`, or `default`    |
+| `blueprintId` | on-chain id of the picked mode's blueprint |
 
 The parent ALWAYS appends both. Iframe apps that ignore them keep working —
 single-mode blueprints receive `mode=default` and `blueprintId=<canonical>`.

@@ -66,10 +66,10 @@ export const Step5Notify: FC<Step5Props> = ({
   return (
     <div className="space-y-5">
       <div className="space-y-2">
-        <p className="font-semibold text-[10px] text-muted-foreground uppercase tracking-wider">
+        <p className="font-semibold text-[10px] text-mono-120 dark:text-mono-100 uppercase tracking-wider">
           Notify operators (optional)
         </p>
-        <p className="text-muted-foreground text-xs">
+        <p className="text-mono-120 dark:text-mono-100 text-xs">
           Paste this into your operator channel. Markdown formatting is
           Slack-flavored but renders cleanly in most channels.
         </p>
@@ -91,7 +91,7 @@ export const Step5Notify: FC<Step5Props> = ({
             href={servicesPath}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-primary text-sm hover:underline"
+            className="text-purple-40 text-sm hover:underline"
           >
             Open services list →
           </a>

@@ -28,10 +28,13 @@ const DisputeMessageModal = ({
           <Text variant="body1" className="mb-2">
             Slash proposal #{selectedSlash?.id.toString()}
           </Text>
-          <Text variant="body2" className="text-muted-foreground mb-2">
+          <Text
+            variant="body2"
+            className="text-mono-120 dark:text-mono-100 mb-2"
+          >
             Submitted dispute reason:
           </Text>
-          <div className="rounded-lg border border-border p-3 bg-muted/40">
+          <div className="rounded-lg border border-mono-60 dark:border-mono-170 p-3 bg-mono-20/50 dark:bg-mono-190/50">
             <Text variant="body2" className="whitespace-pre-wrap break-words">
               {selectedSlash
                 ? (getSlashDisputeMessage(selectedSlash) ??

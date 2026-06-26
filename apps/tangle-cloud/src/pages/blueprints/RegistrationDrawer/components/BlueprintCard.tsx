@@ -21,7 +21,7 @@ const BlueprintCard: FC<BlueprintCardProps> = ({
   return (
     <div
       className={twMerge(
-        'flex items-center gap-3 p-4 border border-border rounded-lg bg-card/70',
+        'flex items-center gap-3 p-4 border border-mono-60 dark:border-mono-170 rounded-lg bg-mono-0 dark:bg-mono-180/70',
         className,
       )}
     >
@@ -44,7 +44,10 @@ const BlueprintCard: FC<BlueprintCardProps> = ({
           {blueprint.name}
         </Text>
 
-        <Text variant="body3" className="text-muted-foreground truncate">
+        <Text
+          variant="body3"
+          className="text-mono-120 dark:text-mono-100 truncate"
+        >
           {blueprint.author}
         </Text>
       </div>

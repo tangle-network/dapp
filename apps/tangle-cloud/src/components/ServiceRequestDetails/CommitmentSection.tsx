@@ -69,7 +69,7 @@ const ModalSafeTooltip: FC<{ content: string }> = ({ content }) => {
         ref={triggerRef}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={() => setIsVisible(false)}
-        className="inline-flex items-center cursor-default text-muted-foreground"
+        className="inline-flex items-center cursor-default text-mono-120 dark:text-mono-100"
       >
         <InformationLine />
       </span>
@@ -85,9 +85,9 @@ const ModalSafeTooltip: FC<{ content: string }> = ({ content }) => {
               zIndex: 9999,
               pointerEvents: 'none',
             }}
-            className="inline-flex items-center rounded px-3 py-2 bg-popover border border-border shadow-sm"
+            className="inline-flex items-center rounded px-3 py-2 bg-popover border border-mono-60 dark:border-mono-170 shadow-sm"
           >
-            <span className="text-xs text-muted-foreground font-normal text-center break-normal min-w-0 max-w-[250px]">
+            <span className="text-xs text-mono-120 dark:text-mono-100 font-normal text-center break-normal min-w-0 max-w-[250px]">
               {content}
             </span>
           </div>,
@@ -133,7 +133,7 @@ const CommitmentSection: FC<Props> = ({
   if (isLoading) {
     return (
       <div className="space-y-2">
-        <Text variant="h5" className="text-foreground">
+        <Text variant="h5" className="text-mono-200 dark:text-mono-0">
           Service Configuration
         </Text>
 
@@ -178,20 +178,22 @@ const CommitmentSection: FC<Props> = ({
 
   return (
     <div className="space-y-2">
-      <Text variant="h5" className="text-foreground">
+      <Text variant="h5" className="text-mono-200 dark:text-mono-0">
         Service Configuration
       </Text>
 
       <div className="space-y-1">
         {blueprintId !== undefined && blueprintName && (
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Blueprint:</span>
+            <span className="text-sm text-mono-120 dark:text-mono-100">
+              Blueprint:
+            </span>
 
             <Link
               to={`/blueprints/${blueprintId}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:text-primary/80 hover:underline"
+              className="inline-flex items-center gap-1 text-sm font-semibold text-purple-40 hover:text-purple-40/80 hover:underline"
             >
               {blueprintName}
               <ExternalLinkLine className="w-3.5 h-3.5" />
@@ -200,17 +202,23 @@ const CommitmentSection: FC<Props> = ({
         )}
 
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">Duration:</span>
+          <span className="text-sm text-mono-120 dark:text-mono-100">
+            Duration:
+          </span>
           <span className="text-sm font-semibold">{durationText}</span>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">Created:</span>
+          <span className="text-sm text-mono-120 dark:text-mono-100">
+            Created:
+          </span>
           <span className="text-sm font-semibold">{createdText}</span>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">Membership:</span>
+          <span className="text-sm text-mono-120 dark:text-mono-100">
+            Membership:
+          </span>
           <Chip
             color={membership === MembershipModel.Fixed ? 'blue' : 'purple'}
           >
@@ -219,14 +227,16 @@ const CommitmentSection: FC<Props> = ({
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">
+          <span className="text-sm text-mono-120 dark:text-mono-100">
             Min. Approvals Required:
           </span>
           <span className="text-sm font-semibold">{minApprovalsRequired}</span>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">Request Type:</span>
+          <span className="text-sm text-mono-120 dark:text-mono-100">
+            Request Type:
+          </span>
           <span className="text-sm font-semibold">
             {formatRequestVariantLabel(requestVariant)}
           </span>
@@ -237,7 +247,7 @@ const CommitmentSection: FC<Props> = ({
 
         {hasExposureValues && (
           <div className="space-y-1">
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-mono-120 dark:text-mono-100">
               Per-Operator Exposure (%):
             </span>
             <div className="space-y-1">
@@ -246,10 +256,10 @@ const CommitmentSection: FC<Props> = ({
                   key={`${index}-${entry.operatorLabel}-${entry.exposureBps}`}
                   className="flex items-center justify-between gap-3 text-sm"
                 >
-                  <span className="inline-flex items-center gap-1.5 text-muted-foreground">
+                  <span className="inline-flex items-center gap-1.5 text-mono-120 dark:text-mono-100">
                     {entry.operatorLabel}
                     {entry.isCurrentOperator && (
-                      <span className="text-primary">(You)</span>
+                      <span className="text-purple-40">(You)</span>
                     )}
                   </span>
                   <span className="font-semibold">

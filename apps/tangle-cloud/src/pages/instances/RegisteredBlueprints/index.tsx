@@ -25,10 +25,10 @@ export const RegisteredBlueprintsTabs: FC = () => {
       }
       className="w-full space-y-5"
     >
-      <TabsList className="flex h-auto w-full justify-start rounded-lg border border-border bg-card p-1 shadow-[var(--shadow-card)]">
+      <TabsList className="flex h-auto w-full justify-start rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 p-1 shadow-sm">
         <TabsTrigger
           value={RegisteredBlueprintsTab.REGISTERED_BLUEPRINTS}
-          className="gap-2 rounded-md px-3 py-2 font-semibold text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+          className="gap-2 rounded-md px-3 py-2 font-semibold text-sm data-[state=active]:bg-purple-40 data-[state=active]:text-purple-40-foreground"
         >
           <GridFillIcon className="h-4 w-4 fill-current" />
           Registered Blueprints

@@ -107,19 +107,19 @@ export const AllServicesTable: FC = () => {
                   </Text>
                   <Text
                     variant="body2"
-                    className="text-muted-foreground text-ellipsis whitespace-nowrap overflow-hidden"
+                    className="text-mono-120 dark:text-mono-100 text-ellipsis whitespace-nowrap overflow-hidden"
                   >
                     {service.blueprintData?.name || ''}
                   </Text>
                 </div>
                 <div>
-                  <ChevronRight className="w-6 h-6 text-muted-foreground" />
+                  <ChevronRight className="w-6 h-6 text-mono-120 dark:text-mono-100" />
                 </div>
                 <div className="w-4/12">
                   <Text
                     variant="body1"
                     fw="bold"
-                    className="text-primary text-ellipsis whitespace-nowrap overflow-hidden"
+                    className="text-purple-40 text-ellipsis whitespace-nowrap overflow-hidden"
                   >
                     {service.serviceId !== undefined
                       ? `Instance-${service.serviceId}`

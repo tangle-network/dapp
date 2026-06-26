@@ -44,7 +44,7 @@ const FilterTray: FC<Props> = ({
         <button
           type="button"
           className={twMerge(
-            'inline-flex h-9 items-center gap-2 rounded-md border border-border bg-muted/30 px-3 font-sans text-sm font-medium text-foreground not-italic transition-colors hover:bg-[color:var(--bg-hover)]',
+            'inline-flex h-9 items-center gap-2 rounded-md border border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 px-3 font-sans text-sm font-medium text-mono-200 dark:text-mono-0 not-italic transition-colors hover:bg-[color:var(--bg-hover)]',
             focus.ring,
           )}
         >
@@ -54,7 +54,7 @@ const FilterTray: FC<Props> = ({
             <span
               className={twMerge(
                 typeRole.mono,
-                'flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[color:var(--border-accent)] px-1.5 text-xs text-foreground',
+                'flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[color:var(--border-accent)] px-1.5 text-xs text-mono-200 dark:text-mono-0',
               )}
             >
               {activeCount}
@@ -68,7 +68,7 @@ const FilterTray: FC<Props> = ({
           sideOffset={8}
           className={twMerge(
             chromeHeight.tray,
-            'z-50 rounded-lg border border-border bg-[color:var(--bg-card)] p-4 shadow-[var(--shadow-dropdown)]',
+            'z-50 rounded-lg border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-mono-0 dark:bg-mono-180)] p-4 shadow-[var(--shadow-dropdown)]',
             'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
           )}
         >

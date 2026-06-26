@@ -463,8 +463,8 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
     <div className="space-y-4">
       {/* Payment Info Banner */}
       {paymentInfo && (
-        <div className="p-3 rounded-lg bg-primary/20 border border-primary/30">
-          <Text variant="body2" className="text-primary">
+        <div className="p-3 rounded-lg bg-purple-40/20 border border-purple-40/30">
+          <Text variant="body2" className="text-purple-40">
             <strong>Payment Required:</strong> This service uses per-job
             pricing. Each job costs{' '}
             <span className="font-mono">
@@ -519,7 +519,7 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
 
       {/* Pricing Model Info */}
       {serviceDetails && (
-        <div className="text-sm text-muted-foreground">
+        <div className="text-sm text-mono-120 dark:text-mono-100">
           Pricing: {getServicePricingModelLabel(serviceDetails.pricing)}
         </div>
       )}
@@ -565,7 +565,10 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
 
           {selectedJobIndex !== '' &&
             jobDefinitions[selectedJobIndex]?.description && (
-              <Text variant="body3" className="text-muted-foreground mt-1">
+              <Text
+                variant="body3"
+                className="text-mono-120 dark:text-mono-100 mt-1"
+              >
                 {jobDefinitions[selectedJobIndex].description}
               </Text>
             )}
@@ -598,14 +601,14 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
 
               <button
                 type="button"
-                className="text-xs text-muted-foreground hover:text-foreground underline"
+                className="text-xs text-mono-120 dark:text-mono-100 hover:text-mono-200 dark:text-mono-0 underline"
                 onClick={() => setUseRawJson(true)}
               >
                 Advanced: Raw JSON
               </button>
             </div>
 
-            <div className="space-y-2 p-3 rounded-lg border border-border">
+            <div className="space-y-2 p-3 rounded-lg border border-mono-60 dark:border-mono-170">
               {selectedSchema.map((field, i) => (
                 <SchemaFieldInput
                   key={`${selectedJobIndex}-${i}`}
@@ -625,7 +628,7 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
               {hasSchema && useRawJson && (
                 <button
                   type="button"
-                  className="text-xs text-muted-foreground hover:text-foreground underline"
+                  className="text-xs text-mono-120 dark:text-mono-100 hover:text-mono-200 dark:text-mono-0 underline"
                   onClick={() => setUseRawJson(false)}
                 >
                   Use Form Fields
@@ -634,7 +637,7 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
             </div>
 
             <Textarea
-              className="w-full h-32 p-3 rounded-lg border border-border bg-background font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-full h-32 p-3 rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-190 font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring"
               placeholder='Enter job inputs as JSON array, e.g., ["arg1", 123]'
               value={inputJson}
               onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -643,7 +646,10 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
               }}
             />
 
-            <Text variant="body3" className="text-muted-foreground mt-1">
+            <Text
+              variant="body3"
+              className="text-mono-120 dark:text-mono-100 mt-1"
+            >
               Enter the arguments for this job as a JSON array
             </Text>
           </>
