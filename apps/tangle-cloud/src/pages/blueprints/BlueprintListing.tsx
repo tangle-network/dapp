@@ -12,7 +12,6 @@ import {
   useMemo,
 } from 'react';
 import { useNavigate } from 'react-router';
-import { twMerge } from 'tailwind-merge';
 import {
   dedupeBlueprintsByIdentity,
   type DedupedBlueprintRow,
@@ -97,8 +96,8 @@ const getModeCount = (row: DedupedBlueprintRow) =>
 const toGalleryItem = (
   row: DedupedBlueprintRow,
   onView: (blueprint: Blueprint) => void,
-  onDeploy: (blueprint: Blueprint) => void,
-  onRegister?: (blueprint: Blueprint) => void,
+  _onDeploy: (blueprint: Blueprint) => void,
+  _onRegister?: (blueprint: Blueprint) => void,
 ): BlueprintItemProps => {
   const { blueprint } = row;
   const category = getBlueprintCategory(blueprint);
@@ -128,14 +127,7 @@ const toGalleryItem = (
         className="h-12 w-12 shrink-0 rounded-xl border-2 border-mono-0 dark:border-mono-180 shadow-lg"
       />
     ),
-    action: (
-      <BlueprintActions
-        blueprint={blueprint}
-        onView={onView}
-        onDeploy={onDeploy}
-        onRegister={onRegister}
-      />
-    ),
+    action: undefined,
   };
 };
 
@@ -219,50 +211,3 @@ const BlueprintListing: FC<Props> = ({
 BlueprintListing.displayName = 'BlueprintListing';
 
 export default BlueprintListing;
-
-const BlueprintActions: FC<{
-  blueprint: Blueprint;
-  onView: (blueprint: Blueprint) => void;
-  onDeploy: (blueprint: Blueprint) => void;
-  onRegister?: (blueprint: Blueprint) => void;
-}> = ({ blueprint, onView, onDeploy, onRegister }) => {
-  const hasOperators = (blueprint.operatorsCount ?? 0) > 0;
-
-  return (
-    <>
-      <Button
-        variant="secondary"
-        size="sm"
-        className="min-w-0 flex-1 px-3"
-        onClick={() => onView(blueprint)}
-      >
-        View
-      </Button>
-
-      {hasOperators && (
-        <Button
-          variant="primary"
-          size="sm"
-          className="min-w-0 flex-1 px-3"
-          onClick={() => onDeploy(blueprint)}
-        >
-          Deploy
-        </Button>
-      )}
-
-      {onRegister !== undefined && (
-        <Button
-          variant={hasOperators ? 'utility' : 'primary'}
-          size="sm"
-          className={twMerge(
-            'min-w-0 flex-1 px-3',
-            hasOperators && 'uppercase',
-          )}
-          onClick={() => onRegister(blueprint)}
-        >
-          Add capacity
-        </Button>
-      )}
-    </>
-  );
-};
