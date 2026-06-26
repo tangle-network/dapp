@@ -82,7 +82,7 @@ const ViewButton: FC<{
         'inline-flex h-7 w-8 items-center justify-center rounded font-sans not-italic transition-colors',
         active
           ? 'bg-[color:var(--bg-hover)] text-mono-200 dark:text-mono-0'
-          : 'text-mono-100 dark:text-mono-60 hover:text-mono-200 dark:text-mono-0',
+          : 'text-mono-100 dark:text-mono-80 hover:text-mono-200 dark:text-mono-0',
         focus.ring,
       )}
     >

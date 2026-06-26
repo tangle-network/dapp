@@ -94,13 +94,13 @@ const DisputeSlashModal = ({
           </Text>
           <div className="p-3 bg-mono-20/50 dark:bg-mono-190/50 rounded-lg mb-4">
             <div className="grid grid-cols-2 gap-x-2 gap-y-3">
-              <Text variant="body3" className="text-mono-100 dark:text-mono-60">
+              <Text variant="body3" className="text-mono-100 dark:text-mono-80">
                 Slash %:
               </Text>
               <Text variant="body3" className="text-red-500">
                 {selectedSlash ? formatSlashBps(selectedSlash.slashBps) : '-'}
               </Text>
-              <Text variant="body3" className="text-mono-100 dark:text-mono-60">
+              <Text variant="body3" className="text-mono-100 dark:text-mono-80">
                 Effective Slash %:
               </Text>
               <Text variant="body3" className="text-red-500">
@@ -108,7 +108,7 @@ const DisputeSlashModal = ({
                   ? formatSlashBps(selectedSlash.effectiveSlashBps)
                   : '-'}
               </Text>
-              <Text variant="body3" className="text-mono-100 dark:text-mono-60">
+              <Text variant="body3" className="text-mono-100 dark:text-mono-80">
                 Dispute Deadline:
               </Text>
               <Text variant="body3">
@@ -116,7 +116,7 @@ const DisputeSlashModal = ({
                   ? formatDateTime(selectedSlash.executeAfter)
                   : '-'}
               </Text>
-              <Text variant="body3" className="text-mono-100 dark:text-mono-60">
+              <Text variant="body3" className="text-mono-100 dark:text-mono-80">
                 Time Remaining:
               </Text>
               <Text variant="body3">
@@ -126,13 +126,13 @@ const DisputeSlashModal = ({
                     )
                   : '-'}
               </Text>
-              <Text variant="body3" className="text-mono-100 dark:text-mono-60">
+              <Text variant="body3" className="text-mono-100 dark:text-mono-80">
                 Proposer:
               </Text>
               <Text variant="body3" className="font-mono">
                 {selectedSlash ? shortenHex(selectedSlash.proposer) : '-'}
               </Text>
-              <Text variant="body3" className="text-mono-100 dark:text-mono-60">
+              <Text variant="body3" className="text-mono-100 dark:text-mono-80">
                 Proposer Role:
               </Text>
               <Text variant="body3">
@@ -140,7 +140,7 @@ const DisputeSlashModal = ({
                   ? getSlashProposerRoleLabel(selectedSlash.proposerRole)
                   : '-'}
               </Text>
-              <Text variant="body3" className="text-mono-100 dark:text-mono-60">
+              <Text variant="body3" className="text-mono-100 dark:text-mono-80">
                 Claim Context:
               </Text>
               <Text
@@ -151,13 +151,13 @@ const DisputeSlashModal = ({
               >
                 {selectedSlash ? getSlashClaimContext(selectedSlash) : '-'}
               </Text>
-              <Text variant="body3" className="text-mono-100 dark:text-mono-60">
+              <Text variant="body3" className="text-mono-100 dark:text-mono-80">
                 Evidence Hash:
               </Text>
               <Text variant="body3" className="font-mono break-all">
                 {selectedSlash?.evidence ?? '-'}
               </Text>
-              <Text variant="body3" className="text-mono-100 dark:text-mono-60">
+              <Text variant="body3" className="text-mono-100 dark:text-mono-80">
                 Required Dispute Bond:
               </Text>
               <Text variant="body3">
@@ -169,7 +169,7 @@ const DisputeSlashModal = ({
                 <>
                   <Text
                     variant="body3"
-                    className="text-mono-100 dark:text-mono-60"
+                    className="text-mono-100 dark:text-mono-80"
                   >
                     Disputer:
                   </Text>
@@ -187,7 +187,7 @@ const DisputeSlashModal = ({
                 <>
                   <Text
                     variant="body3"
-                    className="text-mono-100 dark:text-mono-60"
+                    className="text-mono-100 dark:text-mono-80"
                   >
                     Resolution Deadline:
                   </Text>
@@ -214,7 +214,7 @@ const DisputeSlashModal = ({
             />
             <Text
               variant="body3"
-              className="text-mono-100 dark:text-mono-60 mt-1"
+              className="text-mono-100 dark:text-mono-80 mt-1"
             >
               Minimum {minDisputeReasonLength} characters (
               {trimmedDisputeReasonLength}/{minDisputeReasonLength}).

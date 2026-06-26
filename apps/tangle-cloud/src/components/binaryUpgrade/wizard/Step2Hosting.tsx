@@ -90,7 +90,7 @@ export const Step2Hosting: FC<Step2Props> = ({ state, setState }) => {
   return (
     <div className="space-y-5">
       <div className="space-y-2">
-        <p className="font-semibold text-[10px] text-mono-100 dark:text-mono-60 uppercase tracking-wider">
+        <p className="font-semibold text-[10px] text-mono-100 dark:text-mono-80 uppercase tracking-wider">
           Hosting
         </p>
         <div className="space-y-2">
@@ -155,7 +155,7 @@ export const Step2Hosting: FC<Step2Props> = ({ state, setState }) => {
               }
               className="font-mono"
             />
-            <p className="text-mono-100 dark:text-mono-60 text-xs">
+            <p className="text-mono-100 dark:text-mono-80 text-xs">
               Stored only in <code>sessionStorage</code> for this tab. Cleared
               when you close the browser tab.
             </p>
@@ -202,7 +202,7 @@ export const Step2Hosting: FC<Step2Props> = ({ state, setState }) => {
           )}
           {state.binaryUri.startsWith('https://') &&
             !isGithubRawHost(state.binaryUri) && (
-              <p className="text-mono-100 dark:text-mono-60 text-xs">
+              <p className="text-mono-100 dark:text-mono-80 text-xs">
                 This isn&apos;t a raw.githubusercontent.com URL. The contract
                 will accept it, but operators can&apos;t verify what byte
                 they&apos;ll get - prefer a CID or a pinned raw commit URL.
@@ -214,7 +214,7 @@ export const Step2Hosting: FC<Step2Props> = ({ state, setState }) => {
       {state.binaryUri.length > 0 && (
         <div className="flex items-center justify-between rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 p-3">
           <div className="min-w-0 flex-1 pr-3">
-            <p className="font-semibold text-[10px] text-mono-100 dark:text-mono-60 uppercase tracking-wider">
+            <p className="font-semibold text-[10px] text-mono-100 dark:text-mono-80 uppercase tracking-wider">
               Resolved URI
             </p>
             <p className="break-all font-mono text-mono-200 dark:text-mono-0 text-xs">
@@ -267,7 +267,7 @@ const HostingOption: FC<{
       <span className="font-display font-bold text-mono-200 dark:text-mono-0 text-sm">
         {label}
       </span>
-      <span className="mt-0.5 block text-mono-100 dark:text-mono-60 text-xs">
+      <span className="mt-0.5 block text-mono-100 dark:text-mono-80 text-xs">
         {description}
       </span>
     </span>

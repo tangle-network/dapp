@@ -38,7 +38,7 @@ const DisconnectedTvlState = () => (
       <div className="font-display font-bold text-mono-200 dark:text-mono-0 text-base tracking-tight">
         Connect a wallet to view your deposits
       </div>
-      <p className="mt-1 max-w-xl text-mono-100 dark:text-mono-60 text-sm leading-relaxed">
+      <p className="mt-1 max-w-xl text-mono-100 dark:text-mono-80 text-sm leading-relaxed">
         Personal deposits, running services, and operator exposure load once a
         wallet is connected. Public chain data on this page loads without one.
       </p>
@@ -69,7 +69,7 @@ const ConnectedTvlState = () => {
         <h3 className="font-display font-bold text-mono-200 dark:text-mono-0 text-lg">
           No deposits found
         </h3>
-        <p className="text-mono-100 dark:text-mono-60 text-sm">
+        <p className="text-mono-100 dark:text-mono-80 text-sm">
           Start by depositing assets to see your TVL.
         </p>
         <Button asChild variant="outline" size="sm">
@@ -92,7 +92,7 @@ const ConnectedTvlState = () => {
                 <p className="font-display font-bold text-mono-200 dark:text-mono-0">
                   {item.symbol}
                 </p>
-                <p className="text-mono-100 dark:text-mono-60 text-sm">
+                <p className="text-mono-100 dark:text-mono-80 text-sm">
                   {item.name}
                 </p>
               </div>
@@ -102,7 +102,7 @@ const ConnectedTvlState = () => {
                     maximumFractionDigits: 6,
                   })}
                 </p>
-                <p className="text-mono-100 dark:text-mono-60 text-sm">
+                <p className="text-mono-100 dark:text-mono-80 text-sm">
                   Deposited
                 </p>
               </div>

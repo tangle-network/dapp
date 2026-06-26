@@ -206,7 +206,7 @@ const DeployPage: FC = () => {
         <Typography variant="h5" className="text-mono-200 dark:text-mono-0">
           Unable to load blueprint
         </Typography>
-        <Typography variant="body2" className="text-mono-100 dark:text-mono-60">
+        <Typography variant="body2" className="text-mono-100 dark:text-mono-80">
           {blueprintError.name}
         </Typography>
       </TangleCloudCard>
@@ -217,7 +217,7 @@ const DeployPage: FC = () => {
         <Typography variant="h5" className="text-mono-200 dark:text-mono-0">
           Blueprint not found
         </Typography>
-        <Typography variant="body2" className="text-mono-100 dark:text-mono-60">
+        <Typography variant="body2" className="text-mono-100 dark:text-mono-80">
           This blueprint is unavailable or has not been indexed yet.
         </Typography>
       </TangleCloudCard>
@@ -451,7 +451,7 @@ const DeployPage: FC = () => {
         <div className="min-w-0 space-y-5">
           <TangleCloudCard className="flex flex-col gap-4">
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-mono-100 dark:text-mono-60">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-mono-100 dark:text-mono-80">
                 Blueprint #{id?.toString() ?? '-'}
               </p>
               <Typography
@@ -463,7 +463,7 @@ const DeployPage: FC = () => {
               </Typography>
               <Typography
                 variant="body2"
-                className="mt-2 max-w-3xl text-mono-120 dark:text-mono-60"
+                className="mt-2 max-w-3xl text-mono-120 dark:text-mono-80"
               >
                 Configure the service instance, then submit the request from the
                 review rail. Operators, caller access, TTL, payment, and request
@@ -488,7 +488,7 @@ const DeployPage: FC = () => {
           <TangleCloudCard className="flex flex-col gap-4">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-mono-100 dark:text-mono-60">
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-mono-100 dark:text-mono-80">
                   Review
                 </p>
                 <Typography
@@ -499,7 +499,7 @@ const DeployPage: FC = () => {
                   Create instance
                 </Typography>
               </div>
-              <span className="rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-20 dark:bg-mono-190 px-2 py-1 font-mono text-xs text-mono-100 dark:text-mono-60">
+              <span className="rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-20 dark:bg-mono-190 px-2 py-1 font-mono text-xs text-mono-100 dark:text-mono-80">
                 requestService
               </span>
             </div>
@@ -543,7 +543,7 @@ export default DeployPage;
 
 const CheckoutMetric = ({ label, value }: { label: string; value: string }) => (
   <div className="rounded-xl border border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 p-3">
-    <p className="text-[10px] font-bold uppercase tracking-wider text-mono-100 dark:text-mono-60">
+    <p className="text-[10px] font-bold uppercase tracking-wider text-mono-100 dark:text-mono-80">
       {label}
     </p>
     <p className="mt-1 truncate font-mono text-sm text-mono-200 dark:text-mono-0">
@@ -554,7 +554,7 @@ const CheckoutMetric = ({ label, value }: { label: string; value: string }) => (
 
 const ReviewRow = ({ label, value }: { label: string; value: ReactNode }) => (
   <div className="grid grid-cols-[92px_minmax(0,1fr)] gap-3 border-b border-mono-60/50 dark:border-mono-170/50 py-2 last:border-0">
-    <span className="text-xs text-mono-100 dark:text-mono-60">{label}</span>
+    <span className="text-xs text-mono-100 dark:text-mono-80">{label}</span>
     <span className="truncate text-right font-mono text-xs text-mono-200 dark:text-mono-0">
       {value}
     </span>

@@ -63,7 +63,7 @@ export const Step4Review: FC<Step4Props> = ({
   return (
     <div className="space-y-5">
       <div className="space-y-2 rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 p-4">
-        <p className="font-semibold text-[10px] text-mono-100 dark:text-mono-60 uppercase tracking-wider">
+        <p className="font-semibold text-[10px] text-mono-100 dark:text-mono-80 uppercase tracking-wider">
           Review
         </p>
         <dl className="space-y-1.5 text-sm">
@@ -72,7 +72,7 @@ export const Step4Review: FC<Step4Props> = ({
               key={k}
               className="grid grid-cols-[7rem_1fr] gap-2 text-mono-200 dark:text-mono-0"
             >
-              <dt className="text-mono-100 dark:text-mono-60 text-xs uppercase tracking-wider">
+              <dt className="text-mono-100 dark:text-mono-80 text-xs uppercase tracking-wider">
                 {k}
               </dt>
               <dd className="break-all font-mono text-xs">{v}</dd>
@@ -85,7 +85,7 @@ export const Step4Review: FC<Step4Props> = ({
         <p className="text-red-500 dark:text-red-400 text-xs">{errorMessage}</p>
       )}
       {txHash && (
-        <p className="break-all font-mono text-mono-100 dark:text-mono-60 text-xs">
+        <p className="break-all font-mono text-mono-100 dark:text-mono-80 text-xs">
           Tx hash {txHash}
         </p>
       )}
@@ -96,7 +96,7 @@ export const Step4Review: FC<Step4Props> = ({
             Published. v{nextVersionId?.toString() ?? '?'} is now in the
             blueprint timeline.
           </p>
-          <p className="text-mono-100 dark:text-mono-60 text-xs">
+          <p className="text-mono-100 dark:text-mono-80 text-xs">
             Operators on APPROVE policy must ack the new version before their
             services use it. Set it as the active version to make this the
             rollout target.
@@ -114,7 +114,7 @@ export const Step4Review: FC<Step4Props> = ({
         </div>
       ) : (
         <div className="flex items-center justify-between">
-          <p className="text-mono-100 dark:text-mono-60 text-xs">
+          <p className="text-mono-100 dark:text-mono-80 text-xs">
             Publishing calls{' '}
             <code className="font-mono">publishBinaryVersion</code> as the
             blueprint owner.

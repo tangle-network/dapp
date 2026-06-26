@@ -117,7 +117,7 @@ const EmptyState: FC<Props> = ({
         >
           {finalTitle}
         </h2>
-        <p className="text-sm leading-relaxed text-mono-100 dark:text-mono-60">
+        <p className="text-sm leading-relaxed text-mono-100 dark:text-mono-80">
           {finalDescription}
         </p>
       </div>

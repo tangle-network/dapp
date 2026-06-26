@@ -280,7 +280,7 @@ const OperatorExitPanel: FC<Props> = ({
           <div className="p-3 rounded-lg bg-mono-20/50 dark:bg-mono-190/50">
             <Text
               variant="body3"
-              className="text-mono-100 dark:text-mono-60 mb-1"
+              className="text-mono-100 dark:text-mono-80 mb-1"
             >
               Exit Queue Duration
             </Text>
@@ -291,7 +291,7 @@ const OperatorExitPanel: FC<Props> = ({
           <div className="p-3 rounded-lg bg-mono-20/50 dark:bg-mono-190/50">
             <Text
               variant="body3"
-              className="text-mono-100 dark:text-mono-60 mb-1"
+              className="text-mono-100 dark:text-mono-80 mb-1"
             >
               Min Commitment
             </Text>
@@ -302,7 +302,7 @@ const OperatorExitPanel: FC<Props> = ({
           <div className="p-3 rounded-lg bg-mono-20/50 dark:bg-mono-190/50">
             <Text
               variant="body3"
-              className="text-mono-100 dark:text-mono-60 mb-1"
+              className="text-mono-100 dark:text-mono-80 mb-1"
             >
               Force Exit Allowed
             </Text>
@@ -319,7 +319,7 @@ const OperatorExitPanel: FC<Props> = ({
               <div>
                 <Text
                   variant="body2"
-                  className="text-mono-100 dark:text-mono-60 mb-3"
+                  className="text-mono-100 dark:text-mono-80 mb-3"
                 >
                   You can schedule an exit from this service. After scheduling,
                   you will need to wait for the exit queue duration before
@@ -358,7 +358,7 @@ const OperatorExitPanel: FC<Props> = ({
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="text-mono-100 dark:text-mono-60">
+                    <span className="text-mono-100 dark:text-mono-80">
                       Scheduled At:
                     </span>
                     <span className="block font-semibold">
@@ -368,7 +368,7 @@ const OperatorExitPanel: FC<Props> = ({
                     </span>
                   </div>
                   <div>
-                    <span className="text-mono-100 dark:text-mono-60">
+                    <span className="text-mono-100 dark:text-mono-80">
                       Execute After:
                     </span>
                     <span className="block font-semibold">
@@ -471,7 +471,7 @@ const OperatorExitPanel: FC<Props> = ({
               </div>
               <Text
                 variant="body3"
-                className="text-mono-100 dark:text-mono-60 mb-3"
+                className="text-mono-100 dark:text-mono-80 mb-3"
               >
                 As the service owner, you can force-exit an operator from this
                 service. Use this carefully as it will immediately remove the
@@ -529,7 +529,7 @@ const ExitStatusBadge: FC<{ status: ExitStatus }> = ({ status }) => {
       case ExitStatus.Completed:
         return 'bg-purple-40/20 text-purple-40';
       default:
-        return 'bg-mono-20 dark:bg-mono-190 text-mono-100 dark:text-mono-60';
+        return 'bg-mono-20 dark:bg-mono-190 text-mono-100 dark:text-mono-80';
     }
   };
 

@@ -41,7 +41,7 @@ const SlashingSummaryCards = ({
           </div>
           <p className="font-display font-bold text-mono-200 dark:text-mono-0 text-xl">
             Slash #{nearestPendingSlash.id.toString()}{' '}
-            <span className="font-normal text-mono-100 dark:text-mono-60">
+            <span className="font-normal text-mono-100 dark:text-mono-80">
               expires at
             </span>{' '}
             {formatDateTime(nearestPendingSlash.executeAfter)}

@@ -55,7 +55,7 @@ export const AssetCommitmentFormItem: FC<AssetCommitmentFormItemProps> = ({
           isControlled
           rightIcon={<>%</>}
           value={exposurePercent ?? ''}
-          inputClassName="placeholder:text-mono-100 dark:text-mono-60 h-10"
+          inputClassName="placeholder:text-mono-100 dark:text-mono-80 h-10"
           placeholder="Enter exposure percentage to spend"
           onChange={onChangeExposurePercent}
           type="number"
@@ -63,7 +63,7 @@ export const AssetCommitmentFormItem: FC<AssetCommitmentFormItemProps> = ({
           min={minExposurePercent || 0}
           max={maxExposurePercent || 100}
         />
-        <Text variant="body3" className="text-mono-100 dark:text-mono-60">
+        <Text variant="body3" className="text-mono-100 dark:text-mono-80">
           Min exposure: {minExposurePercent} ~ Max exposure:{' '}
           {maxExposurePercent}
         </Text>

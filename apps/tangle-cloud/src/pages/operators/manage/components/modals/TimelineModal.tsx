@@ -68,14 +68,14 @@ const TimelineModal = ({
                       </Text>
                       <Text
                         variant="body3"
-                        className="text-mono-100 dark:text-mono-60"
+                        className="text-mono-100 dark:text-mono-80"
                       >
                         {stage.description}
                       </Text>
                       {stage.timestamp !== null ? (
                         <Text
                           variant="body3"
-                          className="text-mono-100 dark:text-mono-60"
+                          className="text-mono-100 dark:text-mono-80"
                         >
                           {formatDateTime(stage.timestamp)}
                         </Text>

@@ -82,10 +82,10 @@ export const Step3Attestation: FC<Step3Props> = ({ state, setState }) => {
   return (
     <div className="space-y-5">
       <div className="space-y-2">
-        <p className="font-semibold text-[10px] text-mono-100 dark:text-mono-60 uppercase tracking-wider">
+        <p className="font-semibold text-[10px] text-mono-100 dark:text-mono-80 uppercase tracking-wider">
           Attestation (optional)
         </p>
-        <p className="text-mono-100 dark:text-mono-60 text-xs">
+        <p className="text-mono-100 dark:text-mono-80 text-xs">
           An attestation bundle (SLSA, sigstore, etc.) lets auditors and
           operators verify the build provenance. Zero means "no bundle" and is
           accepted by the contract.
@@ -190,7 +190,7 @@ const AttestationOption: FC<{
       <span className="font-display font-bold text-mono-200 dark:text-mono-0 text-sm">
         {label}
       </span>
-      <span className="mt-0.5 block text-mono-100 dark:text-mono-60 text-xs">
+      <span className="mt-0.5 block text-mono-100 dark:text-mono-80 text-xs">
         {description}
       </span>
     </span>

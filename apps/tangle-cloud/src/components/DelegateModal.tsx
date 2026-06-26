@@ -58,7 +58,7 @@ const DelegateModal: FC<DelegateModalProps> = ({
         </DialogHeader>
         <div className="space-y-4 p-4">
           <div>
-            <label className="text-sm font-medium text-mono-100 dark:text-mono-60">
+            <label className="text-sm font-medium text-mono-100 dark:text-mono-80">
               Amount (TNT)
             </label>
             <input

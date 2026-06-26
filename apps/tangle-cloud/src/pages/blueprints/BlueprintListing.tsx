@@ -194,7 +194,7 @@ const BlueprintListing: FC<Props> = ({
 
       {hasCachedData && (
         <div className="flex items-center justify-between">
-          <span className="text-sm text-mono-100 dark:text-mono-60">
+          <span className="text-sm text-mono-100 dark:text-mono-80">
             {rows.length} blueprints
           </span>
         </div>

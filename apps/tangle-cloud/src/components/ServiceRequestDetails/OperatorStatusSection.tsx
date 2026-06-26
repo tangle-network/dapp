@@ -100,7 +100,7 @@ const OperatorStatusSection: FC<Props> = ({
       </Text>
 
       <div className="flex items-center gap-2 mb-2">
-        <span className="text-sm text-mono-100 dark:text-mono-60">
+        <span className="text-sm text-mono-100 dark:text-mono-80">
           Progress:
         </span>
 
@@ -124,7 +124,7 @@ const OperatorStatusSection: FC<Props> = ({
               }`}
             >
               <div className="flex items-center gap-2">
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-mono-20 dark:bg-mono-190 font-mono text-[10px] text-mono-100 dark:text-mono-60">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-mono-20 dark:bg-mono-190 font-mono text-[10px] text-mono-100 dark:text-mono-80">
                   {address.slice(2, 4).toUpperCase()}
                 </span>
 

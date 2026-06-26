@@ -52,7 +52,7 @@ const BlueprintInfoCard: FC<Props> = ({
             {name}
           </Text>
 
-          <Text variant="body1" className="text-mono-100 dark:text-mono-60">
+          <Text variant="body1" className="text-mono-100 dark:text-mono-80">
             {formattedAuthor}
           </Text>
         </div>
@@ -66,7 +66,7 @@ const BlueprintInfoCard: FC<Props> = ({
 
         <div className="relative flex w-full gap-1 pt-4">
           <div className="flex-1 space-y-2">
-            <Text variant="body2" className="text-mono-100 dark:text-mono-60">
+            <Text variant="body2" className="text-mono-100 dark:text-mono-80">
               Instances
             </Text>
 
@@ -76,7 +76,7 @@ const BlueprintInfoCard: FC<Props> = ({
           </div>
 
           <div className="flex-1 space-y-2">
-            <Text variant="body2" className="text-mono-100 dark:text-mono-60">
+            <Text variant="body2" className="text-mono-100 dark:text-mono-80">
               Operators
             </Text>
 

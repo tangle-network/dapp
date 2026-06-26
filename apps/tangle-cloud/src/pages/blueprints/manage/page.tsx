@@ -486,7 +486,7 @@ const ManageBlueprintsPage: FC = () => {
             <Text variant="body1" fw="semibold">
               {info.getValue()}
             </Text>
-            <Text variant="body3" className="text-mono-100 dark:text-mono-60">
+            <Text variant="body3" className="text-mono-100 dark:text-mono-80">
               ID: {info.row.original.id.toString()}
             </Text>
           </div>
@@ -611,7 +611,7 @@ const ManageBlueprintsPage: FC = () => {
           <Text variant="h4" fw="bold">
             My Blueprints
           </Text>
-          <Text variant="body2" className="text-mono-100 dark:text-mono-60">
+          <Text variant="body2" className="text-mono-100 dark:text-mono-80">
             Update metadata, transfer ownership, or deactivate blueprints owned
             by the connected wallet.
           </Text>
@@ -634,7 +634,7 @@ const ManageBlueprintsPage: FC = () => {
           <Text variant="h4" fw="bold">
             My Blueprints
           </Text>
-          <Text variant="body2" className="text-mono-100 dark:text-mono-60">
+          <Text variant="body2" className="text-mono-100 dark:text-mono-80">
             View and manage blueprints you have created.
           </Text>
         </div>
@@ -663,7 +663,7 @@ const ManageBlueprintsPage: FC = () => {
                       {headerGroup.headers.map((header) => (
                         <th
                           key={header.id}
-                          className="text-left py-3 px-4 text-mono-100 dark:text-mono-60 font-medium"
+                          className="text-left py-3 px-4 text-mono-100 dark:text-mono-80 font-medium"
                         >
                           {header.isPlaceholder
                             ? null
@@ -701,7 +701,7 @@ const ManageBlueprintsPage: FC = () => {
               <div className="flex items-center justify-between mt-4">
                 <Text
                   variant="body2"
-                  className="text-mono-100 dark:text-mono-60"
+                  className="text-mono-100 dark:text-mono-80"
                 >
                   Page {table.getState().pagination.pageIndex + 1} of{' '}
                   {table.getPageCount()}
@@ -952,7 +952,7 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
             />
             <Text
               variant="body3"
-              className="text-mono-100 dark:text-mono-60 mt-1"
+              className="text-mono-100 dark:text-mono-80 mt-1"
             >
               {requiresIpfsForBlueprintMetadata()
                 ? 'Production hosted blueprints must keep metadata on ipfs:// content-addressed URIs.'
@@ -1137,7 +1137,7 @@ const DeactivateModal: FC<DeactivateModalProps> = ({
           </Text>
           <Text
             variant="body2"
-            className="text-mono-100 dark:text-mono-60 mt-2"
+            className="text-mono-100 dark:text-mono-80 mt-2"
           >
             This will prevent new operators from registering and new services
             from being created. Existing services will continue to operate.
@@ -1246,7 +1246,7 @@ const TransferModal: FC<TransferModalProps> = ({
 
           <Text
             variant="body3"
-            className="text-mono-100 dark:text-mono-60 mt-4"
+            className="text-mono-100 dark:text-mono-80 mt-4"
           >
             Warning: This action cannot be undone. You will lose ownership of
             this blueprint.

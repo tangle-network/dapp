@@ -137,7 +137,7 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
             id="instanceName"
             autoFocus
             isControlled
-            inputClassName="placeholder:text-mono-100 dark:text-mono-60 h-10"
+            inputClassName="placeholder:text-mono-100 dark:text-mono-80 h-10"
             placeholder="Enter instance name"
             autoComplete="off"
             value={instanceName}
@@ -155,7 +155,7 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
               id="instanceDuration"
               isControlled
               isInvalid={Boolean(instanceDurationError)}
-              inputClassName="placeholder:text-mono-100 dark:text-mono-60 h-10"
+              inputClassName="placeholder:text-mono-100 dark:text-mono-80 h-10"
               placeholder="Enter duration"
               autoComplete="off"
               type="number"
@@ -182,7 +182,7 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
               </SelectContent>
             </Select>
           </div>
-          <Text variant="body2" className="text-mono-100 dark:text-mono-60">
+          <Text variant="body2" className="text-mono-100 dark:text-mono-80">
             Use 0 for perpetual service, or {constraints.min}-{constraints.max}{' '}
             {durationUnit}
           </Text>
@@ -208,7 +208,7 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
                   isControlled
                   onChange={(nextValue) => handleCallerChange(index, nextValue)}
                   className="flex-grow"
-                  inputClassName="placeholder:text-mono-100 dark:text-mono-60 h-10 w-full"
+                  inputClassName="placeholder:text-mono-100 dark:text-mono-80 h-10 w-full"
                   placeholder="Enter wallet address (0x...)"
                   autoComplete="off"
                 />

@@ -475,7 +475,7 @@ const ServiceDetailPage: FC = () => {
     return (
       <div className="text-center py-12">
         <Text variant="h4">Service Not Found</Text>
-        <Text variant="body1" className="text-mono-100 dark:text-mono-60 mt-2">
+        <Text variant="body1" className="text-mono-100 dark:text-mono-80 mt-2">
           This service does not exist or may have been removed.
         </Text>
         <Button onClick={() => navigate(PagePath.INSTANCES)} className="mt-4">
@@ -501,7 +501,7 @@ const ServiceDetailPage: FC = () => {
             <Text variant="h4" fw="bold">
               Service #{serviceId.toString()}
             </Text>
-            <Text variant="body2" className="text-mono-100 dark:text-mono-60">
+            <Text variant="body2" className="text-mono-100 dark:text-mono-80">
               {blueprintResult?.details.name ?? 'Loading...'}
             </Text>
           </div>
@@ -601,7 +601,7 @@ const ServiceDetailPage: FC = () => {
           <Text variant="h5" fw="bold">
             Service Settings: Permitted Callers
           </Text>
-          <Text variant="body2" className="text-mono-100 dark:text-mono-60">
+          <Text variant="body2" className="text-mono-100 dark:text-mono-80">
             Manage which addresses can submit jobs to this service at runtime.
           </Text>
         </div>
@@ -615,7 +615,7 @@ const ServiceDetailPage: FC = () => {
         ) : (
           <>
             <div className="rounded-lg border border-mono-60 dark:border-mono-170 p-3">
-              <Text variant="body2" className="text-mono-100 dark:text-mono-60">
+              <Text variant="body2" className="text-mono-100 dark:text-mono-80">
                 Connected account access:{' '}
                 <StatusPill
                   tone={canSubmitJobs ? 'success' : 'warning'}
@@ -627,13 +627,13 @@ const ServiceDetailPage: FC = () => {
             </div>
 
             <div className="space-y-2">
-              <Text variant="body2" className="text-mono-100 dark:text-mono-60">
+              <Text variant="body2" className="text-mono-100 dark:text-mono-80">
                 Current permitted callers
               </Text>
               {permittedCallers.length === 0 ? (
                 <Text
                   variant="body2"
-                  className="text-mono-100 dark:text-mono-60"
+                  className="text-mono-100 dark:text-mono-80"
                 >
                   No permitted callers configured.
                 </Text>
@@ -688,7 +688,7 @@ const ServiceDetailPage: FC = () => {
               <div className="space-y-2">
                 <Text
                   variant="body2"
-                  className="text-mono-100 dark:text-mono-60"
+                  className="text-mono-100 dark:text-mono-80"
                 >
                   Add permitted caller
                 </Text>
@@ -720,7 +720,7 @@ const ServiceDetailPage: FC = () => {
               <div className="space-y-2">
                 <Text
                   variant="body2"
-                  className="text-mono-100 dark:text-mono-60"
+                  className="text-mono-100 dark:text-mono-80"
                 >
                   Add permitted caller
                 </Text>
@@ -810,7 +810,7 @@ const InfoItem: FC<{ label: string; value: ReactNode }> = ({
   value,
 }) => (
   <div>
-    <Text variant="body2" className="text-mono-100 dark:text-mono-60 mb-1">
+    <Text variant="body2" className="text-mono-100 dark:text-mono-80 mb-1">
       {label}
     </Text>
     {typeof value === 'string' ? (
@@ -833,12 +833,12 @@ const PermissionDeniedMessage: FC = () => (
     </Text>
     <Text
       variant="body2"
-      className="text-center text-mono-100 dark:text-mono-60 max-w-md"
+      className="text-center text-mono-100 dark:text-mono-80 max-w-md"
     >
       You are not authorized to submit jobs to this service. Only the service
       owner or addresses added as permitted callers can submit jobs.
     </Text>
-    <Text variant="body3" className="text-mono-100 dark:text-mono-60 mt-4">
+    <Text variant="body3" className="text-mono-100 dark:text-mono-80 mt-4">
       Contact the service owner to request access.
     </Text>
   </div>
