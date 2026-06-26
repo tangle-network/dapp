@@ -330,7 +330,7 @@ const RewardsPage: FC = () => {
             <p className="font-semibold text-[var(--surface-warning-text)] text-sm">
               Using a static GraphQL endpoint from `VITE_GRAPHQL_ENDPOINT`.
             </p>
-            <p className="mt-1 text-mono-100 dark:text-mono-60 text-sm">
+            <p className="mt-1 text-mono-100 dark:text-mono-80 text-sm">
               Active chain: {activeChain?.name ?? `Chain ${chainId}`} ({chainId}
               ) . Expected indexer network: {resolvedNetwork}. Endpoint:{' '}
               {configuredEndpoint}
@@ -582,14 +582,14 @@ const PendingAssetCell: FC<{ token: Address; addressExplorerUrl?: string }> = ({
             {isLoading ? 'Loading...' : symbol}
           </span>
           {tokenName && (
-            <span className="truncate text-mono-100 dark:text-mono-60 text-xs">
+            <span className="truncate text-mono-100 dark:text-mono-80 text-xs">
               {tokenName}
             </span>
           )}
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="font-mono text-mono-100 dark:text-mono-60 text-xs">
+          <span className="font-mono text-mono-100 dark:text-mono-80 text-xs">
             {shortenHex(token)}
           </span>
           <CopyIconButton value={token} label="Copy asset address" />
@@ -598,7 +598,7 @@ const PendingAssetCell: FC<{ token: Address; addressExplorerUrl?: string }> = ({
               href={explorerAddressUrl ?? undefined}
               target="_blank"
               rel="noreferrer"
-              className="text-mono-100 dark:text-mono-60 transition-colors hover:text-purple-40"
+              className="text-mono-100 dark:text-mono-80 transition-colors hover:text-purple-40"
               aria-label="View asset address on block explorer"
             >
               <ExternalLinkLine className="h-4 w-4 fill-current" />
@@ -692,7 +692,7 @@ const RewardClaimsTable: FC<RewardClaimsTableProps> = ({
                 {new Date(Number(entry.claimedAt) * 1000).toLocaleString()}
               </TableCell>
               <TableCell>
-                <div className="flex items-center gap-2 text-mono-100 dark:text-mono-60">
+                <div className="flex items-center gap-2 text-mono-100 dark:text-mono-80">
                   <span className="font-mono text-xs">
                     {shortenHex(entry.txHash, 6)}
                   </span>
@@ -702,7 +702,7 @@ const RewardClaimsTable: FC<RewardClaimsTableProps> = ({
                       href={`${txExplorerUrl}/tx/${entry.txHash}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-mono-100 dark:text-mono-60 transition-colors hover:text-purple-40"
+                      className="text-mono-100 dark:text-mono-80 transition-colors hover:text-purple-40"
                       aria-label="View transaction on block explorer"
                     >
                       <ExternalLinkLine className="h-4 w-4 fill-current" />
@@ -727,7 +727,7 @@ const CopyIconButton: FC<{ value: string; label: string }> = ({
   <button
     type="button"
     aria-label={label}
-    className="inline-flex text-mono-100 dark:text-mono-60 transition-colors hover:text-purple-40"
+    className="inline-flex text-mono-100 dark:text-mono-80 transition-colors hover:text-purple-40"
     onClick={() => void navigator.clipboard?.writeText(value)}
   >
     <FileCopyLine className="h-4 w-4 fill-current" />

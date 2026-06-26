@@ -104,11 +104,11 @@ export const TrustScoreGauge: FC<TrustScoreGaugeProps> = ({
           style={{ color }}
         >
           {score}
-          <span className="ml-1 font-display font-semibold text-xs text-mono-100 dark:text-mono-60 uppercase tracking-wider">
+          <span className="ml-1 font-display font-semibold text-xs text-mono-100 dark:text-mono-80 uppercase tracking-wider">
             / 100
           </span>
         </span>
-        <span className="text-mono-100 dark:text-mono-60 text-xs">
+        <span className="text-mono-100 dark:text-mono-80 text-xs">
           {breakdown.attestationCount} attestation
           {breakdown.attestationCount === 1 ? '' : 's'}
         </span>
@@ -125,7 +125,7 @@ export const TrustScoreGauge: FC<TrustScoreGaugeProps> = ({
           }}
         />
       </div>
-      <p className="text-mono-100 dark:text-mono-60 text-xs">
+      <p className="text-mono-100 dark:text-mono-80 text-xs">
         {buildBreakdownLine(breakdown)}
       </p>
     </div>

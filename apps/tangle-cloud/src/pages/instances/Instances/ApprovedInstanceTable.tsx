@@ -252,7 +252,7 @@ export const ApprovedInstanceTable: FC<ApprovedInstanceTableProps> = ({
 
             return (
               <TableCellWrapper className="p-0 min-h-fit">
-                <span className="text-sm text-mono-100 dark:text-mono-60">
+                <span className="text-sm text-mono-100 dark:text-mono-80">
                   -
                 </span>
               </TableCellWrapper>

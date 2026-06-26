@@ -225,7 +225,7 @@ const CopyWithTooltip: FC<{
 }> = ({ textToCopy }) => (
   <button
     type="button"
-    className="text-mono-100 dark:text-mono-60 text-xs underline-offset-4 hover:text-mono-200 dark:text-mono-0 hover:underline"
+    className="text-mono-100 dark:text-mono-80 text-xs underline-offset-4 hover:text-mono-200 dark:text-mono-0 hover:underline"
     onClick={() => void navigator.clipboard?.writeText(textToCopy)}
   >
     Copy
@@ -858,7 +858,7 @@ const Page: FC = () => {
               variant="utility"
               size="sm"
               isDisabled={!actionState.canUnregister}
-              className="uppercase body4 bg-destructive/10 text-red-500 dark:text-red-400 hover:bg-destructive/15 border border-destructive/20 disabled:!opacity-100 disabled:!text-mono-100 dark:text-mono-60 disabled:!border-mono-60 dark:border-mono-170 disabled:!bg-transparent dark:disabled:!text-mono-100 dark:text-mono-60  disabled:cursor-not-allowed"
+              className="uppercase body4 bg-destructive/10 text-red-500 dark:text-red-400 hover:bg-destructive/15 border border-destructive/20 disabled:!opacity-100 disabled:!text-mono-100 dark:text-mono-80 disabled:!border-mono-60 dark:border-mono-170 disabled:!bg-transparent dark:disabled:!text-mono-100 dark:text-mono-80  disabled:cursor-not-allowed"
               onClick={(event: MouseEvent<HTMLButtonElement>) => {
                 event.stopPropagation();
                 setSelectedRegistration(info.row.original);
@@ -1234,7 +1234,7 @@ const Page: FC = () => {
           </Text>
           <Text
             variant="body1"
-            className="text-mono-100 dark:text-mono-60 mt-1"
+            className="text-mono-100 dark:text-mono-80 mt-1"
           >
             Review operator registrations, disputes, and slash actions for the
             connected wallet.
@@ -1256,7 +1256,7 @@ const Page: FC = () => {
         <Text variant="h4" fw="bold">
           Operator management
         </Text>
-        <Text variant="body1" className="text-mono-100 dark:text-mono-60 mt-1">
+        <Text variant="body1" className="text-mono-100 dark:text-mono-80 mt-1">
           Review registrations, propose slash actions, dispute claims, execute
           finalized slashes, or cancel proposals.
         </Text>
@@ -1288,7 +1288,7 @@ const Page: FC = () => {
               </Text>
               <Text
                 variant="body3"
-                className="text-mono-100 dark:text-mono-60 mt-1"
+                className="text-mono-100 dark:text-mono-80 mt-1"
               >
                 {pendingDisputeBondRefund &&
                 pendingDisputeBondRefund > BigInt(0)
@@ -1334,7 +1334,7 @@ const Page: FC = () => {
 
       {clockError ? (
         <Card className="p-4 border border-yellow-500/20 bg-yellow-500/10">
-          <Text variant="body2" className="text-mono-100 dark:text-mono-60">
+          <Text variant="body2" className="text-mono-100 dark:text-mono-80">
             {clockError}
           </Text>
           <div className="mt-3">
@@ -1351,7 +1351,7 @@ const Page: FC = () => {
 
       {isActiveServicePrecheckUnavailable ? (
         <Card className="p-4 border border-yellow-500/20 bg-yellow-500/10">
-          <Text variant="body2" className="text-mono-100 dark:text-mono-60">
+          <Text variant="body2" className="text-mono-100 dark:text-mono-80">
             Active service precheck is unavailable. Unregister actions are
             temporarily disabled until indexer/service data can be fetched.
           </Text>
@@ -1424,7 +1424,7 @@ const Page: FC = () => {
             </Text>
             <Text
               variant="body2"
-              className="text-mono-100 dark:text-mono-60 mt-2"
+              className="text-mono-100 dark:text-mono-80 mt-2"
             >
               This action removes your operator registration from this blueprint
               after chain checks pass.
@@ -1484,7 +1484,7 @@ const Page: FC = () => {
                 />
                 <Text
                   variant="body3"
-                  className="text-mono-100 dark:text-mono-60 mt-1"
+                  className="text-mono-100 dark:text-mono-80 mt-1"
                 >
                   Leave empty to keep your current key.
                 </Text>

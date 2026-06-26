@@ -82,7 +82,7 @@ const SecurityRequirementsSection: FC<Props> = ({
               {getAssetLabel(index)}
             </span>
 
-            <span className="text-sm text-mono-100 dark:text-mono-60">
+            <span className="text-sm text-mono-100 dark:text-mono-80">
               {formatBps(req.minExposureBps)} - {formatBps(req.maxExposureBps)}
             </span>
           </div>

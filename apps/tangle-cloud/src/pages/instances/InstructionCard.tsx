@@ -126,7 +126,7 @@ const TONE_STYLES: Record<NextStep['tone'], { icon: string; chip: string }> = {
   },
   info: {
     icon: 'fill-primary',
-    chip: 'border-mono-60 dark:border-mono-170 bg-mono-20 dark:bg-mono-190 text-mono-100 dark:text-mono-60',
+    chip: 'border-mono-60 dark:border-mono-170 bg-mono-20 dark:bg-mono-190 text-mono-100 dark:text-mono-80',
   },
 };
 
@@ -178,7 +178,7 @@ export const InstructionCard: FC<InstructionCardProps> = ({
           <div className="mt-3 font-display font-bold text-mono-200 dark:text-mono-0 text-lg tracking-tight">
             {isConnected ? 'For your account' : 'Quick Actions'}
           </div>
-          <p className="mt-1 text-mono-100 dark:text-mono-60 text-xs">
+          <p className="mt-1 text-mono-100 dark:text-mono-80 text-xs">
             {subheading}
           </p>
         </div>
@@ -207,7 +207,7 @@ export const InstructionCard: FC<InstructionCardProps> = ({
                       </span>
                     )}
                   </div>
-                  <p className="line-clamp-2 text-mono-100 dark:text-mono-60 text-sm">
+                  <p className="line-clamp-2 text-mono-100 dark:text-mono-80 text-sm">
                     {step.description}
                   </p>
                 </div>

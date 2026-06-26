@@ -73,7 +73,7 @@ const ProofProgressIndicator: FC<Props> = ({ progress }) => {
       )}
 
       {progress.message && (
-        <p className="text-xs text-mono-100 dark:text-mono-60">
+        <p className="text-xs text-mono-100 dark:text-mono-80">
           {progress.message}
         </p>
       )}

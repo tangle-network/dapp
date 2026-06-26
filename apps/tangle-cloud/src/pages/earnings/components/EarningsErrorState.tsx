@@ -35,7 +35,7 @@ const EarningsErrorState: FC<EarningsErrorStateProps> = ({
         </ErrorMessage>
 
         {diagnostics && (
-          <div className="mt-4 space-y-1 text-mono-100 dark:text-mono-60 text-sm">
+          <div className="mt-4 space-y-1 text-mono-100 dark:text-mono-80 text-sm">
             <p>Expected indexer network: {diagnostics.expectedNetwork}</p>
             <p className="break-all">Endpoint: {diagnostics.endpoint}</p>
             {hasMismatch && (

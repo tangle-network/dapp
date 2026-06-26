@@ -28,7 +28,7 @@ const InstanceHeader: FC<Props> = ({ title, githubPath, creator }) => {
           )}
         </Text>
 
-        <Text variant="body1" className="text-mono-100 dark:text-mono-60">
+        <Text variant="body1" className="text-mono-100 dark:text-mono-80">
           {creator}
         </Text>
       </div>

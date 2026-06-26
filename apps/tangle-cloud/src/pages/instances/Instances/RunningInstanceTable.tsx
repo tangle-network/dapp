@@ -164,13 +164,13 @@ export const RunningInstanceTable: FC = () => {
                   </Text>
                   <Text
                     variant="body2"
-                    className="text-mono-100 dark:text-mono-60 text-ellipsis whitespace-nowrap overflow-hidden"
+                    className="text-mono-100 dark:text-mono-80 text-ellipsis whitespace-nowrap overflow-hidden"
                   >
                     {service.blueprintData?.name || ''}
                   </Text>
                 </div>
                 <div>
-                  <ChevronRight className="w-6 h-6 text-mono-100 dark:text-mono-60" />
+                  <ChevronRight className="w-6 h-6 text-mono-100 dark:text-mono-80" />
                 </div>
                 <div className="w-4/12">
                   <Text

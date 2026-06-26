@@ -299,7 +299,7 @@ const FundServiceModal: FC<Props> = ({ serviceId, onClose }) => {
               <div className="p-4 rounded-lg bg-mono-20/50 dark:bg-mono-190/50">
                 <Text
                   variant="body2"
-                  className="text-mono-100 dark:text-mono-60 mb-1"
+                  className="text-mono-100 dark:text-mono-80 mb-1"
                 >
                   Current Escrow Balance
                 </Text>
@@ -310,7 +310,7 @@ const FundServiceModal: FC<Props> = ({ serviceId, onClose }) => {
 
               {/* User Balance */}
               <div className="flex justify-between items-center text-sm">
-                <span className="text-mono-100 dark:text-mono-60">
+                <span className="text-mono-100 dark:text-mono-80">
                   Your Balance:
                 </span>
                 <span className="font-semibold">
@@ -347,7 +347,7 @@ const FundServiceModal: FC<Props> = ({ serviceId, onClose }) => {
                   }}
                   isInvalid={!!validationError || !!insufficientBalance}
                   rightIcon={
-                    <span className="text-mono-100 dark:text-mono-60">
+                    <span className="text-mono-100 dark:text-mono-80">
                       {tokenSymbol}
                     </span>
                   }

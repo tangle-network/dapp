@@ -43,19 +43,19 @@ const PaymentsCreditsContent: FC = () => {
             <TabsList className="flex w-full gap-1 rounded-xl border border-mono-60 dark:border-mono-170 bg-mono-20 dark:bg-mono-190 p-1">
               <TabsTrigger
                 value={CreditsTab.BALANCE}
-                className="flex-1 rounded-lg px-4 py-2 text-sm font-semibold text-mono-100 dark:text-mono-60 transition-colors data-[state=active]:bg-mono-0 data-[state=active]:text-mono-200 dark:data-[state=active]:bg-mono-180 dark:data-[state=active]:text-mono-0"
+                className="flex-1 rounded-lg px-4 py-2 text-sm font-semibold text-mono-100 dark:text-mono-80 transition-colors data-[state=active]:bg-mono-0 data-[state=active]:text-mono-200 dark:data-[state=active]:bg-mono-180 dark:data-[state=active]:text-mono-0"
               >
                 Accounts
               </TabsTrigger>
               <TabsTrigger
                 value={CreditsTab.FUND}
-                className="flex-1 rounded-lg px-4 py-2 text-sm font-semibold text-mono-100 dark:text-mono-60 transition-colors data-[state=active]:bg-mono-0 data-[state=active]:text-mono-200 dark:data-[state=active]:bg-mono-180 dark:data-[state=active]:text-mono-0"
+                className="flex-1 rounded-lg px-4 py-2 text-sm font-semibold text-mono-100 dark:text-mono-80 transition-colors data-[state=active]:bg-mono-0 data-[state=active]:text-mono-200 dark:data-[state=active]:bg-mono-180 dark:data-[state=active]:text-mono-0"
               >
                 Fund
               </TabsTrigger>
               <TabsTrigger
                 value={CreditsTab.SPEND}
-                className="flex-1 rounded-lg px-4 py-2 text-sm font-semibold text-mono-100 dark:text-mono-60 transition-colors data-[state=active]:bg-mono-0 data-[state=active]:text-mono-200 dark:data-[state=active]:bg-mono-180 dark:data-[state=active]:text-mono-0"
+                className="flex-1 rounded-lg px-4 py-2 text-sm font-semibold text-mono-100 dark:text-mono-80 transition-colors data-[state=active]:bg-mono-0 data-[state=active]:text-mono-200 dark:data-[state=active]:bg-mono-180 dark:data-[state=active]:text-mono-0"
               >
                 Authorize
               </TabsTrigger>

@@ -114,11 +114,11 @@ export const MetadataJsonInput: FC<Props> = ({
       <div>
         <Text variant="body2" className="mb-1">
           {label}{' '}
-          <span className="text-mono-100 dark:text-mono-60 text-xs">
+          <span className="text-mono-100 dark:text-mono-80 text-xs">
             (metadata_json)
           </span>
         </Text>
-        <Text variant="body3" className="text-mono-100 dark:text-mono-60">
+        <Text variant="body3" className="text-mono-100 dark:text-mono-80">
           The operator parses this JSON server-side. Pick a runtime backend and
           add any extra fields (image, env, ports, ...) the blueprint
           recognises.
@@ -126,7 +126,7 @@ export const MetadataJsonInput: FC<Props> = ({
       </div>
 
       <div>
-        <Text variant="body3" className="mb-1 text-mono-100 dark:text-mono-60">
+        <Text variant="body3" className="mb-1 text-mono-100 dark:text-mono-80">
           Runtime Backend
         </Text>
         <Select
@@ -150,7 +150,7 @@ export const MetadataJsonInput: FC<Props> = ({
             ))}
           </SelectContent>
         </Select>
-        <Text variant="body3" className="mt-1 text-mono-100 dark:text-mono-60">
+        <Text variant="body3" className="mt-1 text-mono-100 dark:text-mono-80">
           {activeOption.description}
         </Text>
       </div>
@@ -177,7 +177,7 @@ export const MetadataJsonInput: FC<Props> = ({
       )}
 
       <div>
-        <Text variant="body3" className="mb-1 text-mono-100 dark:text-mono-60">
+        <Text variant="body3" className="mb-1 text-mono-100 dark:text-mono-80">
           Raw JSON (advanced)
         </Text>
         <Textarea
@@ -195,7 +195,7 @@ export const MetadataJsonInput: FC<Props> = ({
         ) : (
           <Text
             variant="body3"
-            className="mt-1 text-mono-100 dark:text-mono-60"
+            className="mt-1 text-mono-100 dark:text-mono-80"
           >
             {parsed.empty
               ? 'Empty metadata is sent as an empty string. The operator will use its defaults.'

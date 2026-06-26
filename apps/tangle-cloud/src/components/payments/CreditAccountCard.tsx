@@ -31,7 +31,7 @@ const CreditAccountCard: FC<Props> = ({
             {label ?? 'Credit Account'}
           </span>
 
-          <p className="mt-0.5 font-mono text-xs text-mono-100 dark:text-mono-60">
+          <p className="mt-0.5 font-mono text-xs text-mono-100 dark:text-mono-80">
             {shortenHex(commitment, 8)}
           </p>
         </div>
@@ -44,7 +44,7 @@ const CreditAccountCard: FC<Props> = ({
       {accountState && (
         <div className="space-y-2">
           <div className="flex items-baseline justify-between">
-            <span className="text-xs text-mono-100 dark:text-mono-60">
+            <span className="text-xs text-mono-100 dark:text-mono-80">
               Balance
             </span>
 
@@ -53,7 +53,7 @@ const CreditAccountCard: FC<Props> = ({
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 text-xs text-mono-100 dark:text-mono-60">
+          <div className="grid grid-cols-2 gap-2 text-xs text-mono-100 dark:text-mono-80">
             <div>
               <span>Total Funded</span>
               <p className="font-mono text-mono-200 dark:text-mono-0">

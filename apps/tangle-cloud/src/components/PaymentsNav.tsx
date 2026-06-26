@@ -21,7 +21,7 @@ const PaymentsNav: FC = () => {
             className={`flex-1 rounded-lg px-4 py-2 text-center text-sm font-semibold transition-colors ${
               active
                 ? 'bg-mono-0 text-mono-200 dark:bg-mono-180 dark:text-mono-0'
-                : 'text-mono-100 dark:text-mono-60 hover:text-mono-200 dark:hover:text-mono-0'
+                : 'text-mono-100 dark:text-mono-80 hover:text-mono-200 dark:hover:text-mono-0'
             }`}
           >
             {tab.label}

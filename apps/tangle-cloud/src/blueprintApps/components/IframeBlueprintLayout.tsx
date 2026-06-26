@@ -122,11 +122,11 @@ const IframeBlueprintLayout: FC<Props> = ({
         >
           <Link
             to="/blueprints"
-            className="shrink-0 text-mono-100 dark:text-mono-60 transition-colors hover:text-mono-200 dark:text-mono-0"
+            className="shrink-0 text-mono-100 dark:text-mono-80 transition-colors hover:text-mono-200 dark:text-mono-0"
           >
             Blueprints
           </Link>
-          <span aria-hidden className="text-mono-100 dark:text-mono-60/40">
+          <span aria-hidden className="text-mono-100 dark:text-mono-80/40">
             /
           </span>
           <span className="truncate font-semibold text-mono-200 dark:text-mono-0">
@@ -165,7 +165,7 @@ const IframeBlueprintLayout: FC<Props> = ({
             }}
             aria-label="Expand app"
             className={twMerge(
-              'inline-flex h-8 w-8 items-center justify-center rounded-md border border-mono-60 dark:border-mono-170 bg-transparent text-mono-100 dark:text-mono-60 transition-colors hover:bg-[color:var(--bg-hover)] hover:text-mono-200 dark:text-mono-0',
+              'inline-flex h-8 w-8 items-center justify-center rounded-md border border-mono-60 dark:border-mono-170 bg-transparent text-mono-100 dark:text-mono-80 transition-colors hover:bg-[color:var(--bg-hover)] hover:text-mono-200 dark:text-mono-0',
               focus.ring,
             )}
           >
@@ -260,7 +260,7 @@ const IframeBlueprintLayout: FC<Props> = ({
                 <CloseIcon className="h-3.5 w-3.5" />
                 Back to Cloud
               </button>
-              <span className="hidden max-w-[42vw] truncate border-l border-mono-60 dark:border-mono-170 pl-2 font-mono text-xs text-mono-100 dark:text-mono-60 sm:inline">
+              <span className="hidden max-w-[42vw] truncate border-l border-mono-60 dark:border-mono-170 pl-2 font-mono text-xs text-mono-100 dark:text-mono-80 sm:inline">
                 {displayName}
               </span>
             </div>
@@ -326,7 +326,7 @@ const CompactModePicker: FC<{
             'h-7 rounded px-2.5 text-xs font-medium transition-colors',
             active
               ? 'bg-[color:var(--bg-hover)] text-mono-200 dark:text-mono-0'
-              : 'text-mono-100 dark:text-mono-60 hover:text-mono-200 dark:text-mono-0',
+              : 'text-mono-100 dark:text-mono-80 hover:text-mono-200 dark:text-mono-0',
             focus.ring,
           )}
         >
@@ -401,7 +401,7 @@ const DetailsPanel: FC<DetailsPanelProps> = ({
             onClick={onClose}
             aria-label="Close details"
             className={twMerge(
-              'inline-flex h-8 w-8 items-center justify-center rounded-md text-mono-100 dark:text-mono-60 hover:bg-[color:var(--bg-hover)] hover:text-mono-200 dark:text-mono-0',
+              'inline-flex h-8 w-8 items-center justify-center rounded-md text-mono-100 dark:text-mono-80 hover:bg-[color:var(--bg-hover)] hover:text-mono-200 dark:text-mono-0',
               focus.ring,
             )}
           >
@@ -416,7 +416,7 @@ const DetailsPanel: FC<DetailsPanelProps> = ({
             </p>
           )}
           {description !== undefined && description.length > 0 && (
-            <p className="text-sm leading-relaxed text-mono-100 dark:text-mono-60">
+            <p className="text-sm leading-relaxed text-mono-100 dark:text-mono-80">
               {description}
             </p>
           )}
@@ -477,7 +477,7 @@ const DetailsPanel: FC<DetailsPanelProps> = ({
                       </p>
                     )}
                     {card.description && (
-                      <p className="mt-1 text-xs leading-relaxed text-mono-100 dark:text-mono-60">
+                      <p className="mt-1 text-xs leading-relaxed text-mono-100 dark:text-mono-80">
                         {card.description}
                       </p>
                     )}
@@ -540,7 +540,7 @@ const ActionRow: FC<{
           {action.label}
         </p>
         {action.description && (
-          <p className="truncate text-xs text-mono-100 dark:text-mono-60">
+          <p className="truncate text-xs text-mono-100 dark:text-mono-80">
             {action.description}
           </p>
         )}

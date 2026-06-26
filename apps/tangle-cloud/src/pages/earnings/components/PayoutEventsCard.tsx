@@ -103,7 +103,7 @@ const PayoutEventsCard: FC<PayoutEventsCardProps> = ({
 
         {events.length === 0 ? (
           <div className="py-6 text-center">
-            <p className="text-mono-100 dark:text-mono-60 text-sm">
+            <p className="text-mono-100 dark:text-mono-80 text-sm">
               No developer payout events found for this wallet context.
             </p>
             <div className="mt-4 flex flex-wrap justify-center gap-3">
@@ -166,7 +166,7 @@ const PayoutEventsCard: FC<PayoutEventsCardProps> = ({
                       </Link>
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-2 text-mono-100 dark:text-mono-60">
+                      <div className="flex items-center gap-2 text-mono-100 dark:text-mono-80">
                         <span className="font-mono text-xs">
                           {shortenHex(entry.txHash, 6)}
                         </span>
@@ -179,7 +179,7 @@ const PayoutEventsCard: FC<PayoutEventsCardProps> = ({
                             href={`${txExplorerUrl}/tx/${entry.txHash}`}
                             target="_blank"
                             rel="noreferrer"
-                            className="text-mono-100 dark:text-mono-60 transition-colors hover:text-purple-40"
+                            className="text-mono-100 dark:text-mono-80 transition-colors hover:text-purple-40"
                             aria-label="View transaction on block explorer"
                           >
                             <ExternalLinkLine className="h-4 w-4 fill-current" />
@@ -193,7 +193,7 @@ const PayoutEventsCard: FC<PayoutEventsCardProps> = ({
             </Table>
 
             {totalEventPages > 1 && (
-              <div className="mt-4 flex items-center justify-between gap-3 border-mono-60 dark:border-mono-170 border-t pt-4 text-mono-100 dark:text-mono-60 text-sm">
+              <div className="mt-4 flex items-center justify-between gap-3 border-mono-60 dark:border-mono-170 border-t pt-4 text-mono-100 dark:text-mono-80 text-sm">
                 <span>
                   Showing {eventsPageIndex * pageSize + 1}-
                   {Math.min((eventsPageIndex + 1) * pageSize, events.length)} of{' '}
@@ -244,7 +244,7 @@ const CopyIconButton: FC<{ value: string; label: string }> = ({
   <button
     type="button"
     aria-label={label}
-    className="inline-flex text-mono-100 dark:text-mono-60 transition-colors hover:text-purple-40"
+    className="inline-flex text-mono-100 dark:text-mono-80 transition-colors hover:text-purple-40"
     onClick={() => void navigator.clipboard?.writeText(value)}
   >
     <FileCopyLine className="h-4 w-4 fill-current" />

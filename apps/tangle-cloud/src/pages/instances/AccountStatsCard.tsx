@@ -118,13 +118,13 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
       >
         <CardContent className="flex h-full flex-col gap-5 p-5 md:p-6">
           <div className="min-w-0">
-            <p className="font-semibold text-mono-100 dark:text-mono-60 text-xs uppercase tracking-wider">
+            <p className="font-semibold text-mono-100 dark:text-mono-80 text-xs uppercase tracking-wider">
               Account
             </p>
             <div className="mt-2 font-display font-bold text-mono-200 dark:text-mono-0 text-lg tracking-tight">
               Connect a wallet to load your account
             </div>
-            <p className="mt-2 max-w-xl text-mono-100 dark:text-mono-60 text-sm leading-relaxed">
+            <p className="mt-2 max-w-xl text-mono-100 dark:text-mono-80 text-sm leading-relaxed">
               Connect to load deployed services, operator registrations, and
               account-scoped lifecycle events. Public catalog and operator
               registry data load below without a wallet.
@@ -153,7 +153,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
               <div className="truncate font-display font-bold text-mono-200 dark:text-mono-0 text-lg tracking-tight">
                 {identityName}
               </div>
-              <div className="mt-1 flex items-center gap-2 text-mono-100 dark:text-mono-60 text-xs">
+              <div className="mt-1 flex items-center gap-2 text-mono-100 dark:text-mono-80 text-xs">
                 <span className="truncate font-mono">
                   {accountAddress ?? 'Connect a wallet to see your account'}
                 </span>
@@ -162,7 +162,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
                     href={accountExplorerUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-mono-100 dark:text-mono-60 transition-colors hover:text-purple-40"
+                    className="text-mono-100 dark:text-mono-80 transition-colors hover:text-purple-40"
                     aria-label="Open account in explorer"
                   >
                     <ExternalLinkLine className="h-4 w-4 fill-current" />
@@ -194,7 +194,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
               >
                 {item && (
                   <>
-                    <p className="text-mono-100 dark:text-mono-60 text-xs">
+                    <p className="text-mono-100 dark:text-mono-80 text-xs">
                       {item.title}
                     </p>
                     <p className="mt-2 font-display font-bold text-mono-200 dark:text-mono-0 text-2xl">
