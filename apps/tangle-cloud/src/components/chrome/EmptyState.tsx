@@ -95,11 +95,11 @@ const EmptyState: FC<Props> = ({
     <div
       role={kind === 'error' ? 'alert' : 'status'}
       className={twMerge(
-        'flex min-h-[280px] flex-col items-center justify-center gap-4 rounded-lg border border-dashed border-border bg-[color:var(--bg-card)]/40 p-8 text-center',
+        'flex min-h-[280px] flex-col items-center justify-center gap-4 rounded-2xl border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 p-8 text-center shadow-sm',
         className,
       )}
     >
-      <div className="flex h-12 w-12 items-center justify-center rounded-full border border-border bg-background">
+      <div className="flex h-12 w-12 items-center justify-center rounded-full border border-mono-60 dark:border-mono-170 bg-mono-20 dark:bg-mono-190">
         {icon ?? (
           <span
             aria-hidden
@@ -108,10 +108,15 @@ const EmptyState: FC<Props> = ({
         )}
       </div>
       <div className="max-w-md space-y-1.5">
-        <h2 className={twMerge(typeRole.section, 'text-foreground')}>
+        <h2
+          className={twMerge(
+            typeRole.section,
+            'text-mono-200 dark:text-mono-0',
+          )}
+        >
           {finalTitle}
         </h2>
-        <p className="text-sm leading-relaxed text-muted-foreground">
+        <p className="text-sm leading-relaxed text-mono-120 dark:text-mono-100">
           {finalDescription}
         </p>
       </div>

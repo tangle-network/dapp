@@ -10,6 +10,7 @@ import SpendAuthContainer from '../../containers/payments/SpendAuthContainer';
 import CreditBalanceContainer from '../../containers/payments/CreditBalanceContainer';
 import RequireWallet from '../../components/RequireWallet';
 import { PageHeader } from '../../components/chrome';
+import TangleCloudCard from '../../components/TangleCloudCard';
 import PaymentProviders from '../../app/PaymentProviders';
 
 const enum CreditsTab {
@@ -35,42 +36,43 @@ const PaymentsCreditsContent: FC = () => {
         description="Fund credit accounts for pay-per-use inference — authorize spend without a wallet transaction per job. Connect to create and fund accounts."
         checks={['Credit accounts', 'Fund account', 'Authorize spend']}
       >
-        <Tabs
-          value={activeTab}
-          onValueChange={(tab: string) => setActiveTab(tab as CreditsTab)}
-          className="space-y-5"
-        >
-          <TabsList className="flex h-auto w-full justify-start rounded-lg border border-border bg-card p-1 shadow-[var(--shadow-card)]">
-            <TabsTrigger
-              value={CreditsTab.BALANCE}
-              className="rounded-md px-3 py-2 font-semibold text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-            >
-              Accounts
-            </TabsTrigger>
-            <TabsTrigger
-              value={CreditsTab.FUND}
-              className="rounded-md px-3 py-2 font-semibold text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-            >
-              Fund
-            </TabsTrigger>
-            <TabsTrigger
-              value={CreditsTab.SPEND}
-              className="rounded-md px-3 py-2 font-semibold text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-            >
-              Authorize
-            </TabsTrigger>
-          </TabsList>
+        <TangleCloudCard className="space-y-5">
+          <Tabs
+            value={activeTab}
+            onValueChange={(tab: string) => setActiveTab(tab as CreditsTab)}
+          >
+            <TabsList className="flex w-full gap-1 rounded-xl border border-mono-60 dark:border-mono-170 bg-mono-20 dark:bg-mono-190 p-1">
+              <TabsTrigger
+                value={CreditsTab.BALANCE}
+                className="flex-1 rounded-lg px-4 py-2 text-sm font-semibold text-mono-120 dark:text-mono-100 transition-colors data-[state=active]:bg-mono-0 data-[state=active]:text-mono-200 dark:data-[state=active]:bg-mono-180 dark:data-[state=active]:text-mono-0"
+              >
+                Accounts
+              </TabsTrigger>
+              <TabsTrigger
+                value={CreditsTab.FUND}
+                className="flex-1 rounded-lg px-4 py-2 text-sm font-semibold text-mono-120 dark:text-mono-100 transition-colors data-[state=active]:bg-mono-0 data-[state=active]:text-mono-200 dark:data-[state=active]:bg-mono-180 dark:data-[state=active]:text-mono-0"
+              >
+                Fund
+              </TabsTrigger>
+              <TabsTrigger
+                value={CreditsTab.SPEND}
+                className="flex-1 rounded-lg px-4 py-2 text-sm font-semibold text-mono-120 dark:text-mono-100 transition-colors data-[state=active]:bg-mono-0 data-[state=active]:text-mono-200 dark:data-[state=active]:bg-mono-180 dark:data-[state=active]:text-mono-0"
+              >
+                Authorize
+              </TabsTrigger>
+            </TabsList>
 
-          <TabsContent value={CreditsTab.BALANCE} className="max-w-2xl">
-            <CreditBalanceContainer />
-          </TabsContent>
-          <TabsContent value={CreditsTab.FUND} className="max-w-2xl">
-            <FundCreditsContainer />
-          </TabsContent>
-          <TabsContent value={CreditsTab.SPEND} className="max-w-2xl">
-            <SpendAuthContainer />
-          </TabsContent>
-        </Tabs>
+            <TabsContent value={CreditsTab.BALANCE}>
+              <CreditBalanceContainer />
+            </TabsContent>
+            <TabsContent value={CreditsTab.FUND}>
+              <FundCreditsContainer />
+            </TabsContent>
+            <TabsContent value={CreditsTab.SPEND}>
+              <SpendAuthContainer />
+            </TabsContent>
+          </Tabs>
+        </TangleCloudCard>
       </RequireWallet>
     </div>
   );

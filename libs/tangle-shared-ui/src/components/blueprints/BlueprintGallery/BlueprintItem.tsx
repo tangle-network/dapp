@@ -10,6 +10,18 @@ import BoostedChip from '../BoostedChip';
 import { BlueprintItemProps } from './types';
 import { CheckBox } from '@tangle-network/ui-components/components/CheckBox';
 
+const CATEGORY_GRADIENTS: Record<string, string> = {
+  Inference: 'from-indigo-500/30 to-purple-600/20',
+  Data: 'from-emerald-500/30 to-teal-600/20',
+  Agents: 'from-amber-500/30 to-orange-600/20',
+  Trading: 'from-blue-500/30 to-cyan-600/20',
+  Training: 'from-rose-500/30 to-pink-600/20',
+  Other: 'from-purple-500/30 to-violet-600/20',
+};
+
+const getCategoryGradient = (category: string | null): string =>
+  CATEGORY_GRADIENTS[category ?? 'Other'] ?? CATEGORY_GRADIENTS.Other;
+
 const BlueprintItem: FC<Omit<BlueprintItemProps, 'id'>> = ({
   name,
   author,
@@ -18,6 +30,7 @@ const BlueprintItem: FC<Omit<BlueprintItemProps, 'id'>> = ({
   instancesCount,
   operatorsCount,
   isBoosted,
+  category,
   renderImage,
   action,
   onClick,
@@ -28,120 +41,114 @@ const BlueprintItem: FC<Omit<BlueprintItemProps, 'id'>> = ({
     <div
       onClick={onClick}
       className={twMerge(
-        'h-[364px] overflow-hidden rounded-xl flex flex-col cursor-pointer group',
-        'border border-mono-0 dark:border-mono-170',
-        isBoosted && 'border-t-0',
+        'group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl',
+        'border border-mono-60 dark:border-mono-170',
+        'bg-mono-0 dark:bg-mono-180',
+        'transition-all duration-200',
+        'hover:border-purple-40/40 hover:shadow-[0_8px_40px_rgba(67,62,217,0.12)] dark:hover:shadow-[0_8px_40px_rgba(0,0,0,0.4)]',
+        'hover:-translate-y-0.5',
       )}
     >
       {isBoosted && (
-        <div
-          className={twMerge(
-            'h-2 bg-purple-60',
-            'bg-[linear-gradient(to_right,hsla(230,64%,52%,0.8)0%,hsla(230,87%,74%,0.8)40%,hsla(242,100%,93%,0.8)100%)]',
-            'dark:bg-[linear-gradient(to_right,hsla(231,49%,13%,0.8)0%,hsla(242,67%,55%,0.8)40%,hsla(242,93%,65%,0.8)100%)]',
-          )}
-        />
+        <div className="h-1 w-full bg-gradient-to-r from-purple-40 via-purple-30 to-blue-40" />
       )}
+
+      {/* Visual banner */}
       <div
         className={twMerge(
-          'relative flex-1 flex flex-col justify-between py-3 px-6 overflow-hidden',
-          'bg-[linear-gradient(180deg,rgba(184,196,255,0.20)0%,rgba(236,239,255,0.20)100%),linear-gradient(180deg,rgba(255,255,255,0.50)0%,rgba(255,255,255,0.30)100%)]',
-          'dark:bg-[linear-gradient(180deg,rgba(17,22,50,0.20)0%,rgba(21,37,117,0.20)100%),linear-gradient(180deg,rgba(43,47,64,0.50)0%,rgba(43,47,64,0.30)100%)]',
-          'before:absolute before:inset-0 before:bg-cover before:bg-no-repeat before:opacity-50 before:pointer-events-none',
-          "before:bg-[url('/static/assets/blueprints/grid-bg.png')] dark:before:bg-[url('/static/assets/blueprints/grid-bg-dark.png')]",
+          'relative h-20 overflow-hidden bg-gradient-to-br',
+          getCategoryGradient(category),
         )}
       >
-        <div className="space-y-3">
-          <div className="flex items-center gap-2 py-2 border-b border-mono-60 dark:border-mono-170">
-            {renderImage(imgUrl ?? '')}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.08),transparent_60%)]" />
 
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <div className="flex-1 min-w-0">
-                  <Typography
-                    variant="h4"
-                    className="truncate text-mono-180 dark:text-mono-20 group-hover:text-mono-200 dark:group-hover:text-mono-0"
-                  >
-                    {name}
-                  </Typography>
-                </div>
+        {/* Category badge */}
+        {category && (
+          <span className="absolute right-3 top-3 rounded-full border border-mono-0/20 bg-mono-0/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-mono-0/80 backdrop-blur-sm dark:border-mono-0/10 dark:bg-mono-0/5 dark:text-mono-0/70">
+            {category}
+          </span>
+        )}
 
-                {typeof isSelected === 'boolean' &&
-                typeof onSelectedChange === 'function' ? (
-                  <CheckBox
-                    isChecked={isSelected}
-                    onChange={onSelectedChange}
-                    labelProps={{
-                      onClick: (event) => event.stopPropagation(),
-                    }}
-                  />
-                ) : (
-                  isBoosted && <BoostedChip />
-                )}
-              </div>
+        {/* Floating icon — overlaps banner and body */}
+        <div className="absolute -bottom-5 left-5">
+          {renderImage(imgUrl ?? '')}
+        </div>
 
-              <Typography
-                variant="body1"
-                className="line-clamp-1 text-mono-120 dark:text-mono-100"
-              >
-                {/* Author can be name or address */}
-                {isEvmAddress(author)
-                  ? shortenHex(author)
-                  : isSubstrateAddress(author)
-                    ? shortenString(author)
-                    : author}
-              </Typography>
+        {/* Selection checkbox */}
+        {typeof isSelected === 'boolean' &&
+          typeof onSelectedChange === 'function' && (
+            <div
+              className="absolute right-3 bottom-3"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <CheckBox isChecked={isSelected} onChange={onSelectedChange} />
             </div>
-          </div>
+          )}
+      </div>
 
+      {/* Body */}
+      <div className="flex flex-1 flex-col gap-3 px-5 pb-5 pt-8">
+        {/* Name + author */}
+        <div className="space-y-0.5">
+          <div className="flex items-center gap-2">
+            <Typography
+              variant="h4"
+              className="truncate text-mono-200 dark:text-mono-0"
+            >
+              {name}
+            </Typography>
+            {!isBoosted && typeof isSelected !== 'boolean' && <BoostedChip />}
+          </div>
           <Typography
             variant="body2"
-            className="line-clamp-[7] text-mono-200 dark:text-mono-0"
+            className="text-mono-120 dark:text-mono-100"
           >
-            {description}
+            {isEvmAddress(author)
+              ? shortenHex(author)
+              : isSubstrateAddress(author)
+                ? shortenString(author)
+                : author}
           </Typography>
         </div>
 
-        <div className="flex w-full gap-1">
-          <div className="flex-1 space-y-2">
+        {/* Description */}
+        <Typography
+          variant="body2"
+          className="line-clamp-2 min-h-[2.6rem] text-mono-140 dark:text-mono-80"
+        >
+          {description ?? 'No description available.'}
+        </Typography>
+
+        {/* Stats */}
+        <div className="flex gap-2">
+          <div className="flex items-center gap-1.5 rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 px-2.5 py-1.5">
+            <span className="text-[11px] font-semibold uppercase tracking-wide text-mono-120 dark:text-mono-100">
+              SVC
+            </span>
             <Typography
               variant="body2"
-              className="text-mono-120 dark:text-mono-100"
+              className="font-bold text-mono-200 dark:text-mono-0"
             >
-              Instances
-            </Typography>
-            <Typography variant="h5">
               {instancesCount ?? EMPTY_VALUE_PLACEHOLDER}
             </Typography>
           </div>
-          <div className="flex-1 space-y-2">
+          <div className="flex items-center gap-1.5 rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 px-2.5 py-1.5">
+            <span className="text-[11px] font-semibold uppercase tracking-wide text-mono-120 dark:text-mono-100">
+              OPR
+            </span>
             <Typography
               variant="body2"
-              className="text-mono-120 dark:text-mono-100"
+              className="font-bold text-mono-200 dark:text-mono-0"
             >
-              Operators
-            </Typography>
-            <Typography variant="h5">
               {operatorsCount ?? EMPTY_VALUE_PLACEHOLDER}
             </Typography>
           </div>
-          {/* Hidden stakers section */}
-          {/* <div className="flex-1 space-y-2">
-            <Typography
-              variant="body2"
-              className="text-mono-120 dark:text-mono-100"
-            >
-              Stakers
-            </Typography>
-            <Typography variant="h5">
-              {stakersCount ?? EMPTY_VALUE_PLACEHOLDER}
-            </Typography>
-          </div> */}
         </div>
 
+        {/* Actions */}
         {action !== undefined && (
           <div
-            className="relative z-10 flex w-full gap-2 pt-3"
+            className="relative z-10 mt-auto flex w-full gap-2 pt-1"
             onClick={(event) => event.stopPropagation()}
           >
             {action}

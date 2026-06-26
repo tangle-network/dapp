@@ -125,7 +125,7 @@ const toGalleryItem = (
         blueprint={blueprint}
         category={category}
         compact
-        className="h-[72px] w-[72px] shrink-0 rounded-full"
+        className="h-12 w-12 shrink-0 rounded-xl border-2 border-mono-0 dark:border-mono-180 shadow-lg"
       />
     ),
     action: (

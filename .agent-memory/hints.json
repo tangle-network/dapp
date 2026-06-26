@@ -1,4 +1,0 @@
-{
-  "hints": "FEEDBACK FROM PREVIOUS RUNS:\n- EFFICIENCY WARNING: Only 0% of turns are productive. 3 turns were wasted on errors, retries, or repeated actions.\n- HIGH-FAILURE ACTIONS: \"wait\" fails 100% of the time (3/3). Try alternative approaches.\n- STUCK LOOPS DETECTED: The agent repeated the same action sequence 1 time(s). When an action doesn't produce the expected effect after 2 attempts, try a completely different strategy.\n- COMMON FAILURES: 3 consecutive errors: Incorrect API key provided: sk-proj-********************************************************************************************************************************************************eMcA. You can find your API key at https://platform.openai.com/account/api-keys.",
-  "updatedAt": "2026-04-25T05:20:10.456Z"
-}
