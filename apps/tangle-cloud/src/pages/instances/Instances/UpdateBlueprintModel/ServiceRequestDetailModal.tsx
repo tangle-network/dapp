@@ -315,13 +315,13 @@ const ServiceRequestDetailModal: FC<Props> = ({
       {expireError ? (
         <div className="px-6 pt-2">
           <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 space-y-2">
-            <Text variant="body3" className="text-destructive">
+            <Text variant="body3" className="text-red-500 dark:text-red-400">
               {expireError.message ||
                 'Failed to expire the service request. Please try again.'}
             </Text>
             <button
               type="button"
-              className="text-xs underline text-destructive"
+              className="text-xs underline text-red-500 dark:text-red-400"
               onClick={resetExpire}
             >
               Dismiss
@@ -331,7 +331,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
       ) : null}
 
       {!viewOnly && (
-        <div className="flex flex-wrap justify-end gap-3 p-6 pt-4 shrink-0 bg-background">
+        <div className="flex flex-wrap justify-end gap-3 p-6 pt-4 shrink-0 bg-mono-0 dark:bg-mono-190">
           {canExpireRequest ? (
             <Button
               variant="secondary"
@@ -348,7 +348,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
 
           <Button
             variant="secondary"
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            className="bg-destructive text-red-500 dark:text-red-400-foreground hover:bg-destructive/90"
             onClick={onReject}
             isLoading={isRejecting}
             isDisabled={isRejecting || isExpiring}
@@ -367,7 +367,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
       )}
 
       {viewOnly && (
-        <div className="flex flex-wrap justify-end gap-3 p-6 pt-4 shrink-0 bg-background">
+        <div className="flex flex-wrap justify-end gap-3 p-6 pt-4 shrink-0 bg-mono-0 dark:bg-mono-190">
           {canExpireRequest ? (
             <Button
               variant="secondary"
@@ -422,7 +422,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
                 return (
                   <Text
                     variant="body2"
-                    className="text-center text-muted-foreground"
+                    className="text-center text-mono-120 dark:text-mono-100"
                   >
                     No security commitments required for this request.
                   </Text>
@@ -433,7 +433,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
                 <div className="space-y-4">
                   <Text
                     variant="body2"
-                    className="text-muted-foreground text-center"
+                    className="text-mono-120 dark:text-mono-100 text-center"
                   >
                     Set your exposure percentage within the allowed bounds for
                     each asset.
@@ -489,7 +489,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
         </form>
       </ModalBody>
 
-      <div className="flex justify-between gap-3 p-6 pt-4 shrink-0 bg-background">
+      <div className="flex justify-between gap-3 p-6 pt-4 shrink-0 bg-mono-0 dark:bg-mono-190">
         <Button
           variant="secondary"
           onClick={handleBackToDetails}

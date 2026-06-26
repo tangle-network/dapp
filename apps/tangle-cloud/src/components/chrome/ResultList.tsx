@@ -53,12 +53,12 @@ function ResultList<T>({
   return (
     <div
       className={twMerge(
-        'overflow-hidden rounded-lg border border-border bg-[color:var(--bg-card)] shadow-[var(--shadow-card)]',
+        'overflow-hidden rounded-lg border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-mono-0 dark:bg-mono-180)] shadow-sm',
         className,
       )}
     >
       {/* Header */}
-      <div className="flex items-center border-b border-border bg-[color:var(--bg-elevated)]/80 px-4 py-2.5">
+      <div className="flex items-center border-b border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)]/80 px-4 py-2.5">
         {columns.map((col, i) => (
           <div
             key={i}
@@ -96,7 +96,7 @@ function ResultList<T>({
                   : undefined
               }
               className={twMerge(
-                'flex items-center border-b border-border/60 bg-[color:var(--bg-card)] px-4 py-3.5 text-sm last:border-b-0',
+                'flex items-center border-b border-mono-60 dark:border-mono-170/60 bg-[color:var(--bg-mono-0 dark:bg-mono-180)] px-4 py-3.5 text-sm last:border-b-0',
                 interactive &&
                   'cursor-pointer transition-colors hover:bg-[color:var(--bg-hover)]',
                 interactive && focus.ring,

@@ -106,14 +106,16 @@ export function useTopNavEntity(entity: TopNavEntity | null): void {
         >
           <Link
             to={sectionHref ?? '#'}
-            className="shrink-0 text-muted-foreground transition-colors hover:text-foreground"
+            className="shrink-0 text-mono-120 dark:text-mono-100 transition-colors hover:text-mono-200 dark:text-mono-0"
           >
             {section}
           </Link>
-          <span aria-hidden className="text-muted-foreground/40">
+          <span aria-hidden className="text-mono-120 dark:text-mono-100/40">
             /
           </span>
-          <span className="truncate font-semibold text-foreground">{name}</span>
+          <span className="truncate font-semibold text-mono-200 dark:text-mono-0">
+            {name}
+          </span>
         </nav>
         {statusTone !== undefined && (
           <span className="hidden shrink-0 md:inline-flex">

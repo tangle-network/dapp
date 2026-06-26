@@ -43,7 +43,7 @@ const ServiceRequestSummary: FC<Props> = ({
   const hasSecurityRequirements = securityRequirements.length > 0;
 
   return (
-    <div className="space-y-4 mt-4 p-4 rounded-lg bg-card border border-border">
+    <div className="space-y-4 mt-4 p-4 rounded-lg bg-mono-0 dark:bg-mono-180 border border-mono-60 dark:border-mono-170">
       <CommitmentSection
         ttl={contractDetails?.ttl}
         createdAt={contractDetails?.createdAt}

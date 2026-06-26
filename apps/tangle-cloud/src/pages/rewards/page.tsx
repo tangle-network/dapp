@@ -330,13 +330,13 @@ const RewardsPage: FC = () => {
             <p className="font-semibold text-[var(--surface-warning-text)] text-sm">
               Using a static GraphQL endpoint from `VITE_GRAPHQL_ENDPOINT`.
             </p>
-            <p className="mt-1 text-muted-foreground text-sm">
+            <p className="mt-1 text-mono-120 dark:text-mono-100 text-sm">
               Active chain: {activeChain?.name ?? `Chain ${chainId}`} ({chainId}
               ) . Expected indexer network: {resolvedNetwork}. Endpoint:{' '}
               {configuredEndpoint}
             </p>
             {hasLikelyEndpointMismatch && (
-              <p className="mt-2 text-destructive text-sm">
+              <p className="mt-2 text-red-500 dark:text-red-400 text-sm">
                 Endpoint appears to target `{endpointNetwork}` while wallet
                 chain expects `{resolvedNetwork}`. Rewards/claims data may be
                 stale or from a different chain.
@@ -349,7 +349,7 @@ const RewardsPage: FC = () => {
       {/* Pending rewards by token */}
       <Card variant="sandbox">
         <CardContent className="p-6">
-          <h2 className="mb-4 font-display font-bold text-foreground text-lg">
+          <h2 className="mb-4 font-display font-bold text-mono-200 dark:text-mono-0 text-lg">
             Pending Rewards by Asset
           </h2>
 
@@ -407,7 +407,7 @@ const RewardsPage: FC = () => {
       {/* Claim history */}
       <Card variant="sandbox">
         <CardContent className="p-6">
-          <h2 className="mb-4 font-display font-bold text-foreground text-lg">
+          <h2 className="mb-4 font-display font-bold text-mono-200 dark:text-mono-0 text-lg">
             Claim History
           </h2>
 
@@ -570,7 +570,7 @@ const PendingAssetCell: FC<{ token: Address; addressExplorerUrl?: string }> = ({
         {iconSymbol ? (
           <TokenIcon name={iconSymbol} size="xl" />
         ) : (
-          <span className="grid h-9 w-9 place-items-center rounded-md border border-border bg-muted font-mono text-foreground text-xs">
+          <span className="grid h-9 w-9 place-items-center rounded-md border border-mono-60 dark:border-mono-170 bg-mono-20 dark:bg-mono-190 font-mono text-mono-200 dark:text-mono-0 text-xs">
             {token.slice(2, 4).toUpperCase()}
           </span>
         )}
@@ -578,18 +578,18 @@ const PendingAssetCell: FC<{ token: Address; addressExplorerUrl?: string }> = ({
 
       <div className="flex flex-col min-w-0">
         <div className="flex items-center gap-2 min-w-0">
-          <span className="whitespace-nowrap font-semibold text-foreground text-sm">
+          <span className="whitespace-nowrap font-semibold text-mono-200 dark:text-mono-0 text-sm">
             {isLoading ? 'Loading...' : symbol}
           </span>
           {tokenName && (
-            <span className="truncate text-muted-foreground text-xs">
+            <span className="truncate text-mono-120 dark:text-mono-100 text-xs">
               {tokenName}
             </span>
           )}
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="font-mono text-muted-foreground text-xs">
+          <span className="font-mono text-mono-120 dark:text-mono-100 text-xs">
             {shortenHex(token)}
           </span>
           <CopyIconButton value={token} label="Copy asset address" />
@@ -598,7 +598,7 @@ const PendingAssetCell: FC<{ token: Address; addressExplorerUrl?: string }> = ({
               href={explorerAddressUrl ?? undefined}
               target="_blank"
               rel="noreferrer"
-              className="text-muted-foreground transition-colors hover:text-primary"
+              className="text-mono-120 dark:text-mono-100 transition-colors hover:text-purple-40"
               aria-label="View asset address on block explorer"
             >
               <ExternalLinkLine className="h-4 w-4 fill-current" />
@@ -626,7 +626,7 @@ const PendingRewardAmountCell: FC<{ token: Address; amount: bigint }> = ({
       : 18);
 
   return (
-    <span className="font-semibold text-foreground text-sm">
+    <span className="font-semibold text-mono-200 dark:text-mono-0 text-sm">
       {formatDisplayAmount(amount, decimals)}
     </span>
   );
@@ -648,7 +648,7 @@ const RewardAmountCell: FC<{ token: Address; amount: bigint }> = ({
       : 18);
 
   return (
-    <span className="font-semibold text-foreground text-sm">
+    <span className="font-semibold text-mono-200 dark:text-mono-0 text-sm">
       {formatDisplayAmount(amount, decimals)}
     </span>
   );
@@ -692,7 +692,7 @@ const RewardClaimsTable: FC<RewardClaimsTableProps> = ({
                 {new Date(Number(entry.claimedAt) * 1000).toLocaleString()}
               </TableCell>
               <TableCell>
-                <div className="flex items-center gap-2 text-muted-foreground">
+                <div className="flex items-center gap-2 text-mono-120 dark:text-mono-100">
                   <span className="font-mono text-xs">
                     {shortenHex(entry.txHash, 6)}
                   </span>
@@ -702,7 +702,7 @@ const RewardClaimsTable: FC<RewardClaimsTableProps> = ({
                       href={`${txExplorerUrl}/tx/${entry.txHash}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-muted-foreground transition-colors hover:text-primary"
+                      className="text-mono-120 dark:text-mono-100 transition-colors hover:text-purple-40"
                       aria-label="View transaction on block explorer"
                     >
                       <ExternalLinkLine className="h-4 w-4 fill-current" />
@@ -727,7 +727,7 @@ const CopyIconButton: FC<{ value: string; label: string }> = ({
   <button
     type="button"
     aria-label={label}
-    className="inline-flex text-muted-foreground transition-colors hover:text-primary"
+    className="inline-flex text-mono-120 dark:text-mono-100 transition-colors hover:text-purple-40"
     onClick={() => void navigator.clipboard?.writeText(value)}
   >
     <FileCopyLine className="h-4 w-4 fill-current" />

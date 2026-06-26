@@ -71,7 +71,7 @@ const CopyWithTooltip: FC<{
 }> = ({ textToCopy, copyLabel = 'Copy' }) => (
   <button
     type="button"
-    className="text-muted-foreground text-xs underline-offset-4 hover:text-foreground hover:underline"
+    className="text-mono-120 dark:text-mono-100 text-xs underline-offset-4 hover:text-mono-200 dark:text-mono-0 hover:underline"
     onClick={() => void navigator.clipboard?.writeText(textToCopy)}
   >
     {copyLabel}
@@ -189,8 +189,11 @@ const DecodedFieldsDisplay: FC<{ fields: NamedDecodedField[] }> = ({
 }) => (
   <div className="space-y-2">
     {fields.map((field, i) => (
-      <div key={i} className="flex flex-col gap-0.5 p-2 bg-background rounded">
-        <Text variant="body3" className="text-muted-foreground">
+      <div
+        key={i}
+        className="flex flex-col gap-0.5 p-2 bg-mono-0 dark:bg-mono-190 rounded"
+      >
+        <Text variant="body3" className="text-mono-120 dark:text-mono-100">
           {field.name || `Field ${i}`}
         </Text>
 
@@ -207,7 +210,7 @@ const PayloadContainer: FC<{
   copyText?: string | null;
   copyLabel: string;
 }> = ({ children, copyText, copyLabel }) => (
-  <div className="p-3 bg-muted/40 rounded-lg">
+  <div className="p-3 bg-mono-20/50 dark:bg-mono-190/50 rounded-lg">
     <div className="flex items-start gap-2">
       <div className="flex-1 min-w-0">{children}</div>
       {copyText && (
@@ -293,7 +296,7 @@ const ViewModeToggle: FC<{
   mode: PayloadViewMode;
   onChange: (mode: PayloadViewMode) => void;
 }> = ({ mode, onChange }) => (
-  <div className="inline-flex rounded-md border border-border overflow-hidden">
+  <div className="inline-flex rounded-md border border-mono-60 dark:border-mono-170 overflow-hidden">
     {(['decoded', 'raw'] as const).map((candidate) => (
       <button
         key={candidate}
@@ -301,8 +304,8 @@ const ViewModeToggle: FC<{
         className={twMerge(
           'px-3 py-1 text-xs capitalize',
           mode === candidate
-            ? 'bg-primary text-primary-foreground'
-            : 'bg-muted/40 text-muted-foreground hover:text-foreground',
+            ? 'bg-purple-40 text-purple-40-foreground'
+            : 'bg-mono-20/50 dark:bg-mono-190/50 text-mono-120 dark:text-mono-100 hover:text-mono-200 dark:text-mono-0',
         )}
         onClick={() => onChange(candidate)}
       >
@@ -400,9 +403,12 @@ export const JobResultsModal: FC<Props> = ({ job, jobDefinition, onClose }) => {
         <ModalHeader>{headerTitle}</ModalHeader>
         <ModalBody>
           {/* Job Info */}
-          <div className="grid grid-cols-2 gap-4 mb-6 p-4 bg-muted/40 rounded-lg">
+          <div className="grid grid-cols-2 gap-4 mb-6 p-4 bg-mono-20/50 dark:bg-mono-190/50 rounded-lg">
             <div>
-              <Text variant="body3" className="text-muted-foreground">
+              <Text
+                variant="body3"
+                className="text-mono-120 dark:text-mono-100"
+              >
                 Job Index
               </Text>
               <Text variant="body1" fw="semibold">
@@ -411,7 +417,10 @@ export const JobResultsModal: FC<Props> = ({ job, jobDefinition, onClose }) => {
               </Text>
             </div>
             <div>
-              <Text variant="body3" className="text-muted-foreground">
+              <Text
+                variant="body3"
+                className="text-mono-120 dark:text-mono-100"
+              >
                 Status
               </Text>
               <span
@@ -426,7 +435,10 @@ export const JobResultsModal: FC<Props> = ({ job, jobDefinition, onClose }) => {
               </span>
             </div>
             <div>
-              <Text variant="body3" className="text-muted-foreground">
+              <Text
+                variant="body3"
+                className="text-mono-120 dark:text-mono-100"
+              >
                 Submitted
               </Text>
               <Text variant="body1">
@@ -434,7 +446,10 @@ export const JobResultsModal: FC<Props> = ({ job, jobDefinition, onClose }) => {
               </Text>
             </div>
             <div>
-              <Text variant="body3" className="text-muted-foreground">
+              <Text
+                variant="body3"
+                className="text-mono-120 dark:text-mono-100"
+              >
                 Results Received
               </Text>
               <Text variant="body1">{job.resultCount}</Text>
@@ -524,10 +539,10 @@ const OperatorResultCard: FC<{
   });
 
   return (
-    <div className="p-4 border border-border rounded-lg">
+    <div className="p-4 border border-mono-60 dark:border-mono-170 rounded-lg">
       <div className="flex justify-between items-start mb-2">
         <div>
-          <Text variant="body3" className="text-muted-foreground">
+          <Text variant="body3" className="text-mono-120 dark:text-mono-100">
             {result.aggregated ? 'Source' : 'Operator'}
           </Text>
           <Text variant="body2" className="font-mono">
@@ -539,7 +554,7 @@ const OperatorResultCard: FC<{
           </Text>
         </div>
         <div className="text-right">
-          <Text variant="body3" className="text-muted-foreground">
+          <Text variant="body3" className="text-mono-120 dark:text-mono-100">
             Submitted
           </Text>
           <Text variant="body2">
@@ -548,7 +563,7 @@ const OperatorResultCard: FC<{
         </div>
       </div>
       <div>
-        <Text variant="body3" className="text-muted-foreground mb-1">
+        <Text variant="body3" className="text-mono-120 dark:text-mono-100 mb-1">
           {result.aggregated ? 'Aggregated Output' : 'Result'}
         </Text>
 

@@ -52,7 +52,10 @@ const CancelSlashModal = ({
           <Text variant="body1" className="mb-2">
             Cancel slash proposal #{selectedSlash?.id.toString()}
           </Text>
-          <Text variant="body2" className="text-muted-foreground mb-2">
+          <Text
+            variant="body2"
+            className="text-mono-120 dark:text-mono-100 mb-2"
+          >
             Admin-only action. Authorization is validated on-chain at submission
             time.
           </Text>
@@ -68,7 +71,10 @@ const CancelSlashModal = ({
               }
               placeholder="Provide cancellation reason..."
             />
-            <Text variant="body3" className="text-muted-foreground mt-1">
+            <Text
+              variant="body3"
+              className="text-mono-120 dark:text-mono-100 mt-1"
+            >
               Minimum {minCancelReasonLength} characters (
               {trimmedCancelReasonLength}/{minCancelReasonLength}).
             </Text>
@@ -81,13 +87,16 @@ const CancelSlashModal = ({
 
             {errorMessage ? (
               <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 mt-3 space-y-2">
-                <Text variant="body3" className="!text-destructive">
+                <Text
+                  variant="body3"
+                  className="!text-red-500 dark:text-red-400"
+                >
                   {errorMessage}
                 </Text>
                 <div>
                   <button
                     type="button"
-                    className="text-xs underline text-destructive"
+                    className="text-xs underline text-red-500 dark:text-red-400"
                     onClick={onDismissError}
                   >
                     Dismiss

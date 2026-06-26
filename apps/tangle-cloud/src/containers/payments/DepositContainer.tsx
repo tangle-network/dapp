@@ -31,7 +31,7 @@ const DepositContainer: FC = () => {
           Deposit to Shielded Pool
         </Text>
 
-        <Text variant="body2" className="mt-1 text-muted-foreground">
+        <Text variant="body2" className="mt-1 text-mono-120 dark:text-mono-100">
           Move tokens from your public wallet into the shielded pool. A ZK proof
           will be generated and a shielded note stored in your browser.
         </Text>

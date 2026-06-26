@@ -3,8 +3,8 @@
  *
  * Single source of truth for the type ramp across tangle-cloud. Consumes the
  * `@tangle-network/brand` 0.3 token system: `--font-sans`, `--font-display`,
- * `--font-size-*`, `--line-height-*`, plus the Tailwind-mapped `text-foreground`
- * / `text-muted-foreground` colors driven by the brand HSL bridge.
+ * `--font-size-*`, `--line-height-*`, plus the Tailwind-mapped `text-mono-200 dark:text-mono-0`
+ * / `text-mono-120 dark:text-mono-100` colors driven by the brand HSL bridge.
  *
  * Replaces ~13 per-page `Text` shims that all reimplemented the same ramp with
  * subtly different variant unions ('h4' | 'h5' | 'body1' | 'body2' | 'body3' |
@@ -104,21 +104,21 @@ const defaultElementFor = (
 const classFor = (variant: ReturnType<typeof canonicalize>): string => {
   switch (variant) {
     case 'h1':
-      return 'font-display text-4xl tracking-tight text-foreground';
+      return 'font-display text-4xl tracking-tight text-mono-200 dark:text-mono-0';
     case 'h2':
-      return 'font-display text-3xl tracking-tight text-foreground';
+      return 'font-display text-3xl tracking-tight text-mono-200 dark:text-mono-0';
     case 'h3':
-      return 'font-display text-xl text-foreground';
+      return 'font-display text-xl text-mono-200 dark:text-mono-0';
     case 'h4':
-      return 'font-display text-lg text-foreground';
+      return 'font-display text-lg text-mono-200 dark:text-mono-0';
     case 'body-lg':
-      return 'text-base text-foreground';
+      return 'text-base text-mono-200 dark:text-mono-0';
     case 'body':
-      return 'text-sm text-foreground';
+      return 'text-sm text-mono-200 dark:text-mono-0';
     case 'body-sm':
-      return 'text-xs text-muted-foreground';
+      return 'text-xs text-mono-120 dark:text-mono-100';
     case 'caption':
-      return 'text-xs text-muted-foreground';
+      return 'text-xs text-mono-120 dark:text-mono-100';
   }
 };
 

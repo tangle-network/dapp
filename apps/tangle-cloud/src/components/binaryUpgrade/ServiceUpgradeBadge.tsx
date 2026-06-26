@@ -68,7 +68,7 @@ export const ServiceUpgradeBadge: FC<ServiceUpgradeBadgeProps> = ({
   return (
     <span className="inline-flex flex-col items-start gap-0.5">
       {primary}
-      <span className="font-mono text-[10px] text-muted-foreground">
+      <span className="font-mono text-[10px] text-mono-120 dark:text-mono-100">
         {subtitle}
       </span>
     </span>

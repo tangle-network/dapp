@@ -61,15 +61,16 @@ const SIZE_STYLES: Record<
 };
 
 const TONE_STYLES: Record<StatTone, string> = {
-  default: 'border-border bg-[var(--bg-card)]',
+  default:
+    'border-mono-60 dark:border-mono-170 bg-[var(--bg-mono-0 dark:bg-mono-180)]',
   accent: 'border-[color:var(--border-accent)] bg-[var(--accent-surface-soft)]',
   success: 'border-emerald-500/30 bg-emerald-500/10',
   warning: 'border-amber-500/30 bg-amber-500/10',
 };
 
 const VALUE_TONE: Record<StatTone, string> = {
-  default: 'text-foreground',
-  accent: 'text-foreground',
+  default: 'text-mono-200 dark:text-mono-0',
+  accent: 'text-mono-200 dark:text-mono-0',
   success: 'text-emerald-200',
   warning: 'text-amber-200',
 };
@@ -97,13 +98,13 @@ export const Stat: FC<StatProps> = ({
     >
       <div className="flex items-center gap-1.5">
         {icon ? (
-          <span className="shrink-0 text-muted-foreground [&_svg]:h-3 [&_svg]:w-3">
+          <span className="shrink-0 text-mono-120 dark:text-mono-100 [&_svg]:h-3 [&_svg]:w-3">
             {icon}
           </span>
         ) : null}
         <p
           className={twMerge(
-            'truncate font-medium text-muted-foreground uppercase tracking-wider',
+            'truncate font-medium text-mono-120 dark:text-mono-100 uppercase tracking-wider',
             sizing.label,
           )}
         >
@@ -133,14 +134,14 @@ export const Stat: FC<StatProps> = ({
             {value}
           </p>
           {inlineDetail ? (
-            <span className="truncate text-muted-foreground text-xs">
+            <span className="truncate text-mono-120 dark:text-mono-100 text-xs">
               {inlineDetail}
             </span>
           ) : null}
         </div>
       )}
       {sublabel ? (
-        <p className="mt-1 truncate text-muted-foreground text-xs">
+        <p className="mt-1 truncate text-mono-120 dark:text-mono-100 text-xs">
           {sublabel}
         </p>
       ) : null}

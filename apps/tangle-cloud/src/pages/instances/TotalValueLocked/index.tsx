@@ -22,8 +22,8 @@ export const TotalValueLockedTabs = () => {
   return (
     <Card variant="sandbox" className="w-full">
       <CardContent className="space-y-4 p-5">
-        <div className="flex items-center gap-2 border-b border-border pb-3 font-display font-bold text-foreground text-sm tracking-tight">
-          <LockFillIcon className="h-4 w-4 fill-current text-primary" />
+        <div className="flex items-center gap-2 border-b border-mono-60 dark:border-mono-170 pb-3 font-display font-bold text-mono-200 dark:text-mono-0 text-sm tracking-tight">
+          <LockFillIcon className="h-4 w-4 fill-current text-purple-40" />
           My deposits
         </div>
         {!isConnected ? <DisconnectedTvlState /> : <ConnectedTvlState />}
@@ -33,12 +33,12 @@ export const TotalValueLockedTabs = () => {
 };
 
 const DisconnectedTvlState = () => (
-  <div className="flex flex-col items-start gap-3 rounded-lg border border-dashed border-border bg-card p-5 sm:flex-row sm:items-center sm:justify-between">
+  <div className="flex flex-col items-start gap-3 rounded-lg border border-dashed border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 p-5 sm:flex-row sm:items-center sm:justify-between">
     <div className="min-w-0">
-      <div className="font-display font-bold text-foreground text-base tracking-tight">
+      <div className="font-display font-bold text-mono-200 dark:text-mono-0 text-base tracking-tight">
         Connect a wallet to view your deposits
       </div>
-      <p className="mt-1 max-w-xl text-muted-foreground text-sm leading-relaxed">
+      <p className="mt-1 max-w-xl text-mono-120 dark:text-mono-100 text-sm leading-relaxed">
         Personal deposits, running services, and operator exposure load once a
         wallet is connected. Public chain data on this page loads without one.
       </p>
@@ -66,10 +66,10 @@ const ConnectedTvlState = () => {
   if (tvlData.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-8 text-center">
-        <h3 className="font-display font-bold text-foreground text-lg">
+        <h3 className="font-display font-bold text-mono-200 dark:text-mono-0 text-lg">
           No deposits found
         </h3>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-mono-120 dark:text-mono-100 text-sm">
           Start by depositing assets to see your TVL.
         </p>
         <Button asChild variant="outline" size="sm">
@@ -86,21 +86,25 @@ const ConnectedTvlState = () => {
           item && (
             <div
               key={item.id}
-              className="flex items-center justify-between rounded-lg border border-border bg-card p-4"
+              className="flex items-center justify-between rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 p-4"
             >
               <div className="flex flex-col">
-                <p className="font-display font-bold text-foreground">
+                <p className="font-display font-bold text-mono-200 dark:text-mono-0">
                   {item.symbol}
                 </p>
-                <p className="text-muted-foreground text-sm">{item.name}</p>
+                <p className="text-mono-120 dark:text-mono-100 text-sm">
+                  {item.name}
+                </p>
               </div>
               <div className="flex flex-col items-end">
-                <p className="font-display font-bold text-foreground">
+                <p className="font-display font-bold text-mono-200 dark:text-mono-0">
                   {Number(item.amount).toLocaleString(undefined, {
                     maximumFractionDigits: 6,
                   })}
                 </p>
-                <p className="text-muted-foreground text-sm">Deposited</p>
+                <p className="text-mono-120 dark:text-mono-100 text-sm">
+                  Deposited
+                </p>
               </div>
             </div>
           ),

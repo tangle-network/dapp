@@ -152,7 +152,7 @@ export const CopyButton: FC<{ children: ReactNode; onClick: () => void }> = ({
 }) => (
   <button
     type="button"
-    className="text-destructive text-xs underline underline-offset-4 hover:text-destructive/80"
+    className="text-red-500 dark:text-red-400 text-xs underline underline-offset-4 hover:text-red-500 dark:text-red-400/80"
     onClick={onClick}
   >
     {children}

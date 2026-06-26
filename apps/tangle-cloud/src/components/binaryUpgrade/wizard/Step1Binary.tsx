@@ -76,7 +76,7 @@ export const Step1Binary: FC<Step1Props> = ({ state, setState }) => {
   return (
     <div className="space-y-5">
       <div className="space-y-2">
-        <p className="font-semibold text-[10px] text-muted-foreground uppercase tracking-wider">
+        <p className="font-semibold text-[10px] text-mono-120 dark:text-mono-100 uppercase tracking-wider">
           Source
         </p>
         <div className="grid grid-cols-2 gap-2">
@@ -107,12 +107,12 @@ export const Step1Binary: FC<Step1Props> = ({ state, setState }) => {
             }}
           />
           {state.binaryFile && (
-            <p className="text-muted-foreground text-xs">
+            <p className="text-mono-120 dark:text-mono-100 text-xs">
               {state.binaryFile.name} ·{' '}
               {(state.binaryFile.size / 1024).toFixed(1)} KB
             </p>
           )}
-          <p className="break-all font-mono text-foreground text-xs">
+          <p className="break-all font-mono text-mono-200 dark:text-mono-0 text-xs">
             sha256{' '}
             {state.isHashing
               ? 'hashing…'
@@ -131,7 +131,7 @@ export const Step1Binary: FC<Step1Props> = ({ state, setState }) => {
             }
             className="font-mono"
           />
-          <p className="text-muted-foreground text-xs">
+          <p className="text-mono-120 dark:text-mono-100 text-xs">
             Use this only if the binary is already pinned somewhere stable and
             you have the canonical sha256 to hand. The contract will store this
             value verbatim — no re-hashing happens on chain.
@@ -154,14 +154,16 @@ const SourceModeCard: FC<{
     className={[
       'flex flex-col items-start gap-1 rounded-lg border p-3 text-left transition-colors',
       selected
-        ? 'border-primary/50 bg-primary/5'
-        : 'border-border bg-card hover:border-primary/30',
+        ? 'border-purple-40/50 bg-purple-40/5'
+        : 'border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 hover:border-purple-40/30',
     ].join(' ')}
   >
-    <span className="font-display font-bold text-foreground text-sm">
+    <span className="font-display font-bold text-mono-200 dark:text-mono-0 text-sm">
       {title}
     </span>
-    <span className="text-muted-foreground text-xs">{description}</span>
+    <span className="text-mono-120 dark:text-mono-100 text-xs">
+      {description}
+    </span>
   </button>
 );
 

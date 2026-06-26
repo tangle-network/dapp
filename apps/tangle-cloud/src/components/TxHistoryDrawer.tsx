@@ -44,7 +44,7 @@ const CopyValueButton: FC<{ value: string; label: string }> = ({
 }) => (
   <button
     type="button"
-    className="text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+    className="text-xs text-mono-120 dark:text-mono-100 underline-offset-4 hover:text-mono-200 dark:text-mono-0 hover:underline"
     onClick={() => void navigator.clipboard?.writeText(value)}
   >
     Copy {label}
@@ -94,7 +94,7 @@ const TxHistoryDrawer: FC = () => {
             aria-label="Transactions"
             title="Transactions"
             className={twMerge(
-              'h-11 gap-2 border-border bg-muted/30 px-3 font-bold text-foreground hover:bg-muted',
+              'h-11 gap-2 border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 px-3 font-bold text-mono-200 dark:text-mono-0 hover:bg-mono-20 dark:hover:bg-mono-190',
             )}
           >
             <ShuffleLine className="fill-current" />
@@ -119,7 +119,7 @@ const TxHistoryDrawer: FC = () => {
             forceMount
             className={twMerge(
               'h-[calc(100%-16px)] w-[calc(100vw-16px)] max-w-[400px] overflow-auto rounded-xl px-4 py-6 outline-none',
-              'bg-card text-card-foreground border border-border fixed right-2 top-2 bottom-2',
+              'bg-mono-0 dark:bg-mono-180 text-card-foreground border border-mono-60 dark:border-mono-170 fixed right-2 top-2 bottom-2',
               'flex flex-col gap-6 justify-between',
               'z-[80]',
               'data-[state=open]:animate-in data-[state=open]:ease-out data-[state=open]:duration-200',
@@ -141,7 +141,7 @@ const TxHistoryDrawer: FC = () => {
                   <button
                     type="button"
                     aria-label="Close"
-                    className="text-foreground p-1 rounded-full hover:bg-muted transition-colors"
+                    className="text-mono-200 dark:text-mono-0 p-1 rounded-full hover:bg-mono-20 dark:hover:bg-mono-190 transition-colors"
                   >
                     <CloseCircleLineIcon size="lg" />
                   </button>
@@ -255,11 +255,11 @@ const DetailRow: FC<DetailRowProps> = ({
 
   return (
     <div className="flex items-center justify-between gap-2">
-      <span className="text-muted-foreground text-sm">{label}</span>
+      <span className="text-mono-120 dark:text-mono-100 text-sm">{label}</span>
       <div className="flex items-center gap-1.5">
         <span
           className={twMerge(
-            'text-foreground text-sm',
+            'text-mono-200 dark:text-mono-0 text-sm',
             isAddress && 'font-mono',
           )}
         >
@@ -314,7 +314,7 @@ const TransactionItem: FC<HistoryTx> = ({
   }, [createExplorerTxUrl, hash]);
 
   return (
-    <div className="p-3 space-y-3 rounded-md bg-muted/40">
+    <div className="p-3 space-y-3 rounded-md bg-mono-20/50 dark:bg-mono-190/50">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center justify-start gap-2">
           {status === 'finalized' ? (
@@ -361,9 +361,12 @@ const TransactionItem: FC<HistoryTx> = ({
         <Alert type="error" description={errorMessage} />
       )}
 
-      <hr className="border-border" />
+      <hr className="border-mono-60 dark:border-mono-170" />
 
-      <Text className="text-center text-muted-foreground" variant="body3">
+      <Text
+        className="text-center text-mono-120 dark:text-mono-100"
+        variant="body3"
+      >
         {status} &bull;{' '}
         {formatDistanceToNow(new Date(timestamp), { addSuffix: true })}
       </Text>

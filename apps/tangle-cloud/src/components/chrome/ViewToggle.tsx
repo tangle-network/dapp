@@ -47,7 +47,7 @@ const ViewToggle: FC<Props> = ({ value, onChange, className }) => {
       role="radiogroup"
       aria-label="View"
       className={twMerge(
-        'inline-flex h-9 items-center rounded-md border border-border bg-muted/30 p-0.5',
+        'inline-flex h-9 items-center rounded-md border border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 p-0.5',
         className,
       )}
     >
@@ -81,8 +81,8 @@ const ViewButton: FC<{
       className={twMerge(
         'inline-flex h-7 w-8 items-center justify-center rounded font-sans not-italic transition-colors',
         active
-          ? 'bg-[color:var(--bg-hover)] text-foreground'
-          : 'text-muted-foreground hover:text-foreground',
+          ? 'bg-[color:var(--bg-hover)] text-mono-200 dark:text-mono-0'
+          : 'text-mono-120 dark:text-mono-100 hover:text-mono-200 dark:text-mono-0',
         focus.ring,
       )}
     >

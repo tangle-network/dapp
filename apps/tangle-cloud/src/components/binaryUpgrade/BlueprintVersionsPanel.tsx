@@ -265,16 +265,16 @@ export const BlueprintVersionsPanel: FC<BlueprintVersionsPanelProps> = ({
   return (
     <Card variant="elevated">
       <CardContent className="p-5 md:p-6">
-        <header className="flex flex-col gap-3 border-border border-b pb-4 md:flex-row md:items-end md:justify-between">
+        <header className="flex flex-col gap-3 border-mono-60 dark:border-mono-170 border-b pb-4 md:flex-row md:items-end md:justify-between">
           <div>
             <Badge variant="outline">
               {sortedVersions.length} version
               {sortedVersions.length === 1 ? '' : 's'}
             </Badge>
-            <h2 className="mt-2 font-display font-extrabold text-2xl text-foreground tracking-tight">
+            <h2 className="mt-2 font-display font-extrabold text-2xl text-mono-200 dark:text-mono-0 tracking-tight">
               Binary versions
             </h2>
-            <p className="mt-1 max-w-2xl text-muted-foreground text-sm">
+            <p className="mt-1 max-w-2xl text-mono-120 dark:text-mono-100 text-sm">
               Append-only timeline of binary builds for this blueprint. Each
               version carries a sha256 digest, a binary URI, and any auditor
               attestations published against it.
@@ -293,8 +293,8 @@ export const BlueprintVersionsPanel: FC<BlueprintVersionsPanelProps> = ({
             <Skeleton className="h-20 rounded-lg" />
           </div>
         ) : sortedVersions.length === 0 ? (
-          <div className="mt-5 flex min-h-32 items-center justify-center rounded-lg border border-border border-dashed bg-card p-6 text-center">
-            <p className="max-w-md text-muted-foreground text-sm">
+          <div className="mt-5 flex min-h-32 items-center justify-center rounded-lg border border-mono-60 dark:border-mono-170 border-dashed bg-mono-0 dark:bg-mono-180 p-6 text-center">
+            <p className="max-w-md text-mono-120 dark:text-mono-100 text-sm">
               No binary versions have been published for this blueprint yet. The
               blueprint owner can publish the first build above.
             </p>
@@ -405,16 +405,16 @@ const VersionRow: FC<VersionRowProps> = ({
     <li
       className={
         version.deprecated
-          ? 'overflow-hidden rounded-lg border border-destructive/40 bg-card opacity-90'
-          : 'overflow-hidden rounded-lg border border-border bg-card'
+          ? 'overflow-hidden rounded-lg border border-destructive/40 bg-mono-0 dark:bg-mono-180 opacity-90'
+          : 'overflow-hidden rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180'
       }
     >
       <button
         type="button"
-        className="grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-4 p-4 text-left transition-colors hover:bg-muted/30"
+        className="grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-4 p-4 text-left transition-colors hover:bg-mono-20/50 dark:bg-mono-190/50"
         onClick={() => setExpanded((prev) => !prev)}
       >
-        <div className="font-display font-extrabold text-foreground text-lg">
+        <div className="font-display font-extrabold text-mono-200 dark:text-mono-0 text-lg">
           v{version.versionId.toString()}
         </div>
         <div className="min-w-0">
@@ -422,24 +422,24 @@ const VersionRow: FC<VersionRowProps> = ({
             <Badge variant={tone === 'info' ? 'outline' : tone} dot>
               {label}
             </Badge>
-            <span className="text-muted-foreground text-xs">
+            <span className="text-mono-120 dark:text-mono-100 text-xs">
               published {formatRelativePast(version.publishedAt, new Date())}
             </span>
           </div>
-          <p className="mt-1 truncate font-mono text-muted-foreground text-xs">
+          <p className="mt-1 truncate font-mono text-mono-120 dark:text-mono-100 text-xs">
             sha256 {shortenHex(version.sha256Hash, 6, 6)}
           </p>
         </div>
         <div className="flex items-center gap-3">
           <TrustScoreGauge breakdown={breakdown} variant="compact" />
-          <span className="text-muted-foreground text-xs">
+          <span className="text-mono-120 dark:text-mono-100 text-xs">
             {expanded ? '−' : '+'}
           </span>
         </div>
       </button>
 
       {expanded && (
-        <div className="border-border border-t bg-muted/10 p-4 space-y-4">
+        <div className="border-mono-60 dark:border-mono-170 border-t bg-mono-20 dark:bg-mono-190/10 p-4 space-y-4">
           <div className="grid gap-3 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
             <div className="space-y-2">
               <KeyValue label="sha256" value={version.sha256Hash} />
@@ -451,7 +451,7 @@ const VersionRow: FC<VersionRowProps> = ({
                       href={resolveBinaryHref(version.binaryUri)}
                       target="_blank"
                       rel="noreferrer"
-                      className="break-all text-primary underline-offset-2 hover:underline"
+                      className="break-all text-purple-40 underline-offset-2 hover:underline"
                     >
                       {version.binaryUri}
                     </a>
@@ -526,7 +526,7 @@ const VersionRow: FC<VersionRowProps> = ({
 
           <div className="space-y-2">
             <header className="flex items-center justify-between">
-              <h3 className="font-display font-bold text-base text-foreground">
+              <h3 className="font-display font-bold text-base text-mono-200 dark:text-mono-0">
                 Attestations ({attestations.length})
               </h3>
               {!attesting && (
@@ -540,7 +540,7 @@ const VersionRow: FC<VersionRowProps> = ({
               )}
             </header>
             {attestations.length === 0 ? (
-              <p className="rounded-lg border border-border border-dashed bg-card p-3 text-muted-foreground text-xs">
+              <p className="rounded-lg border border-mono-60 dark:border-mono-170 border-dashed bg-mono-0 dark:bg-mono-180 p-3 text-mono-120 dark:text-mono-100 text-xs">
                 No attestations have been submitted for this version yet. Any
                 wallet may submit one — auditors registered in the on-chain
                 auditor registry contribute weighted signal toward the trust
@@ -580,11 +580,13 @@ const KeyValue: FC<{ label: string; value: React.ReactNode }> = ({
   label,
   value,
 }) => (
-  <div className="rounded-md border border-border bg-card/60 p-2.5">
-    <p className="font-semibold text-[10px] text-muted-foreground uppercase tracking-wider">
+  <div className="rounded-md border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180/60 p-2.5">
+    <p className="font-semibold text-[10px] text-mono-120 dark:text-mono-100 uppercase tracking-wider">
       {label}
     </p>
-    <p className="mt-1 break-all font-mono text-foreground text-xs">{value}</p>
+    <p className="mt-1 break-all font-mono text-mono-200 dark:text-mono-0 text-xs">
+      {value}
+    </p>
   </div>
 );
 

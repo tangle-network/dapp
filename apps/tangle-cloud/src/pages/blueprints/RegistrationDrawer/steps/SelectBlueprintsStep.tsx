@@ -20,7 +20,7 @@ const SelectBlueprintsStep: FC<SelectBlueprintsStepProps> = ({
           Selected Blueprints
         </Text>
 
-        <Text variant="body2" className="text-muted-foreground">
+        <Text variant="body2" className="text-mono-120 dark:text-mono-100">
           You have selected {blueprints.length} blueprint
           {blueprints.length > 1 ? 's' : ''} to register as an operator. Review
           your selection and proceed to configure settings.
@@ -47,7 +47,7 @@ const SelectBlueprintsStep: FC<SelectBlueprintsStepProps> = ({
         ))}
       </div>
 
-      <Text variant="body3" className="text-muted-foreground">
+      <Text variant="body3" className="text-mono-120 dark:text-mono-100">
         In the next step, you will configure your RPC URL and any required
         registration parameters for each blueprint.
       </Text>

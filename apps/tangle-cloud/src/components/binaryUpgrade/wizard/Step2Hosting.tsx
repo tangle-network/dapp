@@ -90,7 +90,7 @@ export const Step2Hosting: FC<Step2Props> = ({ state, setState }) => {
   return (
     <div className="space-y-5">
       <div className="space-y-2">
-        <p className="font-semibold text-[10px] text-muted-foreground uppercase tracking-wider">
+        <p className="font-semibold text-[10px] text-mono-120 dark:text-mono-100 uppercase tracking-wider">
           Hosting
         </p>
         <div className="space-y-2">
@@ -130,7 +130,7 @@ export const Step2Hosting: FC<Step2Props> = ({ state, setState }) => {
             className="font-mono"
           />
           {state.binaryUri.length > 0 && !isValidIpfsUri(state.binaryUri) && (
-            <p className="text-destructive text-xs">
+            <p className="text-red-500 dark:text-red-400 text-xs">
               Must start with <code>ipfs://</code>.
             </p>
           )}
@@ -138,7 +138,7 @@ export const Step2Hosting: FC<Step2Props> = ({ state, setState }) => {
       )}
 
       {state.hostingMode === 'pin-web3-storage' && (
-        <div className="space-y-3 rounded-lg border border-border bg-card p-3">
+        <div className="space-y-3 rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 p-3">
           <div className="space-y-1.5">
             <Label htmlFor="w3s-token">Web3.Storage API token</Label>
             <Input
@@ -155,7 +155,7 @@ export const Step2Hosting: FC<Step2Props> = ({ state, setState }) => {
               }
               className="font-mono"
             />
-            <p className="text-muted-foreground text-xs">
+            <p className="text-mono-120 dark:text-mono-100 text-xs">
               Stored only in <code>sessionStorage</code> for this tab. Cleared
               when you close the browser tab.
             </p>
@@ -171,7 +171,9 @@ export const Step2Hosting: FC<Step2Props> = ({ state, setState }) => {
               : 'Pin to IPFS'}
           </Button>
           {state.pinError && (
-            <p className="text-destructive text-xs">{state.pinError}</p>
+            <p className="text-red-500 dark:text-red-400 text-xs">
+              {state.pinError}
+            </p>
           )}
           {state.binaryUri.startsWith('ipfs://') && (
             <p className="break-all font-mono text-success text-xs">
@@ -194,13 +196,13 @@ export const Step2Hosting: FC<Step2Props> = ({ state, setState }) => {
             className="font-mono"
           />
           {state.binaryUri.length > 0 && !isValidHttpsUri(state.binaryUri) && (
-            <p className="text-destructive text-xs">
+            <p className="text-red-500 dark:text-red-400 text-xs">
               Must be a valid https:// URL.
             </p>
           )}
           {state.binaryUri.startsWith('https://') &&
             !isGithubRawHost(state.binaryUri) && (
-              <p className="text-muted-foreground text-xs">
+              <p className="text-mono-120 dark:text-mono-100 text-xs">
                 This isn&apos;t a raw.githubusercontent.com URL. The contract
                 will accept it, but operators can&apos;t verify what byte
                 they&apos;ll get - prefer a CID or a pinned raw commit URL.
@@ -210,12 +212,12 @@ export const Step2Hosting: FC<Step2Props> = ({ state, setState }) => {
       )}
 
       {state.binaryUri.length > 0 && (
-        <div className="flex items-center justify-between rounded-lg border border-border bg-card p-3">
+        <div className="flex items-center justify-between rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 p-3">
           <div className="min-w-0 flex-1 pr-3">
-            <p className="font-semibold text-[10px] text-muted-foreground uppercase tracking-wider">
+            <p className="font-semibold text-[10px] text-mono-120 dark:text-mono-100 uppercase tracking-wider">
               Resolved URI
             </p>
-            <p className="break-all font-mono text-foreground text-xs">
+            <p className="break-all font-mono text-mono-200 dark:text-mono-0 text-xs">
               {state.binaryUri}
             </p>
           </div>
@@ -250,8 +252,8 @@ const HostingOption: FC<{
       'flex items-start gap-3 rounded-lg border p-3',
       disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer',
       selected
-        ? 'border-primary/50 bg-primary/5'
-        : 'border-border bg-card hover:border-primary/30',
+        ? 'border-purple-40/50 bg-purple-40/5'
+        : 'border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 hover:border-purple-40/30',
     ].join(' ')}
   >
     <input
@@ -262,10 +264,10 @@ const HostingOption: FC<{
       className="mt-1"
     />
     <span>
-      <span className="font-display font-bold text-foreground text-sm">
+      <span className="font-display font-bold text-mono-200 dark:text-mono-0 text-sm">
         {label}
       </span>
-      <span className="mt-0.5 block text-muted-foreground text-xs">
+      <span className="mt-0.5 block text-mono-120 dark:text-mono-100 text-xs">
         {description}
       </span>
     </span>

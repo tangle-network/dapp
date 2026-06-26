@@ -126,7 +126,7 @@ const TONE_STYLES: Record<NextStep['tone'], { icon: string; chip: string }> = {
   },
   info: {
     icon: 'fill-primary',
-    chip: 'border-border bg-[var(--bg-elevated)] text-muted-foreground',
+    chip: 'border-mono-60 dark:border-mono-170 bg-mono-20 dark:bg-mono-190 text-mono-120 dark:text-mono-100',
   },
 };
 
@@ -175,18 +175,20 @@ export const InstructionCard: FC<InstructionCardProps> = ({
       <div className="flex flex-col gap-4">
         <div>
           <Badge variant="outline">{heading}</Badge>
-          <div className="mt-3 font-display font-bold text-foreground text-lg tracking-tight">
+          <div className="mt-3 font-display font-bold text-mono-200 dark:text-mono-0 text-lg tracking-tight">
             {isConnected ? 'For your account' : 'Quick Actions'}
           </div>
-          <p className="mt-1 text-muted-foreground text-xs">{subheading}</p>
+          <p className="mt-1 text-mono-120 dark:text-mono-100 text-xs">
+            {subheading}
+          </p>
         </div>
 
         <div className="flex flex-col gap-3">
           {steps.map((step) => {
             const tone = TONE_STYLES[step.tone];
             const content = (
-              <div className="group flex cursor-pointer items-center gap-4 rounded-lg border border-border bg-[var(--bg-elevated)] p-4 transition-colors duration-200 hover:border-primary/40 hover:bg-[var(--bg-hover)]">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-[var(--bg-card)] transition-colors duration-200 group-hover:border-primary/40">
+              <div className="group flex cursor-pointer items-center gap-4 rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-20 dark:bg-mono-190 p-4 transition-colors duration-200 hover:border-purple-40/40 hover:bg-mono-20/60 dark:bg-mono-190/60">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-mono-60 dark:border-mono-170 bg-[var(--bg-mono-0 dark:bg-mono-180)] transition-colors duration-200 group-hover:border-purple-40/40">
                   {createElement(step.icon, {
                     className: `h-5 w-5 ${tone.icon}`,
                   })}
@@ -194,7 +196,7 @@ export const InstructionCard: FC<InstructionCardProps> = ({
 
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="font-display font-bold text-foreground text-sm transition-colors duration-200 group-hover:text-primary">
+                    <h3 className="font-display font-bold text-mono-200 dark:text-mono-0 text-sm transition-colors duration-200 group-hover:text-purple-40">
                       {step.title}
                     </h3>
                     {step.count !== undefined && step.count > 0 && (
@@ -205,7 +207,7 @@ export const InstructionCard: FC<InstructionCardProps> = ({
                       </span>
                     )}
                   </div>
-                  <p className="line-clamp-2 text-muted-foreground text-sm">
+                  <p className="line-clamp-2 text-mono-120 dark:text-mono-100 text-sm">
                     {step.description}
                   </p>
                 </div>

@@ -42,13 +42,15 @@ const ConfigureStep: FC<ConfigureStepProps> = ({ blueprints, form }) => {
           Configure Settings
         </Text>
 
-        <Text variant="body2" className="text-muted-foreground">
+        <Text variant="body2" className="text-mono-120 dark:text-mono-100">
           Configure your RPC URL and registration parameters for each blueprint.
         </Text>
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium text-foreground">RPC URL</label>
+        <label className="text-sm font-medium text-mono-200 dark:text-mono-0">
+          RPC URL
+        </label>
         <Input
           id="rpc-url-input"
           placeholder="https://rpc.example.com"
@@ -62,14 +64,14 @@ const ConfigureStep: FC<ConfigureStepProps> = ({ blueprints, form }) => {
           }
         />
         {form.formState.errors.rpcUrl?.message && (
-          <Text variant="body3" className="text-destructive">
+          <Text variant="body3" className="text-red-500 dark:text-red-400">
             {form.formState.errors.rpcUrl.message}
           </Text>
         )}
       </div>
 
       {typeof blueprintConfigError?.message === 'string' && (
-        <Text variant="body3" className="text-destructive">
+        <Text variant="body3" className="text-red-500 dark:text-red-400">
           {blueprintConfigError.message}
         </Text>
       )}
@@ -90,7 +92,7 @@ const ConfigureStep: FC<ConfigureStepProps> = ({ blueprints, form }) => {
         return (
           <div
             key={blueprintId}
-            className="p-4 border border-border rounded-lg space-y-4 bg-card/70"
+            className="p-4 border border-mono-60 dark:border-mono-170 rounded-lg space-y-4 bg-mono-0 dark:bg-mono-180/70"
           >
             <div className="flex items-center gap-3">
               {blueprint.imgUrl && (
@@ -107,13 +109,19 @@ const ConfigureStep: FC<ConfigureStepProps> = ({ blueprints, form }) => {
                 <Text variant="body2" fw="bold">
                   {blueprint.name}
                 </Text>
-                <Text variant="body3" className="text-muted-foreground">
+                <Text
+                  variant="body3"
+                  className="text-mono-120 dark:text-mono-100"
+                >
                   {blueprint.registrationParams.length} parameter
                   {blueprint.registrationParams.length > 1 ? 's' : ''} required
                 </Text>
 
                 {missingParamIndices.length > 0 && (
-                  <Text variant="body3" className="text-destructive">
+                  <Text
+                    variant="body3"
+                    className="text-red-500 dark:text-red-400"
+                  >
                     Missing required params:{' '}
                     {missingParamIndices
                       .map((index) => `#${index + 1}`)
@@ -150,7 +158,7 @@ const ConfigureStep: FC<ConfigureStepProps> = ({ blueprints, form }) => {
       {blueprints.every((bp) => bp.registrationParams.length === 0) && (
         <Text
           variant="body2"
-          className="text-muted-foreground p-4 bg-muted/40 rounded-lg"
+          className="text-mono-120 dark:text-mono-100 p-4 bg-mono-20/50 dark:bg-mono-190/50 rounded-lg"
         >
           None of the selected blueprints require registration parameters.
         </Text>

@@ -92,15 +92,21 @@ const DisputeSlashModal = ({
           <Text variant="body1" className="mb-2">
             Dispute slash proposal #{selectedSlash?.id.toString()}
           </Text>
-          <div className="p-3 bg-muted/40 rounded-lg mb-4">
+          <div className="p-3 bg-mono-20/50 dark:bg-mono-190/50 rounded-lg mb-4">
             <div className="grid grid-cols-2 gap-x-2 gap-y-3">
-              <Text variant="body3" className="text-muted-foreground">
+              <Text
+                variant="body3"
+                className="text-mono-120 dark:text-mono-100"
+              >
                 Slash %:
               </Text>
               <Text variant="body3" className="text-red-500">
                 {selectedSlash ? formatSlashBps(selectedSlash.slashBps) : '-'}
               </Text>
-              <Text variant="body3" className="text-muted-foreground">
+              <Text
+                variant="body3"
+                className="text-mono-120 dark:text-mono-100"
+              >
                 Effective Slash %:
               </Text>
               <Text variant="body3" className="text-red-500">
@@ -108,7 +114,10 @@ const DisputeSlashModal = ({
                   ? formatSlashBps(selectedSlash.effectiveSlashBps)
                   : '-'}
               </Text>
-              <Text variant="body3" className="text-muted-foreground">
+              <Text
+                variant="body3"
+                className="text-mono-120 dark:text-mono-100"
+              >
                 Dispute Deadline:
               </Text>
               <Text variant="body3">
@@ -116,7 +125,10 @@ const DisputeSlashModal = ({
                   ? formatDateTime(selectedSlash.executeAfter)
                   : '-'}
               </Text>
-              <Text variant="body3" className="text-muted-foreground">
+              <Text
+                variant="body3"
+                className="text-mono-120 dark:text-mono-100"
+              >
                 Time Remaining:
               </Text>
               <Text variant="body3">
@@ -126,13 +138,19 @@ const DisputeSlashModal = ({
                     )
                   : '-'}
               </Text>
-              <Text variant="body3" className="text-muted-foreground">
+              <Text
+                variant="body3"
+                className="text-mono-120 dark:text-mono-100"
+              >
                 Proposer:
               </Text>
               <Text variant="body3" className="font-mono">
                 {selectedSlash ? shortenHex(selectedSlash.proposer) : '-'}
               </Text>
-              <Text variant="body3" className="text-muted-foreground">
+              <Text
+                variant="body3"
+                className="text-mono-120 dark:text-mono-100"
+              >
                 Proposer Role:
               </Text>
               <Text variant="body3">
@@ -140,7 +158,10 @@ const DisputeSlashModal = ({
                   ? getSlashProposerRoleLabel(selectedSlash.proposerRole)
                   : '-'}
               </Text>
-              <Text variant="body3" className="text-muted-foreground">
+              <Text
+                variant="body3"
+                className="text-mono-120 dark:text-mono-100"
+              >
                 Claim Context:
               </Text>
               <Text
@@ -151,13 +172,19 @@ const DisputeSlashModal = ({
               >
                 {selectedSlash ? getSlashClaimContext(selectedSlash) : '-'}
               </Text>
-              <Text variant="body3" className="text-muted-foreground">
+              <Text
+                variant="body3"
+                className="text-mono-120 dark:text-mono-100"
+              >
                 Evidence Hash:
               </Text>
               <Text variant="body3" className="font-mono break-all">
                 {selectedSlash?.evidence ?? '-'}
               </Text>
-              <Text variant="body3" className="text-muted-foreground">
+              <Text
+                variant="body3"
+                className="text-mono-120 dark:text-mono-100"
+              >
                 Required Dispute Bond:
               </Text>
               <Text variant="body3">
@@ -167,7 +194,10 @@ const DisputeSlashModal = ({
               </Text>
               {isAlreadyDisputed && hasKnownDisputer ? (
                 <>
-                  <Text variant="body3" className="text-muted-foreground">
+                  <Text
+                    variant="body3"
+                    className="text-mono-120 dark:text-mono-100"
+                  >
                     Disputer:
                   </Text>
                   <Text
@@ -182,7 +212,10 @@ const DisputeSlashModal = ({
               {isAlreadyDisputed &&
               disputeResolutionSecondsRemaining !== null ? (
                 <>
-                  <Text variant="body3" className="text-muted-foreground">
+                  <Text
+                    variant="body3"
+                    className="text-mono-120 dark:text-mono-100"
+                  >
                     Resolution Deadline:
                   </Text>
                   <Text variant="body3">
@@ -206,7 +239,10 @@ const DisputeSlashModal = ({
               }
               placeholder="Explain why this slash proposal is invalid..."
             />
-            <Text variant="body3" className="text-muted-foreground mt-1">
+            <Text
+              variant="body3"
+              className="text-mono-120 dark:text-mono-100 mt-1"
+            >
               Minimum {minDisputeReasonLength} characters (
               {trimmedDisputeReasonLength}/{minDisputeReasonLength}).
             </Text>
@@ -219,13 +255,16 @@ const DisputeSlashModal = ({
 
             {errorMessage ? (
               <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 mt-3 space-y-2">
-                <Text variant="body3" className="!text-destructive">
+                <Text
+                  variant="body3"
+                  className="!text-red-500 dark:text-red-400"
+                >
                   {errorMessage}
                 </Text>
                 <div>
                   <button
                     type="button"
-                    className="text-xs underline text-destructive"
+                    className="text-xs underline text-red-500 dark:text-red-400"
                     onClick={onDismissError}
                   >
                     Dismiss

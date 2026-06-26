@@ -131,7 +131,7 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
   return (
     <div
       className={cx(
-        'flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6 p-4 bg-muted/40 rounded-lg w-full',
+        'flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6 p-4 bg-mono-20/50 dark:bg-mono-190/50 rounded-lg w-full',
         className,
       )}
     >
@@ -144,14 +144,20 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
             {displayName}
           </Text>
 
-          <Text variant="body3" className="text-muted-foreground truncate">
+          <Text
+            variant="body3"
+            className="text-mono-120 dark:text-mono-100 truncate"
+          >
             {displaySymbol}
           </Text>
 
           {delegatedAmount !== null &&
             delegatedAmount !== undefined &&
             delegatedAmount > BigInt(0) && (
-              <Text variant="body3" className="text-muted-foreground">
+              <Text
+                variant="body3"
+                className="text-mono-120 dark:text-mono-100"
+              >
                 Your stake: {formattedDelegatedAmount} {displaySymbol}
               </Text>
             )}
@@ -162,11 +168,17 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
       <div className="flex-1 min-w-0">
         {/* Operator exposure info (read-only) */}
         {operatorExposureBps !== undefined && (
-          <div className="flex items-center justify-between mb-3 p-2 bg-background rounded-lg">
-            <label className="text-muted-foreground">Operator Exposure</label>
-            <Text variant="body2" fw="bold" className="text-foreground">
+          <div className="flex items-center justify-between mb-3 p-2 bg-mono-0 dark:bg-mono-190 rounded-lg">
+            <label className="text-mono-120 dark:text-mono-100">
+              Operator Exposure
+            </label>
+            <Text
+              variant="body2"
+              fw="bold"
+              className="text-mono-200 dark:text-mono-0"
+            >
               {operatorExposureBps / 100}%
-              <span className="text-muted-foreground font-normal text-xs ml-1">
+              <span className="text-mono-120 dark:text-mono-100 font-normal text-xs ml-1">
                 {operatorExposureBps < 10000
                   ? '(set by deployer)'
                   : '(protocol default)'}
@@ -176,10 +188,10 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
         )}
 
         <div className="flex justify-between items-center mb-2">
-          <label className="text-foreground font-medium">
+          <label className="text-mono-200 dark:text-mono-0 font-medium">
             Your Exposure Commitment
           </label>
-          <Text variant="body2" className="text-muted-foreground">
+          <Text variant="body2" className="text-mono-120 dark:text-mono-100">
             Range: {minPercent}% - {maxPercent}%
           </Text>
         </div>
@@ -199,13 +211,17 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
 
           {/* Current value display */}
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Min: {minPercent}%</span>
+            <span className="text-mono-120 dark:text-mono-100">
+              Min: {minPercent}%
+            </span>
 
-            <span className="text-primary font-medium">
+            <span className="text-purple-40 font-medium">
               Selected: {valuePercent}%
             </span>
 
-            <span className="text-muted-foreground">Max: {maxPercent}%</span>
+            <span className="text-mono-120 dark:text-mono-100">
+              Max: {maxPercent}%
+            </span>
           </div>
         </div>
 
@@ -236,7 +252,10 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
                   Tokens at Risk: {formattedTokensAtRisk} {displaySymbol}
                 </Text>
 
-                <Text variant="body3" className="text-muted-foreground mt-1">
+                <Text
+                  variant="body3"
+                  className="text-mono-120 dark:text-mono-100 mt-1"
+                >
                   This amount can be slashed if the service misbehaves.
                 </Text>
               </div>
@@ -275,7 +294,7 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
           )}
 
         {errorMessage && (
-          <Text variant="body3" className="mt-2 text-destructive">
+          <Text variant="body3" className="mt-2 text-red-500 dark:text-red-400">
             {errorMessage}
           </Text>
         )}

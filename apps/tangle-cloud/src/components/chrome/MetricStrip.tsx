@@ -21,14 +21,14 @@ type Props = {
 };
 
 const TONE_VALUE_CLASS: Record<MetricTone, string> = {
-  neutral: 'text-foreground',
-  accent: 'text-foreground',
+  neutral: 'text-mono-200 dark:text-mono-0',
+  accent: 'text-mono-200 dark:text-mono-0',
   success: 'text-[color:var(--md3-tertiary,#10b981)]',
   warning: 'text-[color:var(--md3-warning,#f59e0b)]',
 };
 
 const TONE_DOT_CLASS: Record<MetricTone, string> = {
-  neutral: 'bg-muted-foreground/30',
+  neutral: 'bg-mono-20 dark:bg-mono-190-foreground/30',
   accent: 'bg-[color:var(--border-accent-hover)]',
   success: 'bg-[color:var(--md3-tertiary,#10b981)]',
   warning: 'bg-[color:var(--md3-warning,#f59e0b)]',
@@ -56,7 +56,7 @@ const MetricStrip: FC<Props> = ({
     <div
       className={twMerge(
         chromeHeight.metricStrip,
-        'flex flex-wrap items-stretch gap-x-8 gap-y-3 border-b border-border',
+        'flex flex-wrap items-stretch gap-x-8 gap-y-3 border-b border-mono-60 dark:border-mono-170',
         className,
       )}
       role="group"
@@ -95,7 +95,7 @@ const MetricStrip: FC<Props> = ({
               </div>
             )}
             {metric.sublabel !== undefined && (
-              <div className="mt-0.5 text-xs text-muted-foreground">
+              <div className="mt-0.5 text-xs text-mono-120 dark:text-mono-100">
                 {metric.sublabel}
               </div>
             )}

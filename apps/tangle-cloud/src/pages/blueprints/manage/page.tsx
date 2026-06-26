@@ -486,7 +486,7 @@ const ManageBlueprintsPage: FC = () => {
             <Text variant="body1" fw="semibold">
               {info.getValue()}
             </Text>
-            <Text variant="body3" className="text-muted-foreground">
+            <Text variant="body3" className="text-mono-120 dark:text-mono-100">
               ID: {info.row.original.id.toString()}
             </Text>
           </div>
@@ -611,7 +611,7 @@ const ManageBlueprintsPage: FC = () => {
           <Text variant="h4" fw="bold">
             My Blueprints
           </Text>
-          <Text variant="body2" className="text-muted-foreground">
+          <Text variant="body2" className="text-mono-120 dark:text-mono-100">
             Update metadata, transfer ownership, or deactivate blueprints owned
             by the connected wallet.
           </Text>
@@ -634,7 +634,7 @@ const ManageBlueprintsPage: FC = () => {
           <Text variant="h4" fw="bold">
             My Blueprints
           </Text>
-          <Text variant="body2" className="text-muted-foreground">
+          <Text variant="body2" className="text-mono-120 dark:text-mono-100">
             View and manage blueprints you have created.
           </Text>
         </div>
@@ -656,11 +656,14 @@ const ManageBlueprintsPage: FC = () => {
               <table className="w-full">
                 <thead>
                   {table.getHeaderGroups().map((headerGroup) => (
-                    <tr key={headerGroup.id} className="border-b border-border">
+                    <tr
+                      key={headerGroup.id}
+                      className="border-b border-mono-60 dark:border-mono-170"
+                    >
                       {headerGroup.headers.map((header) => (
                         <th
                           key={header.id}
-                          className="text-left py-3 px-4 text-muted-foreground font-medium"
+                          className="text-left py-3 px-4 text-mono-120 dark:text-mono-100 font-medium"
                         >
                           {header.isPlaceholder
                             ? null
@@ -677,7 +680,7 @@ const ManageBlueprintsPage: FC = () => {
                   {table.getRowModel().rows.map((row) => (
                     <tr
                       key={row.id}
-                      className="border-b border-border hover:bg-muted/60"
+                      className="border-b border-mono-60 dark:border-mono-170 hover:bg-mono-20/60 dark:bg-mono-190/60"
                     >
                       {row.getVisibleCells().map((cell) => (
                         <td key={cell.id} className="py-3 px-4">
@@ -696,7 +699,10 @@ const ManageBlueprintsPage: FC = () => {
             {/* Pagination */}
             {table.getPageCount() > 1 && (
               <div className="flex items-center justify-between mt-4">
-                <Text variant="body2" className="text-muted-foreground">
+                <Text
+                  variant="body2"
+                  className="text-mono-120 dark:text-mono-100"
+                >
                   Page {table.getState().pagination.pageIndex + 1} of{' '}
                   {table.getPageCount()}
                 </Text>
@@ -944,7 +950,10 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
               }}
               placeholder="ipfs://... or https://..."
             />
-            <Text variant="body3" className="text-muted-foreground mt-1">
+            <Text
+              variant="body3"
+              className="text-mono-120 dark:text-mono-100 mt-1"
+            >
               {requiresIpfsForBlueprintMetadata()
                 ? 'Production hosted blueprints must keep metadata on ipfs:// content-addressed URIs.'
                 : 'Local development can still preview metadata from https:// endpoints.'}
@@ -970,7 +979,7 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
           </div>
 
           {previewData && (
-            <div className="mt-4 rounded border border-border p-4 space-y-2">
+            <div className="mt-4 rounded border border-mono-60 dark:border-mono-170 p-4 space-y-2">
               <Text variant="body2" fw="semibold">
                 Metadata Preview
               </Text>
@@ -1003,7 +1012,7 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
                     href={previewData.website}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-primary underline break-all"
+                    className="text-purple-40 underline break-all"
                   >
                     {previewData.website}
                   </a>
@@ -1019,7 +1028,7 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
                     href={previewData.codeRepository}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-primary underline break-all"
+                    className="text-purple-40 underline break-all"
                   >
                     {previewData.codeRepository}
                   </a>
@@ -1035,7 +1044,7 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
                     href={previewData.docs}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-primary underline break-all"
+                    className="text-purple-40 underline break-all"
                   >
                     {previewData.docs}
                   </a>
@@ -1047,7 +1056,7 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
           )}
 
           {!previewData && blueprint.metadata && (
-            <div className="mt-4 rounded border border-border p-4 space-y-2">
+            <div className="mt-4 rounded border border-mono-60 dark:border-mono-170 p-4 space-y-2">
               <Text variant="body2" fw="semibold">
                 Current Metadata
               </Text>
@@ -1126,7 +1135,10 @@ const DeactivateModal: FC<DeactivateModalProps> = ({
             Are you sure you want to deactivate{' '}
             <strong>{blueprint.name}</strong>?
           </Text>
-          <Text variant="body2" className="text-muted-foreground mt-2">
+          <Text
+            variant="body2"
+            className="text-mono-120 dark:text-mono-100 mt-2"
+          >
             This will prevent new operators from registering and new services
             from being created. Existing services will continue to operate.
           </Text>
@@ -1232,7 +1244,10 @@ const TransferModal: FC<TransferModalProps> = ({
             </div>
           )}
 
-          <Text variant="body3" className="text-muted-foreground mt-4">
+          <Text
+            variant="body3"
+            className="text-mono-120 dark:text-mono-100 mt-4"
+          >
             Warning: This action cannot be undone. You will lose ownership of
             this blueprint.
           </Text>

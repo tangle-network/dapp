@@ -168,9 +168,9 @@ export const AttestForm: FC<AttestFormProps> = ({
   ]);
 
   return (
-    <div className="rounded-lg border border-border bg-card p-4 space-y-4">
+    <div className="rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 p-4 space-y-4">
       <header className="flex items-center justify-between">
-        <h4 className="font-display font-bold text-foreground text-sm">
+        <h4 className="font-display font-bold text-mono-200 dark:text-mono-0 text-sm">
           Attest v{versionId.toString()}
         </h4>
         <Button variant="ghost" size="sm" onClick={onClose}>
@@ -179,7 +179,7 @@ export const AttestForm: FC<AttestFormProps> = ({
       </header>
 
       <fieldset className="space-y-2">
-        <legend className="font-semibold text-[10px] text-muted-foreground uppercase tracking-wider">
+        <legend className="font-semibold text-[10px] text-mono-120 dark:text-mono-100 uppercase tracking-wider">
           Report
         </legend>
         <label className="flex items-center gap-2 text-xs">
@@ -216,7 +216,7 @@ export const AttestForm: FC<AttestFormProps> = ({
           }
         />
         {mode === 'pdf' && reportFile && (
-          <p className="break-all font-mono text-muted-foreground text-xs">
+          <p className="break-all font-mono text-mono-120 dark:text-mono-100 text-xs">
             sha256 {reportHash}
           </p>
         )}
@@ -280,15 +280,17 @@ export const AttestForm: FC<AttestFormProps> = ({
       </div>
 
       {validationError && (
-        <p className="text-destructive text-xs">{validationError}</p>
+        <p className="text-red-500 dark:text-red-400 text-xs">
+          {validationError}
+        </p>
       )}
       {error && (
-        <p className="text-destructive text-xs">
+        <p className="text-red-500 dark:text-red-400 text-xs">
           Attestation failed: {error.message}
         </p>
       )}
       {txHash && (
-        <p className="break-all font-mono text-muted-foreground text-xs">
+        <p className="break-all font-mono text-mono-120 dark:text-mono-100 text-xs">
           Tx hash {txHash}
         </p>
       )}

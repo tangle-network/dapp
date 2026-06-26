@@ -24,18 +24,25 @@ export const AccountStatsCardHeader: FC<AccountStatsCardHeaderProps> = ({
 
         <div>
           {isPrimitive(title) && title !== null && title !== undefined ? (
-            <Text variant="h5" fw="bold" className="text-foreground">
+            <Text
+              variant="h5"
+              fw="bold"
+              className="text-mono-200 dark:text-mono-0"
+            >
               {title}
             </Text>
           ) : (
             title
           )}
 
-          <div className="flex items-center gap-0.5 text-muted-foreground">
+          <div className="flex items-center gap-0.5 text-mono-120 dark:text-mono-100">
             {isPrimitive(description) &&
             description !== null &&
             description !== undefined ? (
-              <Text variant="body3" className="text-muted-foreground">
+              <Text
+                variant="body3"
+                className="text-mono-120 dark:text-mono-100"
+              >
                 {description}
               </Text>
             ) : (

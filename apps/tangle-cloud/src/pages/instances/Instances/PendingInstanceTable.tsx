@@ -190,7 +190,7 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
                 <Text
                   variant="body1"
                   fw="bold"
-                  className="text-primary text-ellipsis whitespace-nowrap overflow-hidden"
+                  className="text-purple-40 text-ellipsis whitespace-nowrap overflow-hidden"
                 >
                   {request.blueprintData?.name ||
                     `Blueprint ${request.blueprintId}`}
@@ -225,7 +225,7 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
                         href={explorerUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs text-primary hover:underline"
+                        className="text-xs text-purple-40 hover:underline"
                       >
                         View on Explorer
                       </a>
@@ -267,7 +267,7 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
                       <span className="text-sm font-medium">You approved</span>
                     </div>
                     {pendingCount > 0 && (
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-xs text-mono-120 dark:text-mono-100">
                         Waiting for {pendingCount} more{' '}
                         {pendingCount === 1 ? 'operator' : 'operators'}
                       </span>
@@ -338,7 +338,7 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
                     />
                   ))}
                   {operators.length > 3 && (
-                    <div className="flex items-center justify-center w-6 h-6 text-xs bg-muted rounded-full border-2 border-background">
+                    <div className="flex items-center justify-center w-6 h-6 text-xs bg-mono-20 dark:bg-mono-190 rounded-full border-2 border-background">
                       +{operators.length - 3}
                     </div>
                   )}

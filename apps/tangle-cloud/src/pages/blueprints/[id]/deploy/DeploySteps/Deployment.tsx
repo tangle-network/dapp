@@ -25,20 +25,26 @@ export const Deployment: FC<BaseDeployStepProps> = (props) => {
       />
       <PaymentStep {...props} />
 
-      <div className="border border-border bg-card/70">
+      <div className="border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180/70">
         <details>
-          <summary className="cursor-pointer px-6 py-4 font-medium text-foreground">
+          <summary className="cursor-pointer px-6 py-4 font-medium text-mono-200 dark:text-mono-0">
             Advanced
           </summary>
           <div className="space-y-4 px-6 pb-6 pt-0">
             <div className="space-y-1">
-              <Text variant="body2" className="text-muted-foreground">
+              <Text
+                variant="body2"
+                className="text-mono-120 dark:text-mono-100"
+              >
                 Most services only need a name, operators, and a caller. Open
                 this section when you need custom request args, security
                 commitments, or a non-default payment setup.
               </Text>
               {shouldShowAdvancedSummary && (
-                <Text variant="body3" className="text-muted-foreground">
+                <Text
+                  variant="body3"
+                  className="text-mono-120 dark:text-mono-100"
+                >
                   {expectedRequestArgsCount > 0
                     ? `This blueprint expects ${expectedRequestArgsCount} request argument${expectedRequestArgsCount === 1 ? '' : 's'}.`
                     : 'This blueprint has no request arguments, but its request schema could not be resolved.'}

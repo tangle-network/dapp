@@ -630,7 +630,10 @@ const CreateBlueprintPage: FC = () => {
           <Text variant="h4" fw="bold">
             Create blueprint
           </Text>
-          <Text variant="body1" className="text-muted-foreground mt-1">
+          <Text
+            variant="body1"
+            className="text-mono-120 dark:text-mono-100 mt-1"
+          >
             Publish a blueprint definition, service schema, and hosted UI
             metadata.
           </Text>
@@ -654,7 +657,7 @@ const CreateBlueprintPage: FC = () => {
         </Text>
         <Text
           variant="body1"
-          className="text-muted-foreground mt-2 mb-6 text-center"
+          className="text-mono-120 dark:text-mono-100 mt-2 mb-6 text-center"
         >
           Your blueprint has been created successfully.
         </Text>
@@ -692,7 +695,7 @@ const CreateBlueprintPage: FC = () => {
           <Text variant="h4" fw="bold">
             Create Blueprint
           </Text>
-          <Text variant="body2" className="text-muted-foreground">
+          <Text variant="body2" className="text-mono-120 dark:text-mono-100">
             Define a new blueprint for operators to register with.
           </Text>
         </div>
@@ -705,17 +708,17 @@ const CreateBlueprintPage: FC = () => {
             <div
               className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${
                 index === step
-                  ? 'bg-primary text-primary-foreground'
+                  ? 'bg-purple-40 text-purple-40-foreground'
                   : index < step
-                    ? 'bg-success text-primary-foreground'
-                    : 'bg-muted text-muted-foreground'
+                    ? 'bg-success text-purple-40-foreground'
+                    : 'bg-mono-20 dark:bg-mono-190 text-mono-120 dark:text-mono-100'
               }`}
             >
               {index < step ? '✓' : index + 1}
             </div>
             <Text
               variant="body2"
-              className={`ml-2 ${index === step ? 'text-foreground' : 'text-muted-foreground'}`}
+              className={`ml-2 ${index === step ? 'text-mono-200 dark:text-mono-0' : 'text-mono-120 dark:text-mono-100'}`}
             >
               {label}
             </Text>
@@ -854,7 +857,7 @@ const BasicInfoStep: FC<BasicInfoStepProps> = ({
         Description
       </Text>
       <textarea
-        className="w-full h-24 p-3 rounded-lg border border-border bg-background text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring"
+        className="w-full h-24 p-3 rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-190 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring"
         placeholder="Describe what your blueprint does"
         value={form.description}
         onChange={(e) => updateForm('description', e.target.value)}
@@ -941,7 +944,7 @@ const BasicInfoStep: FC<BasicInfoStepProps> = ({
         placeholder="ipfs://... or https://..."
         isControlled
       />
-      <Text variant="body3" className="text-muted-foreground mt-1">
+      <Text variant="body3" className="text-mono-120 dark:text-mono-100 mt-1">
         Publish the JSON preview below at this URI so cloud.tangle.tools can
         resolve your hosted blueprint surfaces and shared runtime metadata. New
         SDK blueprints ship the same contract shape in
@@ -965,13 +968,16 @@ const BasicInfoStep: FC<BasicInfoStepProps> = ({
       />
     </div>
 
-    <div className="rounded-xl border border-border p-4 space-y-4">
+    <div className="rounded-xl border border-mono-60 dark:border-mono-170 p-4 space-y-4">
       <div className="flex items-center justify-between gap-3">
         <div>
           <Text variant="body1" fw="semibold">
             Shared host metadata
           </Text>
-          <Text variant="body3" className="text-muted-foreground mt-1">
+          <Text
+            variant="body3"
+            className="text-mono-120 dark:text-mono-100 mt-1"
+          >
             This drives the shared hosted blueprint pages, generic service
             surfaces, optional safe link-out handoff for publisher apps, and
             richer tier-2 cards, forms, resource views, theming, and approved
@@ -1087,8 +1093,8 @@ const BasicInfoStep: FC<BasicInfoStepProps> = ({
                 type="button"
                 className={`rounded-full border px-3 py-1.5 text-sm transition ${
                   isSelected
-                    ? 'border-primary bg-primary text-primary-foreground'
-                    : 'border-border bg-transparent text-muted-foreground'
+                    ? 'border-purple-40 bg-purple-40 text-purple-40-foreground'
+                    : 'border-mono-60 dark:border-mono-170 bg-transparent text-mono-120 dark:text-mono-100'
                 }`}
                 onClick={() =>
                   updateForm(
@@ -1140,7 +1146,10 @@ const BasicInfoStep: FC<BasicInfoStepProps> = ({
               <SelectItem value="link">Link out</SelectItem>
             </SelectContent>
           </Select>
-          <Text variant="body3" className="text-muted-foreground mt-1">
+          <Text
+            variant="body3"
+            className="text-mono-120 dark:text-mono-100 mt-1"
+          >
             Third-party iframe embedding is disabled. Publisher apps can only
             open in a new tab after trust and provenance checks pass.
           </Text>
@@ -1152,7 +1161,7 @@ const BasicInfoStep: FC<BasicInfoStepProps> = ({
           Metadata JSON preview
         </Text>
         <textarea
-          className="w-full min-h-64 p-3 rounded-lg border border-border bg-background font-mono text-sm resize-y focus:outline-none"
+          className="w-full min-h-64 p-3 rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-190 font-mono text-sm resize-y focus:outline-none"
           value={metadataPreview}
           readOnly
         />
@@ -1314,7 +1323,7 @@ const JobsStep: FC<JobsStepProps> = ({
     </div>
 
     {form.jobs.length === 0 ? (
-      <div className="text-center py-8 text-muted-foreground border border-dashed border-border rounded-lg">
+      <div className="text-center py-8 text-mono-120 dark:text-mono-100 border border-dashed border-mono-60 dark:border-mono-170 rounded-lg">
         <Text variant="body1">
           At least one job is required. Jobs define the operations operators can
           perform.
@@ -1323,7 +1332,10 @@ const JobsStep: FC<JobsStepProps> = ({
     ) : (
       <div className="space-y-4">
         {form.jobs.map((job, index) => (
-          <div key={index} className="p-4 border border-border rounded-lg">
+          <div
+            key={index}
+            className="p-4 border border-mono-60 dark:border-mono-170 rounded-lg"
+          >
             <div className="flex items-center justify-between mb-3">
               <Text variant="body1" fw="semibold">
                 Job {index + 1}
@@ -1369,7 +1381,7 @@ const JobsStep: FC<JobsStepProps> = ({
                   Params Schema (JSON)
                 </Text>
                 <textarea
-                  className="w-full min-h-28 p-3 rounded-lg border border-border bg-background font-mono text-sm resize-y focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full min-h-28 p-3 rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-190 font-mono text-sm resize-y focus:outline-none focus:ring-2 focus:ring-ring"
                   value={job.paramsSchemaJson}
                   onChange={(e) =>
                     updateJob(index, { paramsSchemaJson: e.target.value })
@@ -1383,7 +1395,7 @@ const JobsStep: FC<JobsStepProps> = ({
                   Result Schema (JSON)
                 </Text>
                 <textarea
-                  className="w-full min-h-28 p-3 rounded-lg border border-border bg-background font-mono text-sm resize-y focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full min-h-28 p-3 rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-190 font-mono text-sm resize-y focus:outline-none focus:ring-2 focus:ring-ring"
                   value={job.resultSchemaJson}
                   onChange={(e) =>
                     updateJob(index, { resultSchemaJson: e.target.value })
@@ -1392,7 +1404,10 @@ const JobsStep: FC<JobsStepProps> = ({
                 />
               </div>
 
-              <Text variant="body3" className="text-muted-foreground">
+              <Text
+                variant="body3"
+                className="text-mono-120 dark:text-mono-100"
+              >
                 Use an array of fields. Example:{' '}
                 <InlineCode>{`[{"kind":"Uint256","name":"value"}]`}</InlineCode>
               </Text>
@@ -1429,7 +1444,7 @@ const SourcesStep: FC<SourcesStepProps> = ({
     </div>
 
     {form.sources.length === 0 ? (
-      <div className="text-center py-8 text-muted-foreground border border-dashed border-border rounded-lg">
+      <div className="text-center py-8 text-mono-120 dark:text-mono-100 border border-dashed border-mono-60 dark:border-mono-170 rounded-lg">
         <Text variant="body1">
           Add at least one execution source (Container, Wasm, or Native).
         </Text>
@@ -1437,7 +1452,10 @@ const SourcesStep: FC<SourcesStepProps> = ({
     ) : (
       <div className="space-y-4">
         {form.sources.map((source, index) => (
-          <div key={index} className="p-4 border border-border rounded-lg">
+          <div
+            key={index}
+            className="p-4 border border-mono-60 dark:border-mono-170 rounded-lg"
+          >
             <div className="flex items-center justify-between mb-3">
               <Text variant="body1" fw="semibold">
                 Source {index + 1}
@@ -1550,7 +1568,7 @@ const SourcesStep: FC<SourcesStepProps> = ({
               )}
 
               {/* Binaries Section - Required */}
-              <div className="mt-4 pt-4 border-t border-border">
+              <div className="mt-4 pt-4 border-t border-mono-60 dark:border-mono-170">
                 <div className="flex items-center justify-between mb-3">
                   <Text variant="body2" fw="semibold">
                     Binaries *
@@ -1574,7 +1592,7 @@ const SourcesStep: FC<SourcesStepProps> = ({
                 {source.binaries.length === 0 ? (
                   <Text
                     variant="body3"
-                    className="text-muted-foreground text-center py-2"
+                    className="text-mono-120 dark:text-mono-100 text-center py-2"
                   >
                     At least one binary is required per source.
                   </Text>
@@ -1583,7 +1601,7 @@ const SourcesStep: FC<SourcesStepProps> = ({
                     {source.binaries.map((binary, binIndex) => (
                       <div
                         key={binIndex}
-                        className="p-3 bg-muted/50 rounded-lg"
+                        className="p-3 bg-mono-20 dark:bg-mono-190/50 rounded-lg"
                       >
                         <div className="flex items-center justify-between mb-2">
                           <Text variant="body3" fw="semibold">
@@ -1730,7 +1748,7 @@ const ReviewStep: FC<{
 
     <div className="grid grid-cols-2 gap-4">
       <div>
-        <Text variant="body2" className="text-muted-foreground">
+        <Text variant="body2" className="text-mono-120 dark:text-mono-100">
           Name
         </Text>
         <Text variant="body1" fw="semibold">
@@ -1739,42 +1757,42 @@ const ReviewStep: FC<{
       </div>
 
       <div>
-        <Text variant="body2" className="text-muted-foreground">
+        <Text variant="body2" className="text-mono-120 dark:text-mono-100">
           Author
         </Text>
         <Text variant="body1">{form.author || 'Your address'}</Text>
       </div>
 
       <div>
-        <Text variant="body2" className="text-muted-foreground">
+        <Text variant="body2" className="text-mono-120 dark:text-mono-100">
           Category
         </Text>
         <Text variant="body1">{form.category || '-'}</Text>
       </div>
 
       <div>
-        <Text variant="body2" className="text-muted-foreground">
+        <Text variant="body2" className="text-mono-120 dark:text-mono-100">
           License
         </Text>
         <Text variant="body1">{form.license || '-'}</Text>
       </div>
 
       <div>
-        <Text variant="body2" className="text-muted-foreground">
+        <Text variant="body2" className="text-mono-120 dark:text-mono-100">
           Membership
         </Text>
         <Text variant="body1">{form.membership}</Text>
       </div>
 
       <div>
-        <Text variant="body2" className="text-muted-foreground">
+        <Text variant="body2" className="text-mono-120 dark:text-mono-100">
           Pricing
         </Text>
         <Text variant="body1">{form.pricing}</Text>
       </div>
 
       <div>
-        <Text variant="body2" className="text-muted-foreground">
+        <Text variant="body2" className="text-mono-120 dark:text-mono-100">
           Operators
         </Text>
         <Text variant="body1">
@@ -1784,7 +1802,7 @@ const ReviewStep: FC<{
       </div>
 
       <div>
-        <Text variant="body2" className="text-muted-foreground">
+        <Text variant="body2" className="text-mono-120 dark:text-mono-100">
           Jobs / Sources
         </Text>
         <Text variant="body1">
@@ -1795,20 +1813,23 @@ const ReviewStep: FC<{
 
     {form.description && (
       <div>
-        <Text variant="body2" className="text-muted-foreground">
+        <Text variant="body2" className="text-mono-120 dark:text-mono-100">
           Description
         </Text>
         <Text variant="body1">{form.description}</Text>
       </div>
     )}
 
-    <div className="rounded-xl border border-border p-4 space-y-3">
+    <div className="rounded-xl border border-mono-60 dark:border-mono-170 p-4 space-y-3">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <Text variant="body2" className="text-muted-foreground">
+          <Text variant="body2" className="text-mono-120 dark:text-mono-100">
             Metadata payload to publish at {form.metadataUri || 'metadata URI'}
           </Text>
-          <Text variant="body3" className="text-muted-foreground mt-1">
+          <Text
+            variant="body3"
+            className="text-mono-120 dark:text-mono-100 mt-1"
+          >
             This is the exact `blueprintUi` contract the shared host will parse.
             Advanced tier-2 sections can be added directly to the JSON after
             copying it out.
@@ -1819,7 +1840,7 @@ const ReviewStep: FC<{
         </Button>
       </div>
       <textarea
-        className="w-full min-h-64 p-3 rounded-lg border border-border bg-background font-mono text-sm resize-y focus:outline-none"
+        className="w-full min-h-64 p-3 rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-190 font-mono text-sm resize-y focus:outline-none"
         value={metadataPreview}
         readOnly
       />

@@ -60,7 +60,7 @@ const SlashingTabsTable = ({
   return (
     <Card className="p-4 space-y-4">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="font-display font-bold text-foreground text-xl">
+        <h2 className="font-display font-bold text-mono-200 dark:text-mono-0 text-xl">
           Slashing Management
         </h2>
         <Button variant="secondary" onClick={onOpenProposeModal}>
@@ -71,7 +71,9 @@ const SlashingTabsTable = ({
       {executeError ? (
         <Card className="p-3 border border-red-500/30 bg-red-500/10">
           <div className="flex items-center justify-between gap-3">
-            <p className="text-destructive text-sm">{executeError}</p>
+            <p className="text-red-500 dark:text-red-400 text-sm">
+              {executeError}
+            </p>
             <Button variant="utility" size="sm" onClick={onDismissExecuteError}>
               Dismiss
             </Button>

@@ -21,7 +21,7 @@ const shortenHex = (value: string) =>
 const CopyHashButton: FC<{ hash: string }> = ({ hash }) => (
   <button
     type="button"
-    className="text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+    className="text-xs text-mono-120 dark:text-mono-100 underline-offset-4 hover:text-mono-200 dark:text-mono-0 hover:underline"
     onClick={() => void navigator.clipboard?.writeText(hash)}
   >
     Copy
@@ -95,7 +95,7 @@ const TxHistoryNotifier: FC = () => {
               href={explorerUrl.toString()}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-4 hover:underline"
+              className="inline-flex items-center gap-1 text-sm font-medium text-purple-40 underline-offset-4 hover:underline"
             >
               View Explorer
               <ExternalLinkLine className="fill-current dark:fill-current" />
@@ -130,7 +130,7 @@ const TxHistoryNotifier: FC = () => {
               href={explorerUrl.toString()}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-4 hover:underline"
+              className="inline-flex items-center gap-1 text-sm font-medium text-purple-40 underline-offset-4 hover:underline"
             >
               View Explorer
               <ExternalLinkLine className="fill-current dark:fill-current" />

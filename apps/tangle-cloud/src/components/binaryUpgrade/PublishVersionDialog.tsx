@@ -415,11 +415,11 @@ const SimplePublishDialog: FC<{
               }}
             />
             {binaryFile && (
-              <p className="text-muted-foreground text-xs">
+              <p className="text-mono-120 dark:text-mono-100 text-xs">
                 {binaryFile.name} · {(binaryFile.size / 1024).toFixed(1)} KB
               </p>
             )}
-            <p className="break-all font-mono text-foreground text-xs">
+            <p className="break-all font-mono text-mono-200 dark:text-mono-0 text-xs">
               sha256{' '}
               {isHashing
                 ? 'hashing…'
@@ -437,7 +437,7 @@ const SimplePublishDialog: FC<{
                 setBinaryUri(e.currentTarget.value)
               }
             />
-            <p className="text-muted-foreground text-xs">
+            <p className="text-mono-120 dark:text-mono-100 text-xs">
               The contract stores this URI as-is. Pinning is off-chain; upload
               the file to your pinning provider first, then paste the resulting
               URI here.
@@ -457,26 +457,28 @@ const SimplePublishDialog: FC<{
               }}
             />
             {attestationFile && (
-              <p className="break-all font-mono text-foreground text-xs">
+              <p className="break-all font-mono text-mono-200 dark:text-mono-0 text-xs">
                 sha256 {attestationHash}
               </p>
             )}
-            <p className="text-muted-foreground text-xs">
+            <p className="text-mono-120 dark:text-mono-100 text-xs">
               Optional SLSA / sigstore bundle digest. Leave blank for an
               all-zero sentinel.
             </p>
           </div>
 
           {validationError && (
-            <p className="text-destructive text-xs">{validationError}</p>
+            <p className="text-red-500 dark:text-red-400 text-xs">
+              {validationError}
+            </p>
           )}
           {error && (
-            <p className="text-destructive text-xs">
+            <p className="text-red-500 dark:text-red-400 text-xs">
               Publish failed: {error.message}
             </p>
           )}
           {txHash && (
-            <p className="break-all font-mono text-muted-foreground text-xs">
+            <p className="break-all font-mono text-mono-120 dark:text-mono-100 text-xs">
               Tx hash {txHash}
             </p>
           )}

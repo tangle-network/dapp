@@ -79,13 +79,19 @@ const ProposeSlashModal = ({
         <ModalBody>
           <div className="space-y-4">
             {loadingProposableServices ? (
-              <Text variant="body2" className="text-muted-foreground">
+              <Text
+                variant="body2"
+                className="text-mono-120 dark:text-mono-100"
+              >
                 Loading eligible services...
               </Text>
             ) : null}
 
             {!loadingProposableServices && proposableServicesCount === 0 ? (
-              <Text variant="body2" className="text-muted-foreground">
+              <Text
+                variant="body2"
+                className="text-mono-120 dark:text-mono-100"
+              >
                 No active services where your account appears as service or
                 blueprint owner.
               </Text>
@@ -98,7 +104,7 @@ const ProposeSlashModal = ({
                     Service
                   </Text>
                   <select
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    className="w-full rounded-md border border-input bg-mono-0 dark:bg-mono-190 px-3 py-2 text-sm"
                     value={proposeServiceId}
                     onChange={(event) =>
                       setProposeServiceId(event.target.value)
@@ -118,7 +124,7 @@ const ProposeSlashModal = ({
                     Operator
                   </Text>
                   <select
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full rounded-md border border-input bg-mono-0 dark:bg-mono-190 px-3 py-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     value={proposeOperator}
                     onChange={(event) => setProposeOperator(event.target.value)}
                     disabled={!selectedProposableService}
@@ -152,7 +158,7 @@ const ProposeSlashModal = ({
                   {maxSlashBps !== undefined ? (
                     <Text
                       variant="body3"
-                      className="text-muted-foreground mt-1"
+                      className="text-mono-120 dark:text-mono-100 mt-1"
                     >
                       Protocol cap: {maxBpsLabel} bps ({maxPercentLabel}%).
                       Proposals above the cap are rejected on-chain.
@@ -176,20 +182,23 @@ const ProposeSlashModal = ({
             ) : null}
 
             {proposeValidationError ? (
-              <Text variant="body3" className="!text-destructive">
+              <Text variant="body3" className="!text-red-500 dark:text-red-400">
                 {proposeValidationError}
               </Text>
             ) : null}
 
             {errorMessage ? (
               <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 space-y-2">
-                <Text variant="body3" className="!text-destructive">
+                <Text
+                  variant="body3"
+                  className="!text-red-500 dark:text-red-400"
+                >
                   {errorMessage}
                 </Text>
                 <div>
                   <button
                     type="button"
-                    className="text-xs underline text-destructive"
+                    className="text-xs underline text-red-500 dark:text-red-400"
                     onClick={onDismissError}
                   >
                     Dismiss

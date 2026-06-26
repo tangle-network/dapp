@@ -205,7 +205,7 @@ const CommandPalette: FC<Props> = ({ open, onOpenChange, extra = [] }) => {
       <DialogContent
         className={twMerge(
           'top-[20%] max-w-[640px] translate-y-0 gap-0 overflow-hidden p-0',
-          'border border-border bg-[color:var(--bg-card)]',
+          'border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-mono-0 dark:bg-mono-180)]',
         )}
         onKeyDown={onKeyDown}
       >
@@ -217,13 +217,13 @@ const CommandPalette: FC<Props> = ({ open, onOpenChange, extra = [] }) => {
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search for an action, page, or blueprint…"
           className={twMerge(
-            'h-12 w-full border-b border-border bg-transparent px-4 text-sm text-foreground placeholder:text-muted-foreground/70',
+            'h-12 w-full border-b border-mono-60 dark:border-mono-170 bg-transparent px-4 text-sm text-mono-200 dark:text-mono-0 placeholder:text-mono-120 dark:text-mono-100/70',
             focus.ring,
           )}
         />
         <div className="max-h-[60vh] overflow-y-auto py-2">
           {filtered.length === 0 ? (
-            <div className="px-4 py-8 text-center text-sm text-muted-foreground">
+            <div className="px-4 py-8 text-center text-sm text-mono-120 dark:text-mono-100">
               No matching actions.
             </div>
           ) : (
@@ -244,18 +244,18 @@ const CommandPalette: FC<Props> = ({ open, onOpenChange, extra = [] }) => {
                       className={twMerge(
                         'flex w-full items-center gap-3 px-4 py-2 text-left text-sm transition-colors',
                         active
-                          ? 'bg-[color:var(--bg-hover)] text-foreground'
-                          : 'text-muted-foreground hover:text-foreground',
+                          ? 'bg-[color:var(--bg-hover)] text-mono-200 dark:text-mono-0'
+                          : 'text-mono-120 dark:text-mono-100 hover:text-mono-200 dark:text-mono-0',
                       )}
                     >
                       {cmd.icon !== undefined && (
-                        <span className="inline-flex h-4 w-4 shrink-0 items-center justify-center text-muted-foreground">
+                        <span className="inline-flex h-4 w-4 shrink-0 items-center justify-center text-mono-120 dark:text-mono-100">
                           {cmd.icon}
                         </span>
                       )}
                       <span className="flex-1 truncate">{cmd.label}</span>
                       {cmd.shortcut !== undefined && (
-                        <kbd className="hidden rounded border border-border bg-[color:var(--bg-elevated)]/60 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground sm:inline-block">
+                        <kbd className="hidden rounded border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)]/60 px-1.5 py-0.5 font-mono text-[10px] text-mono-120 dark:text-mono-100 sm:inline-block">
                           {cmd.shortcut}
                         </kbd>
                       )}
@@ -266,22 +266,22 @@ const CommandPalette: FC<Props> = ({ open, onOpenChange, extra = [] }) => {
             ))
           )}
         </div>
-        <div className="flex items-center justify-between border-t border-border px-4 py-2 text-xs text-muted-foreground">
+        <div className="flex items-center justify-between border-t border-mono-60 dark:border-mono-170 px-4 py-2 text-xs text-mono-120 dark:text-mono-100">
           <div className="flex items-center gap-3">
             <span>
-              <kbd className="rounded border border-border bg-[color:var(--bg-elevated)]/60 px-1 font-mono">
+              <kbd className="rounded border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)]/60 px-1 font-mono">
                 ↑↓
               </kbd>{' '}
               navigate
             </span>
             <span>
-              <kbd className="rounded border border-border bg-[color:var(--bg-elevated)]/60 px-1 font-mono">
+              <kbd className="rounded border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)]/60 px-1 font-mono">
                 ↵
               </kbd>{' '}
               execute
             </span>
             <span>
-              <kbd className="rounded border border-border bg-[color:var(--bg-elevated)]/60 px-1 font-mono">
+              <kbd className="rounded border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)]/60 px-1 font-mono">
                 esc
               </kbd>{' '}
               close

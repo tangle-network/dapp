@@ -112,9 +112,10 @@ const BlueprintAppFrameOverlay: FC<Props> = ({
       role={phase === 'error' || phase === 'blocked' ? 'alert' : 'status'}
       aria-live="polite"
       className={twMerge(
-        'absolute inset-0 z-10 flex items-center justify-center bg-background',
+        'absolute inset-0 z-10 flex items-center justify-center bg-mono-0 dark:bg-mono-190',
         rounded && 'rounded-[12px]',
-        phase === 'loading' && 'bg-background/85 backdrop-blur-[1px]',
+        phase === 'loading' &&
+          'bg-mono-0 dark:bg-mono-190/85 backdrop-blur-[1px]',
       )}
     >
       {phase === 'loading' && <FrameSkeleton />}
@@ -122,18 +123,23 @@ const BlueprintAppFrameOverlay: FC<Props> = ({
         className={twMerge(
           'relative flex max-w-md flex-col items-center gap-3 px-6 text-center',
           isFailure &&
-            'rounded-lg border border-border bg-[color:var(--bg-card)] py-6 shadow-[var(--shadow-card)]',
+            'rounded-lg border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-mono-0 dark:bg-mono-180)] py-6 shadow-sm',
         )}
       >
         <StatusPill tone={meta.tone}>{meta.label}</StatusPill>
         <div className="space-y-1.5">
-          <h2 className={twMerge(typeRole.section, 'text-foreground')}>
+          <h2
+            className={twMerge(
+              typeRole.section,
+              'text-mono-200 dark:text-mono-0',
+            )}
+          >
             {PHASE_TITLE[phase]}
           </h2>
-          <p className="text-sm leading-relaxed text-muted-foreground">
+          <p className="text-sm leading-relaxed text-mono-120 dark:text-mono-100">
             {phaseBody(phase, appDisplayName)}
           </p>
-          <p className="pt-1 font-mono text-xs text-muted-foreground/70">
+          <p className="pt-1 font-mono text-xs text-mono-120 dark:text-mono-100/70">
             {origin}
           </p>
         </div>
@@ -150,7 +156,7 @@ const BlueprintAppFrameOverlay: FC<Props> = ({
                 target="_blank"
                 rel="noreferrer"
                 className={twMerge(
-                  'inline-flex h-8 items-center rounded-md border border-border bg-transparent px-3 text-xs font-medium text-foreground transition-colors hover:bg-[color:var(--bg-hover)]',
+                  'inline-flex h-8 items-center rounded-md border border-mono-60 dark:border-mono-170 bg-transparent px-3 text-xs font-medium text-mono-200 dark:text-mono-0 transition-colors hover:bg-[color:var(--bg-hover)]',
                   focus.ring,
                 )}
               >

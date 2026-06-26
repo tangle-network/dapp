@@ -89,13 +89,13 @@ export const StoppedInstanceTable: FC = () => {
                   <Text
                     variant="body1"
                     fw="bold"
-                    className="text-primary text-ellipsis whitespace-nowrap overflow-hidden"
+                    className="text-purple-40 text-ellipsis whitespace-nowrap overflow-hidden"
                   >
                     {service.blueprintData?.author || ''}
                   </Text>
                   <Text
                     variant="body2"
-                    className="text-muted-foreground text-ellipsis whitespace-nowrap overflow-hidden"
+                    className="text-mono-120 dark:text-mono-100 text-ellipsis whitespace-nowrap overflow-hidden"
                   >
                     {service.blueprintData?.name || ''}
                   </Text>
@@ -107,7 +107,7 @@ export const StoppedInstanceTable: FC = () => {
                   <Text
                     variant="body1"
                     fw="bold"
-                    className="text-primary text-ellipsis whitespace-nowrap overflow-hidden"
+                    className="text-purple-40 text-ellipsis whitespace-nowrap overflow-hidden"
                   >
                     {service.serviceId
                       ? `Instance-${service.serviceId}`

@@ -45,14 +45,14 @@ const PageToolbar: FC<Props> = ({
     <div
       className={twMerge(
         chromeHeight.toolbar,
-        'flex w-full flex-wrap items-center gap-2 rounded-lg border border-border bg-[color:var(--bg-card)] px-2 py-1.5 shadow-[var(--shadow-card)] sm:flex-nowrap sm:gap-3',
+        'flex w-full flex-wrap items-center gap-2 rounded-lg border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-mono-0 dark:bg-mono-180)] px-2 py-1.5 shadow-sm sm:flex-nowrap sm:gap-3',
         sticky && 'sticky top-16 z-20',
         className,
       )}
     >
       <div className="relative flex min-w-[180px] flex-[1_1_260px] items-center">
         <Search
-          className="pointer-events-none absolute left-3 h-4 w-4 fill-current text-muted-foreground"
+          className="pointer-events-none absolute left-3 h-4 w-4 fill-current text-mono-120 dark:text-mono-100"
           aria-hidden
         />
         <input
@@ -62,8 +62,8 @@ const PageToolbar: FC<Props> = ({
           placeholder={search.placeholder}
           autoFocus={search.autoFocus}
           className={twMerge(
-            'h-9 w-full rounded-md border border-transparent bg-transparent pl-9 pr-3 font-sans text-sm leading-tight text-foreground not-italic placeholder:text-muted-foreground/70',
-            'hover:border-border focus:border-[color:var(--border-accent-hover)]',
+            'h-9 w-full rounded-md border border-transparent bg-transparent pl-9 pr-3 font-sans text-sm leading-tight text-mono-200 dark:text-mono-0 not-italic placeholder:text-mono-120 dark:text-mono-100/70',
+            'hover:border-mono-60 dark:border-mono-170 focus:border-[color:var(--border-accent-hover)]',
             focus.ring,
           )}
         />
@@ -73,7 +73,7 @@ const PageToolbar: FC<Props> = ({
         <span
           className={twMerge(
             typeRole.mono,
-            'shrink-0 text-muted-foreground tabular-nums',
+            'shrink-0 text-mono-120 dark:text-mono-100 tabular-nums',
           )}
           aria-live="polite"
         >

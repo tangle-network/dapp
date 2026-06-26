@@ -156,7 +156,7 @@ export const AttestationBadge: FC<AttestationBadgeProps> = ({
   return (
     <div
       className={twMerge(
-        'flex flex-col gap-3 rounded-lg border border-border bg-card p-3 md:flex-row md:items-center md:justify-between',
+        'flex flex-col gap-3 rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 p-3 md:flex-row md:items-center md:justify-between',
         isMuted ? 'opacity-60' : '',
         className,
       )}
@@ -167,7 +167,7 @@ export const AttestationBadge: FC<AttestationBadgeProps> = ({
           <div className="flex flex-wrap items-center gap-1.5">
             <span
               className={twMerge(
-                'truncate font-display font-bold text-foreground text-sm',
+                'truncate font-display font-bold text-mono-200 dark:text-mono-0 text-sm',
                 isRevoked ? 'line-through' : '',
               )}
             >
@@ -187,17 +187,17 @@ export const AttestationBadge: FC<AttestationBadgeProps> = ({
               </span>
             )}
             {isRevoked && (
-              <span className="text-destructive text-[10px] uppercase tracking-wider">
+              <span className="text-red-500 dark:text-red-400 text-[10px] uppercase tracking-wider">
                 (revoked)
               </span>
             )}
             {isExpired && !isRevoked && (
-              <span className="text-muted-foreground text-[10px] uppercase tracking-wider">
+              <span className="text-mono-120 dark:text-mono-100 text-[10px] uppercase tracking-wider">
                 (expired)
               </span>
             )}
           </div>
-          <p className="mt-0.5 truncate font-mono text-muted-foreground text-xs">
+          <p className="mt-0.5 truncate font-mono text-mono-120 dark:text-mono-100 text-xs">
             {attestation.attester}
           </p>
         </div>
@@ -223,12 +223,12 @@ export const AttestationBadge: FC<AttestationBadgeProps> = ({
             className="inline-block h-2 w-2 rounded-full"
             style={{ backgroundColor: sevColor }}
           />
-          <span className="text-muted-foreground">
+          <span className="text-mono-120 dark:text-mono-100">
             {severityLabel(attestation.severityFound)}
           </span>
         </span>
 
-        <span className="text-muted-foreground text-xs">
+        <span className="text-mono-120 dark:text-mono-100 text-xs">
           Attested {formatRelative(attestation.attestedAt, now)}
           {attestation.expiresAt !== 0n && (
             <>
@@ -280,7 +280,7 @@ const AuditorAvatar: FC<{ attester: string; auditor: Auditor | null }> = ({
   );
   return (
     <div
-      className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-border font-display font-extrabold text-white text-xs"
+      className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-mono-60 dark:border-mono-170 font-display font-extrabold text-white text-xs"
       style={{
         background: `linear-gradient(135deg, hsl(${hue} 64% 46%), hsl(${(hue + 36) % 360} 64% 36%))`,
       }}

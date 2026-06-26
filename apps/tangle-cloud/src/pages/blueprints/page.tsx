@@ -189,7 +189,7 @@ const Page: FC = () => {
             className={twMerge(
               'fixed bottom-4 w-[calc(100vw-2rem)] max-w-4xl p-4 -translate-x-1/2 left-1/2 rounded-lg z-20',
               'flex items-center justify-between',
-              'border border-border bg-card shadow-[var(--shadow-dropdown)]',
+              'border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 shadow-[var(--shadow-dropdown)]',
             )}
             initial={{ opacity: 0, bottom: -100 }}
             animate={{ opacity: 1, bottom: 16 }}
@@ -197,7 +197,7 @@ const Page: FC = () => {
             transition={{ duration: 0.3 }}
           >
             <div className="flex items-center gap-4">
-              <p className="font-bold text-foreground text-sm">
+              <p className="font-bold text-mono-200 dark:text-mono-0 text-sm">
                 {selectedBlueprintCount}{' '}
                 {pluralize('blueprint', selectedBlueprintCount)} selected
               </p>

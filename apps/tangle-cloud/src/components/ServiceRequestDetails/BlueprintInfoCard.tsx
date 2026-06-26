@@ -33,7 +33,10 @@ const BlueprintInfoCard: FC<Props> = ({
 
   return (
     <div
-      className={twMerge('rounded-xl overflow-hidden', 'border border-border')}
+      className={twMerge(
+        'rounded-xl overflow-hidden',
+        'border border-mono-60 dark:border-mono-170',
+      )}
     >
       <div
         className={twMerge(
@@ -45,22 +48,25 @@ const BlueprintInfoCard: FC<Props> = ({
         )}
       >
         <div className="relative space-y-1">
-          <Text variant="h4" className="text-foreground">
+          <Text variant="h4" className="text-mono-200 dark:text-mono-0">
             {name}
           </Text>
 
-          <Text variant="body1" className="text-muted-foreground">
+          <Text variant="body1" className="text-mono-120 dark:text-mono-100">
             {formattedAuthor}
           </Text>
         </div>
 
-        <Text variant="body2" className="relative text-foreground">
+        <Text
+          variant="body2"
+          className="relative text-mono-200 dark:text-mono-0"
+        >
           {description}
         </Text>
 
         <div className="relative flex w-full gap-1 pt-4">
           <div className="flex-1 space-y-2">
-            <Text variant="body2" className="text-muted-foreground">
+            <Text variant="body2" className="text-mono-120 dark:text-mono-100">
               Instances
             </Text>
 
@@ -70,7 +76,7 @@ const BlueprintInfoCard: FC<Props> = ({
           </div>
 
           <div className="flex-1 space-y-2">
-            <Text variant="body2" className="text-muted-foreground">
+            <Text variant="body2" className="text-mono-120 dark:text-mono-100">
               Operators
             </Text>
 

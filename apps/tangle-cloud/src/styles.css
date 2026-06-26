@@ -31,10 +31,10 @@
   --border-hover: rgba(211, 216, 226, 0.2);
   --border-accent: rgba(129, 140, 248, 0.2);
   --border-accent-hover: rgba(129, 140, 248, 0.35);
-  --shadow-card: 0 10px 60px rgba(17, 24, 39, 0.1),
-    0 0 0 1px rgba(255, 255, 255, 0.03);
-  --shadow-hover: 0 14px 70px rgba(0, 0, 0, 0.45),
-    0 0 0 1px rgba(129, 140, 248, 0.12);
+  --shadow-card:
+    0 10px 60px rgba(17, 24, 39, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.03);
+  --shadow-hover:
+    0 14px 70px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(129, 140, 248, 0.12);
   --shadow-dropdown: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
@@ -83,8 +83,24 @@
 /* Force font-style: normal to prevent italic synthesis from fallback fonts. */
 .tangle-cloud-shell
   :where(
-    h1, h2, h3, h4, h5, h6, p, span, a, button, label, li, td, th, input,
-    select, textarea, div
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    span,
+    a,
+    button,
+    label,
+    li,
+    td,
+    th,
+    input,
+    select,
+    textarea,
+    div
   ):not(.italic) {
   font-style: normal !important;
 }

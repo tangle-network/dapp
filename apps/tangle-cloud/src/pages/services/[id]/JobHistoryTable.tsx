@@ -165,11 +165,14 @@ export const JobHistoryTable: FC<Props> = ({
         <table className="w-full">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id} className="border-b border-border">
+              <tr
+                key={headerGroup.id}
+                className="border-b border-mono-60 dark:border-mono-170"
+              >
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="text-left py-3 px-4 text-muted-foreground font-medium"
+                    className="text-left py-3 px-4 text-mono-120 dark:text-mono-100 font-medium"
                   >
                     {header.isPlaceholder
                       ? null
@@ -179,7 +182,7 @@ export const JobHistoryTable: FC<Props> = ({
                         )}
                   </th>
                 ))}
-                <th className="text-left py-3 px-4 text-muted-foreground font-medium">
+                <th className="text-left py-3 px-4 text-mono-120 dark:text-mono-100 font-medium">
                   Actions
                 </th>
               </tr>
@@ -189,7 +192,7 @@ export const JobHistoryTable: FC<Props> = ({
             {table.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}
-                className="border-b border-border hover:bg-muted/60"
+                className="border-b border-mono-60 dark:border-mono-170 hover:bg-mono-20/60 dark:bg-mono-190/60"
               >
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} className="py-3 px-4">
@@ -214,7 +217,7 @@ export const JobHistoryTable: FC<Props> = ({
       {/* Pagination */}
       {table.getPageCount() > 1 && (
         <div className="flex items-center justify-between mt-4">
-          <Text variant="body2" className="text-muted-foreground">
+          <Text variant="body2" className="text-mono-120 dark:text-mono-100">
             Page {table.getState().pagination.pageIndex + 1} of{' '}
             {table.getPageCount()}
           </Text>

@@ -122,14 +122,14 @@ const IframeBlueprintLayout: FC<Props> = ({
         >
           <Link
             to="/blueprints"
-            className="shrink-0 text-muted-foreground transition-colors hover:text-foreground"
+            className="shrink-0 text-mono-120 dark:text-mono-100 transition-colors hover:text-mono-200 dark:text-mono-0"
           >
             Blueprints
           </Link>
-          <span aria-hidden className="text-muted-foreground/40">
+          <span aria-hidden className="text-mono-120 dark:text-mono-100/40">
             /
           </span>
-          <span className="truncate font-semibold text-foreground">
+          <span className="truncate font-semibold text-mono-200 dark:text-mono-0">
             {displayName}
           </span>
         </nav>
@@ -165,7 +165,7 @@ const IframeBlueprintLayout: FC<Props> = ({
             }}
             aria-label="Expand app"
             className={twMerge(
-              'inline-flex h-8 w-8 items-center justify-center rounded-md border border-border bg-transparent text-muted-foreground transition-colors hover:bg-[color:var(--bg-hover)] hover:text-foreground',
+              'inline-flex h-8 w-8 items-center justify-center rounded-md border border-mono-60 dark:border-mono-170 bg-transparent text-mono-120 dark:text-mono-100 transition-colors hover:bg-[color:var(--bg-hover)] hover:text-mono-200 dark:text-mono-0',
               focus.ring,
             )}
           >
@@ -178,7 +178,7 @@ const IframeBlueprintLayout: FC<Props> = ({
               rel="noopener noreferrer"
               title="Visit the blueprint's own site"
               className={twMerge(
-                'inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-transparent px-2.5 text-xs font-medium text-foreground transition-colors hover:bg-[color:var(--bg-hover)]',
+                'inline-flex h-8 items-center gap-1.5 rounded-md border border-mono-60 dark:border-mono-170 bg-transparent px-2.5 text-xs font-medium text-mono-200 dark:text-mono-0 transition-colors hover:bg-[color:var(--bg-hover)]',
                 focus.ring,
               )}
             >
@@ -192,7 +192,7 @@ const IframeBlueprintLayout: FC<Props> = ({
             aria-expanded={detailsOpen}
             aria-controls="blueprint-details-panel"
             className={twMerge(
-              'inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-transparent px-2.5 text-xs font-medium not-italic text-foreground transition-colors hover:bg-[color:var(--bg-hover)]',
+              'inline-flex h-8 items-center gap-1.5 rounded-md border border-mono-60 dark:border-mono-170 bg-transparent px-2.5 text-xs font-medium not-italic text-mono-200 dark:text-mono-0 transition-colors hover:bg-[color:var(--bg-hover)]',
               detailsOpen && 'border-[color:var(--border-accent-hover)]',
               focus.ring,
             )}
@@ -221,7 +221,7 @@ const IframeBlueprintLayout: FC<Props> = ({
       className={twMerge(
         'relative -mx-4 -mb-10 -mt-6 md:-mx-8',
         focusMode &&
-          'fixed inset-0 z-[70] mx-0 mb-0 mt-0 bg-background md:mx-0',
+          'fixed inset-0 z-[70] mx-0 mb-0 mt-0 bg-mono-0 dark:bg-mono-190 md:mx-0',
       )}
       style={accentStyle}
     >
@@ -248,19 +248,19 @@ const IframeBlueprintLayout: FC<Props> = ({
         />
         {focusMode && (
           <div className="pointer-events-none fixed inset-x-0 top-3 z-[80] flex justify-center px-3">
-            <div className="pointer-events-auto flex max-w-[calc(100vw-24px)] items-center gap-2 border border-border bg-background/95 px-2 py-1.5 shadow-[var(--shadow-card)] backdrop-blur-md">
+            <div className="pointer-events-auto flex max-w-[calc(100vw-24px)] items-center gap-2 border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-190/95 px-2 py-1.5 shadow-sm backdrop-blur-md">
               <button
                 type="button"
                 onClick={() => setFocusMode(false)}
                 className={twMerge(
-                  'inline-flex h-8 items-center gap-2 px-2.5 text-xs font-semibold text-foreground transition-colors hover:bg-[color:var(--bg-hover)]',
+                  'inline-flex h-8 items-center gap-2 px-2.5 text-xs font-semibold text-mono-200 dark:text-mono-0 transition-colors hover:bg-[color:var(--bg-hover)]',
                   focus.ring,
                 )}
               >
                 <CloseIcon className="h-3.5 w-3.5" />
                 Back to Cloud
               </button>
-              <span className="hidden max-w-[42vw] truncate border-l border-border pl-2 font-mono text-xs text-muted-foreground sm:inline">
+              <span className="hidden max-w-[42vw] truncate border-l border-mono-60 dark:border-mono-170 pl-2 font-mono text-xs text-mono-120 dark:text-mono-100 sm:inline">
                 {displayName}
               </span>
             </div>
@@ -271,7 +271,7 @@ const IframeBlueprintLayout: FC<Props> = ({
       {/* Mobile mode picker — lives in the panel instead of the strip on
        * narrow viewports. Surfaced here so it doesn't crowd the strip. */}
       {!focusMode && modes.length > 1 && activeMode && (
-        <div className="md:hidden border-t border-border bg-background px-4 py-3">
+        <div className="md:hidden border-t border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-190 px-4 py-3">
           <BlueprintModePicker
             modes={modes}
             selectedModeId={activeMode.id}
@@ -311,7 +311,7 @@ const CompactModePicker: FC<{
   <div
     role="radiogroup"
     aria-label="Deployment mode"
-    className="inline-flex h-8 items-center rounded-md border border-border bg-transparent p-0.5"
+    className="inline-flex h-8 items-center rounded-md border border-mono-60 dark:border-mono-170 bg-transparent p-0.5"
   >
     {modes.map((mode) => {
       const active = mode.id === activeId;
@@ -325,8 +325,8 @@ const CompactModePicker: FC<{
           className={twMerge(
             'h-7 rounded px-2.5 text-xs font-medium transition-colors',
             active
-              ? 'bg-[color:var(--bg-hover)] text-foreground'
-              : 'text-muted-foreground hover:text-foreground',
+              ? 'bg-[color:var(--bg-hover)] text-mono-200 dark:text-mono-0'
+              : 'text-mono-120 dark:text-mono-100 hover:text-mono-200 dark:text-mono-0',
             focus.ring,
           )}
         >
@@ -372,7 +372,7 @@ const DetailsPanel: FC<DetailsPanelProps> = ({
       <div
         aria-hidden
         className={twMerge(
-          'fixed inset-0 z-30 bg-background/40 backdrop-blur-[2px] transition-opacity',
+          'fixed inset-0 z-30 bg-mono-0 dark:bg-mono-190/40 backdrop-blur-[2px] transition-opacity',
           open
             ? 'pointer-events-auto opacity-100'
             : 'pointer-events-none opacity-0',
@@ -388,11 +388,11 @@ const DetailsPanel: FC<DetailsPanelProps> = ({
           if (e.key === 'Escape') onClose();
         }}
         className={twMerge(
-          'fixed inset-y-0 right-0 z-40 w-full max-w-[480px] overflow-y-auto border-l border-border bg-[color:var(--bg-card)] shadow-2xl transition-transform',
+          'fixed inset-y-0 right-0 z-40 w-full max-w-[480px] overflow-y-auto border-l border-mono-60 dark:border-mono-170 bg-[color:var(--bg-mono-0 dark:bg-mono-180)] shadow-2xl transition-transform',
           open ? 'translate-x-0' : 'translate-x-full',
         )}
       >
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-[color:var(--bg-card)] px-5 py-3">
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-mono-60 dark:border-mono-170 bg-[color:var(--bg-mono-0 dark:bg-mono-180)] px-5 py-3">
           <h2 className={twMerge(typeRole.section, 'truncate')}>
             {displayName}
           </h2>
@@ -401,7 +401,7 @@ const DetailsPanel: FC<DetailsPanelProps> = ({
             onClick={onClose}
             aria-label="Close details"
             className={twMerge(
-              'inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-[color:var(--bg-hover)] hover:text-foreground',
+              'inline-flex h-8 w-8 items-center justify-center rounded-md text-mono-120 dark:text-mono-100 hover:bg-[color:var(--bg-hover)] hover:text-mono-200 dark:text-mono-0',
               focus.ring,
             )}
           >
@@ -411,12 +411,12 @@ const DetailsPanel: FC<DetailsPanelProps> = ({
 
         <div className="space-y-5 p-5">
           {tagline !== undefined && tagline.length > 0 && (
-            <p className="text-base leading-relaxed text-foreground">
+            <p className="text-base leading-relaxed text-mono-200 dark:text-mono-0">
               {tagline}
             </p>
           )}
           {description !== undefined && description.length > 0 && (
-            <p className="text-sm leading-relaxed text-muted-foreground">
+            <p className="text-sm leading-relaxed text-mono-120 dark:text-mono-100">
               {description}
             </p>
           )}
@@ -446,7 +446,7 @@ const DetailsPanel: FC<DetailsPanelProps> = ({
            * ActionLauncher, but list-shaped to fit the narrow panel. */}
           {actions.length > 0 && (
             <DetailsSection title="What you can do">
-              <ul className="divide-y divide-border rounded-md border border-border bg-background">
+              <ul className="divide-y divide-mono-60 dark:divide-mono-170 rounded-md border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-190">
                 {actions.slice(0, 8).map((action) => (
                   <li key={action.id}>
                     <ActionRow action={action} provisionPath={provisionPath} />
@@ -466,26 +466,26 @@ const DetailsPanel: FC<DetailsPanelProps> = ({
                 {overviewCards.map((card) => (
                   <div
                     key={card.id}
-                    className="rounded-md border border-border bg-background p-3"
+                    className="rounded-md border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-190 p-3"
                   >
                     <div className={twMerge(typeRole.label, 'mb-1')}>
                       {card.title}
                     </div>
                     {'value' in card && card.value !== undefined && (
-                      <p className="font-mono text-base font-semibold tabular-nums text-foreground">
+                      <p className="font-mono text-base font-semibold tabular-nums text-mono-200 dark:text-mono-0">
                         {card.value}
                       </p>
                     )}
                     {card.description && (
-                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                      <p className="mt-1 text-xs leading-relaxed text-mono-120 dark:text-mono-100">
                         {card.description}
                       </p>
                     )}
                     {'items' in card && card.items && card.items.length > 0 && (
-                      <ul className="mt-2 space-y-1 text-xs leading-relaxed text-foreground/90">
+                      <ul className="mt-2 space-y-1 text-xs leading-relaxed text-mono-200 dark:text-mono-0/90">
                         {card.items.map((item, i) => (
                           <li key={i} className="flex items-start gap-1.5">
-                            <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-muted-foreground" />
+                            <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-mono-20 dark:bg-mono-190-foreground" />
                             <span>{item}</span>
                           </li>
                         ))}
@@ -499,7 +499,7 @@ const DetailsPanel: FC<DetailsPanelProps> = ({
                               href={link.href}
                               target="_blank"
                               rel="noreferrer"
-                              className="text-xs text-foreground hover:underline"
+                              className="text-xs text-mono-200 dark:text-mono-0 hover:underline"
                             >
                               {link.label} ↗
                             </a>
@@ -536,16 +536,16 @@ const ActionRow: FC<{
   const inner = (
     <div className="flex items-center justify-between gap-3 px-3 py-2.5 transition-colors hover:bg-[color:var(--bg-hover)]">
       <div className="min-w-0">
-        <p className="truncate text-sm font-medium text-foreground">
+        <p className="truncate text-sm font-medium text-mono-200 dark:text-mono-0">
           {action.label}
         </p>
         {action.description && (
-          <p className="truncate text-xs text-muted-foreground">
+          <p className="truncate text-xs text-mono-120 dark:text-mono-100">
             {action.description}
           </p>
         )}
       </div>
-      <span className="shrink-0 text-xs font-semibold text-foreground/70">
+      <span className="shrink-0 text-xs font-semibold text-mono-200 dark:text-mono-0/70">
         {submitLabel} →
       </span>
     </div>

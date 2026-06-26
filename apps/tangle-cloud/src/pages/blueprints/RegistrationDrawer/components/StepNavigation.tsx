@@ -21,7 +21,7 @@ const StepNavigation: FC<StepNavigationProps> = ({
   onSubmit,
 }) => {
   return (
-    <div className="flex gap-4 pt-4 border-t border-border">
+    <div className="flex gap-4 pt-4 border-t border-mono-60 dark:border-mono-170">
       <Button
         variant="secondary"
         isFullWidth

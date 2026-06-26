@@ -353,11 +353,11 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
           />
 
           <div className="space-y-4">
-            <Text variant="body2" className="text-muted-foreground">
+            <Text variant="body2" className="text-mono-120 dark:text-mono-100">
               Stay in Cloud and verify the operator state before trying again:
             </Text>
 
-            <ol className="list-decimal list-inside space-y-2 text-muted-foreground">
+            <ol className="list-decimal list-inside space-y-2 text-mono-120 dark:text-mono-100">
               <li>
                 <span className="text-sm">Confirm the connected wallet.</span>
               </li>
@@ -408,7 +408,7 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
                   {blueprints.map((blueprint) => (
                     <div
                       key={blueprint.id.toString()}
-                      className="rounded-lg border border-border bg-card/70 p-4"
+                      className="rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180/70 p-4"
                     >
                       <div className="flex items-start gap-3">
                         {blueprint.imgUrl && (
@@ -417,7 +417,7 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
                             width={40}
                             height={40}
                             alt={blueprint.name}
-                            className="shrink-0 rounded-full border border-border object-cover"
+                            className="shrink-0 rounded-full border border-mono-60 dark:border-mono-170 object-cover"
                           />
                         )}
 
@@ -427,7 +427,7 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
                           </Text>
                           <Text
                             variant="body3"
-                            className="mt-1 text-muted-foreground"
+                            className="mt-1 text-mono-120 dark:text-mono-100"
                           >
                             Blueprint #{blueprint.id.toString()}
                             {blueprint.author ? ` - ${blueprint.author}` : ''}
@@ -451,11 +451,11 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
                 </div>
               </div>
 
-              <div className="rounded-lg border border-border bg-muted/30 p-4">
+              <div className="rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 p-4">
                 <Text variant="body2" fw="bold">
                   What happens next
                 </Text>
-                <ul className="mt-3 list-disc space-y-2 pl-5 text-muted-foreground text-sm">
+                <ul className="mt-3 list-disc space-y-2 pl-5 text-mono-120 dark:text-mono-100 text-sm">
                   <li>Your wallet sends `preRegister(blueprintId)`.</li>
                   <li>The protocol emits `OperatorPreRegistered`.</li>
                   <li>
@@ -471,7 +471,7 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
             </div>
           </div>
 
-          <div className="shrink-0 border-t border-border p-4">
+          <div className="shrink-0 border-t border-mono-60 dark:border-mono-170 p-4">
             <Button
               variant="sandbox"
               isFullWidth
@@ -500,9 +500,9 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
           onModeChange={setRegistrationMode}
         />
 
-        <div className="shrink-0 px-4 py-3 border-b border-border">
+        <div className="shrink-0 px-4 py-3 border-b border-mono-60 dark:border-mono-170">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-mono-120 dark:text-mono-100">
               Step {step} of {TOTAL_STEPS}
             </span>
             <span className="text-sm font-medium">{STEP_LABELS[step]}</span>
@@ -513,7 +513,9 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
                 key={index}
                 className={[
                   'h-1.5 rounded-full',
-                  index + 1 <= step ? 'bg-primary' : 'bg-muted',
+                  index + 1 <= step
+                    ? 'bg-purple-40'
+                    : 'bg-mono-20 dark:bg-mono-190',
                 ].join(' ')}
               />
             ))}
@@ -527,7 +529,7 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
           >
             <div>{renderStepContent()}</div>
 
-            <div className="mt-auto pt-4 border-t border-border">
+            <div className="mt-auto pt-4 border-t border-mono-60 dark:border-mono-170">
               <StepNavigation
                 isFirstStep={isFirstStep}
                 isLastStep={isLastStep}
@@ -549,7 +551,7 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="fixed !left-auto !right-0 !top-0 z-[80] flex h-screen max-h-screen w-full max-w-xl !translate-x-0 !translate-y-0 flex-col overflow-hidden rounded-none border-y-0 border-r-0 p-0 sm:max-w-xl">
-        <div className="shrink-0 flex items-center justify-between p-4 border-b border-border">
+        <div className="shrink-0 flex items-center justify-between p-4 border-b border-mono-60 dark:border-mono-170">
           <DialogTitle className="text-lg font-bold">
             Register as Operator
           </DialogTitle>
@@ -573,14 +575,14 @@ const RegistrationModePicker = ({
   mode: RegistrationMode;
   onModeChange: (mode: RegistrationMode) => void;
 }) => (
-  <div className="grid shrink-0 gap-2 border-b border-border p-4 sm:grid-cols-2">
+  <div className="grid shrink-0 gap-2 border-b border-mono-60 dark:border-mono-170 p-4 sm:grid-cols-2">
     <button
       type="button"
       className={[
         'rounded-lg border p-4 text-left transition-colors',
         mode === 'intent'
-          ? 'border-primary bg-primary/10 text-foreground'
-          : 'border-border bg-card/70 text-muted-foreground hover:bg-muted/40',
+          ? 'border-purple-40 bg-purple-40/10 text-mono-200 dark:text-mono-0'
+          : 'border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180/70 text-mono-120 dark:text-mono-100 hover:bg-mono-20/50 dark:bg-mono-190/50',
       ].join(' ')}
       onClick={() => onModeChange('intent')}
     >
@@ -595,8 +597,8 @@ const RegistrationModePicker = ({
       className={[
         'rounded-lg border p-4 text-left transition-colors',
         mode === 'full'
-          ? 'border-primary bg-primary/10 text-foreground'
-          : 'border-border bg-card/70 text-muted-foreground hover:bg-muted/40',
+          ? 'border-purple-40 bg-purple-40/10 text-mono-200 dark:text-mono-0'
+          : 'border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180/70 text-mono-120 dark:text-mono-100 hover:bg-mono-20/50 dark:bg-mono-190/50',
       ].join(' ')}
       onClick={() => onModeChange('full')}
     >

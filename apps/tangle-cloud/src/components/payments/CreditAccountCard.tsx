@@ -24,14 +24,14 @@ const CreditAccountCard: FC<Props> = ({
   onDelete,
 }) => {
   return (
-    <div className="p-4 space-y-3 border rounded-lg border-border bg-card">
+    <div className="p-4 space-y-3 border rounded-lg border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180">
       <div className="flex items-center justify-between">
         <div>
-          <span className="text-sm font-semibold text-foreground">
+          <span className="text-sm font-semibold text-mono-200 dark:text-mono-0">
             {label ?? 'Credit Account'}
           </span>
 
-          <p className="mt-0.5 font-mono text-xs text-muted-foreground">
+          <p className="mt-0.5 font-mono text-xs text-mono-120 dark:text-mono-100">
             {shortenHex(commitment, 8)}
           </p>
         </div>
@@ -44,24 +44,26 @@ const CreditAccountCard: FC<Props> = ({
       {accountState && (
         <div className="space-y-2">
           <div className="flex items-baseline justify-between">
-            <span className="text-xs text-muted-foreground">Balance</span>
+            <span className="text-xs text-mono-120 dark:text-mono-100">
+              Balance
+            </span>
 
-            <span className="text-lg font-semibold text-foreground">
+            <span className="text-lg font-semibold text-mono-200 dark:text-mono-0">
               {formatUnits(accountState.balance, TOKEN_DECIMALS)}
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
+          <div className="grid grid-cols-2 gap-2 text-xs text-mono-120 dark:text-mono-100">
             <div>
               <span>Total Funded</span>
-              <p className="font-mono text-foreground">
+              <p className="font-mono text-mono-200 dark:text-mono-0">
                 {formatUnits(accountState.totalFunded, TOKEN_DECIMALS)}
               </p>
             </div>
 
             <div>
               <span>Total Spent</span>
-              <p className="font-mono text-foreground">
+              <p className="font-mono text-mono-200 dark:text-mono-0">
                 {formatUnits(accountState.totalSpent, TOKEN_DECIMALS)}
               </p>
             </div>

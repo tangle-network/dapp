@@ -125,7 +125,7 @@ function CloudNetworkSelector({ networks }: { networks: Network[] }) {
           title="Switch to required network"
           aria-label="Switch to required network"
           onClick={switchToCorrectEvmChain}
-          className="h-11 w-11 border-border bg-muted/30 p-0 hover:bg-muted"
+          className="h-11 w-11 border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 p-0 hover:bg-mono-20 dark:hover:bg-mono-190"
         >
           <Alert className="fill-[var(--surface-warning-text)]" />
         </Button>
@@ -137,7 +137,7 @@ function CloudNetworkSelector({ networks }: { networks: Network[] }) {
             type="button"
             variant="outline"
             disabled={isLoading}
-            className="h-11 gap-2 border-border bg-muted/30 px-3 font-sans font-medium not-italic text-foreground hover:bg-muted"
+            className="h-11 gap-2 border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 px-3 font-sans font-medium not-italic text-mono-200 dark:text-mono-0 hover:bg-mono-20 dark:hover:bg-mono-190"
           >
             {isLoading ? (
               <Spinner size="lg" />
@@ -193,7 +193,7 @@ function CloudNetworkSelector({ networks }: { networks: Network[] }) {
               value={customRpcEndpoint}
               onChange={(event) => setCustomRpcEndpoint(event.target.value)}
               placeholder="RPC endpoint URL"
-              className="h-10 w-full rounded-md border border-border bg-background px-3 text-foreground text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
+              className="h-10 w-full rounded-md border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-190 px-3 text-mono-200 dark:text-mono-0 text-sm outline-none transition-colors placeholder:text-mono-120 dark:text-mono-100 focus:border-purple-40"
             />
             <Button
               type="button"

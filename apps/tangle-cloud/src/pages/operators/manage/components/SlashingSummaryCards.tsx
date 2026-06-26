@@ -39,9 +39,9 @@ const SlashingSummaryCards = ({
               Nearest Dispute Deadline Against You
             </p>
           </div>
-          <p className="font-display font-bold text-foreground text-xl">
+          <p className="font-display font-bold text-mono-200 dark:text-mono-0 text-xl">
             Slash #{nearestPendingSlash.id.toString()}{' '}
-            <span className="font-normal text-muted-foreground">
+            <span className="font-normal text-mono-120 dark:text-mono-100">
               expires at
             </span>{' '}
             {formatDateTime(nearestPendingSlash.executeAfter)}
