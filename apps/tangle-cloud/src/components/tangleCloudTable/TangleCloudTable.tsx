@@ -234,17 +234,17 @@ const TableStatus = ({
 }: TableStatusProps) => (
   <div
     className={twMerge(
-      'flex min-h-48 flex-col items-center justify-center rounded-xl border border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 p-8 text-center',
+      'flex min-h-[200px] flex-col items-center justify-center gap-3 rounded-xl border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 p-8 text-center',
       className,
     )}
   >
-    <div className="rounded-full border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-mono-100 dark:text-mono-80">
+    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-mono-20 dark:bg-mono-190 text-xl">
       {icon}
     </div>
-    <h3 className="mt-4 font-display text-lg font-bold text-mono-200 dark:text-mono-0">
+    <h3 className="font-display text-lg font-bold text-mono-200 dark:text-mono-0">
       {title}
     </h3>
-    <p className="mt-2 max-w-2xl text-sm leading-relaxed text-mono-100 dark:text-mono-80">
+    <p className="max-w-md text-sm leading-relaxed text-mono-120 dark:text-mono-80">
       {description}
     </p>
     {buttonText ? (

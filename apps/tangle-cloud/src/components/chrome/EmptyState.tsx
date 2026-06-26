@@ -101,7 +101,7 @@ const EmptyState: FC<Props> = ({
     <div
       role={kind === 'error' ? 'alert' : 'status'}
       className={twMerge(
-        'flex min-h-[280px] flex-col items-center justify-center gap-4 rounded-2xl border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 p-8 text-center shadow-sm',
+        'flex min-h-[280px] flex-col items-center justify-center gap-4 rounded-2xl border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 p-8 text-center shadow-[0_10px_60px_rgba(17,24,39,0.10)] dark:shadow-[0_14px_70px_rgba(0,0,0,0.45)]',
         className,
       )}
     >
