@@ -2,20 +2,7 @@ import {
   type Operator,
   useOperators,
 } from '@tangle-network/tangle-shared-ui/data/graphql/useOperators';
-import {
-  Button,
-  Card,
-  CardContent,
-  EmptyState,
-  Input,
-  Skeleton,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@tangle-network/sandbox-ui/primitives';
+import { Button } from '@tangle-network/ui-components';
 import { Search } from '@tangle-network/icons';
 import {
   type ChangeEvent,
@@ -38,6 +25,8 @@ import {
 } from '../../components/chrome';
 import type { Metric } from '../../components/chrome';
 import DelegateModal from '../../components/DelegateModal';
+import TangleCloudCard from '../../components/TangleCloudCard';
+import { Typography } from '@tangle-network/ui-components/typography/Typography/Typography';
 
 type SortKey = 'stake' | 'delegations' | 'status';
 type SortDir = 'asc' | 'desc';
@@ -122,10 +111,10 @@ const Page: FC = () => {
         title="Operators"
         subtitle="Inspect registered operators, delegation mode, stake, and RPC availability."
         action={
-          <>
+          <div className="flex gap-2">
             {isConnected && (
               <Button
-                variant="ghost"
+                variant="secondary"
                 size="sm"
                 onClick={() => navigate(PagePath.OPERATORS_MANAGE)}
               >
@@ -133,13 +122,13 @@ const Page: FC = () => {
               </Button>
             )}
             <Button
-              variant="sandbox"
+              variant="primary"
               size="sm"
               onClick={() => handleStakeClicked()}
             >
               Delegate
             </Button>
-          </>
+          </div>
         }
       />
 
@@ -172,7 +161,7 @@ const OperatorsPanel = ({
   operators: Operator[];
   isLoading: boolean;
   onStakeClicked: (operatorAddress?: Address) => void;
-  onManageClicked: (operatorAddress: Address) => void;
+  onManageClicked: (_operatorAddress: Address) => void;
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortKey, setSortKey] = useState<SortKey>('stake');
@@ -209,7 +198,6 @@ const OperatorsPanel = ({
         const bCount = b.stakingDelegationCount ?? 0n;
         return aCount === bCount ? 0 : aCount < bCount ? -factor : factor;
       }
-      // status: active first when desc
       const aActive = a.stakingStatus === 'ACTIVE' ? 1 : 0;
       const bActive = b.stakingStatus === 'ACTIVE' ? 1 : 0;
       return (aActive - bActive) * factor;
@@ -229,112 +217,126 @@ const OperatorsPanel = ({
 
   if (isLoading) {
     return (
-      <Card variant="sandbox">
-        <CardContent className="space-y-3 p-5">
-          <Skeleton className="h-11 w-full max-w-md rounded-md" />
-          <Skeleton className="h-16 rounded-md" />
-          <Skeleton className="h-16 rounded-md" />
-          <Skeleton className="h-16 rounded-md" />
-          <Skeleton className="h-16 rounded-md" />
-        </CardContent>
-      </Card>
+      <TangleCloudCard className="space-y-3">
+        <div className="h-11 w-full max-w-md animate-pulse rounded-lg bg-mono-40 dark:bg-mono-170" />
+        {[...Array(4)].map((_, i) => (
+          <div
+            key={i}
+            className="h-16 animate-pulse rounded-lg bg-mono-40 dark:bg-mono-170"
+          />
+        ))}
+      </TangleCloudCard>
     );
   }
 
   if (operators.length === 0) {
     return (
-      <Card variant="sandbox">
-        <CardContent className="p-6">
-          <EmptyState
-            icon={<span className="text-3xl">{'⚙️'}</span>}
-            title="No operators indexed"
-            description="Switch networks or wait for the indexer to sync. Operators are picked up automatically once they register on-chain."
-          />
-        </CardContent>
-      </Card>
+      <TangleCloudCard className="flex flex-col items-center gap-3 py-16 text-center">
+        <span className="text-3xl">{'⚙️'}</span>
+        <Typography variant="h5" className="text-mono-200 dark:text-mono-0">
+          No operators indexed
+        </Typography>
+        <Typography
+          variant="body2"
+          className="max-w-sm text-mono-120 dark:text-mono-100"
+        >
+          Switch networks or wait for the indexer to sync. Operators appear
+          automatically once they register on-chain.
+        </Typography>
+      </TangleCloudCard>
     );
   }
 
   return (
-    <Card variant="sandbox">
-      <CardContent className="space-y-4 p-4 md:p-5">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="relative w-full sm:max-w-md">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 fill-current text-muted-foreground" />
-            <Input
-              value={searchQuery}
-              onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                setSearchQuery(event.currentTarget.value)
-              }
-              placeholder="Search by address, RPC, status, or mode"
-              className="h-11 bg-background pl-10 text-sm"
-            />
-          </div>
-          <span className="text-muted-foreground text-sm">
-            {filteredOperators.length} of {operators.length} operators
-          </span>
-        </div>
-
-        {filteredOperators.length === 0 ? (
-          <EmptyState
-            title="No operators match this search"
-            description="Try an address fragment, RPC host, status (active/inactive), or mode (open/whitelist)."
+    <TangleCloudCard className="space-y-4">
+      {/* Search bar */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative w-full sm:max-w-md">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 fill-current text-mono-120 dark:text-mono-100" />
+          <input
+            value={searchQuery}
+            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+              setSearchQuery(event.currentTarget.value)
+            }
+            placeholder="Search by address, RPC, status, or mode"
+            className="h-11 w-full rounded-xl border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-190 pl-10 pr-3 text-sm text-mono-200 dark:text-mono-0 placeholder:text-mono-120 dark:placeholder:text-mono-100 outline-none focus:border-purple-40"
           />
-        ) : (
-          <div className="overflow-hidden rounded-lg border border-border">
-            <Table>
-              <TableHeader>
-                <TableRow className="border-border bg-[var(--bg-elevated)]/60 hover:bg-[var(--bg-elevated)]/60">
-                  <TableHead className="w-[36%] font-semibold text-muted-foreground text-sm uppercase tracking-wider">
+        </div>
+        <span className="text-sm text-mono-120 dark:text-mono-100">
+          {filteredOperators.length} of {operators.length} operators
+        </span>
+      </div>
+
+      {/* Table */}
+      {filteredOperators.length === 0 ? (
+        <div className="py-12 text-center">
+          <Typography
+            variant="body2"
+            className="text-mono-120 dark:text-mono-100"
+          >
+            No operators match this search.
+          </Typography>
+        </div>
+      ) : (
+        <div className="overflow-hidden rounded-xl border border-mono-60 dark:border-mono-170">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-mono-60 dark:border-mono-170 bg-mono-20 dark:bg-mono-190">
+                <th className="w-[36%] px-4 py-3 text-left">
+                  <span className="text-xs font-bold uppercase tracking-wider text-mono-120 dark:text-mono-100">
                     Operator
-                  </TableHead>
-                  <TableHead className="font-semibold text-muted-foreground text-sm uppercase tracking-wider">
-                    <SortableHead
-                      label="Stake"
-                      isActive={sortKey === 'stake'}
-                      direction={sortDir}
-                      onClick={() => onSort('stake')}
-                    />
-                  </TableHead>
-                  <TableHead className="font-semibold text-muted-foreground text-sm uppercase tracking-wider">
-                    <SortableHead
-                      label="Delegations"
-                      isActive={sortKey === 'delegations'}
-                      direction={sortDir}
-                      onClick={() => onSort('delegations')}
-                    />
-                  </TableHead>
-                  <TableHead className="font-semibold text-muted-foreground text-sm uppercase tracking-wider">
-                    Mode
-                  </TableHead>
-                  <TableHead className="font-semibold text-muted-foreground text-sm uppercase tracking-wider">
-                    <SortableHead
-                      label="Status"
-                      isActive={sortKey === 'status'}
-                      direction={sortDir}
-                      onClick={() => onSort('status')}
-                    />
-                  </TableHead>
-                  <TableHead className="text-right font-semibold text-muted-foreground text-sm uppercase tracking-wider">
-                    Actions
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredOperators.map((operator) => (
-                  <OperatorTableRow
-                    key={operator.id}
-                    operator={operator}
-                    onStakeClicked={onStakeClicked}
-                    onManageClicked={onManageClicked}
+                  </span>
+                </th>
+                <th className="px-4 py-3 text-left">
+                  <SortableHead
+                    label="Stake"
+                    isActive={sortKey === 'stake'}
+                    direction={sortDir}
+                    onClick={() => onSort('stake')}
                   />
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+                </th>
+                <th className="px-4 py-3 text-left">
+                  <SortableHead
+                    label="Delegations"
+                    isActive={sortKey === 'delegations'}
+                    direction={sortDir}
+                    onClick={() => onSort('delegations')}
+                  />
+                </th>
+                <th className="px-4 py-3 text-left">
+                  <span className="text-xs font-bold uppercase tracking-wider text-mono-120 dark:text-mono-100">
+                    Mode
+                  </span>
+                </th>
+                <th className="px-4 py-3 text-left">
+                  <SortableHead
+                    label="Status"
+                    isActive={sortKey === 'status'}
+                    direction={sortDir}
+                    onClick={() => onSort('status')}
+                  />
+                </th>
+                <th className="px-4 py-3 text-right">
+                  <span className="text-xs font-bold uppercase tracking-wider text-mono-120 dark:text-mono-100">
+                    Actions
+                  </span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredOperators.map((operator) => (
+                <OperatorTableRow
+                  key={operator.id}
+                  operator={operator}
+                  onStakeClicked={onStakeClicked}
+                  onManageClicked={onManageClicked}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </TangleCloudCard>
   );
 };
 
@@ -352,13 +354,18 @@ const SortableHead = ({
   <button
     type="button"
     onClick={onClick}
-    className="inline-flex items-center gap-1 font-semibold uppercase tracking-wider transition-colors hover:text-foreground"
+    className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider transition-colors hover:text-mono-200 dark:hover:text-mono-0"
   >
-    {label}
     <span
-      aria-hidden
-      className={isActive ? 'text-foreground' : 'text-muted-foreground/40'}
+      className={
+        isActive
+          ? 'text-mono-200 dark:text-mono-0'
+          : 'text-mono-120 dark:text-mono-100'
+      }
     >
+      {label}
+    </span>
+    <span className={isActive ? 'text-purple-40' : 'text-mono-100/40'}>
       {isActive ? (direction === 'desc' ? '↓' : '↑') : '↕'}
     </span>
   </button>
@@ -371,83 +378,82 @@ const OperatorTableRow = ({
 }: {
   operator: Operator;
   onStakeClicked: (operatorAddress?: Address) => void;
-  onManageClicked: (operatorAddress: Address) => void;
+  onManageClicked: (_operatorAddress: Address) => void;
 }) => {
   const address = operator.id as Address;
   const status = operator.stakingStatus ?? 'INACTIVE';
   const rpcHost = getRpcHost(operator.rpcAddress);
   const delegationMode = operator.delegationMode;
   const delegationModeLabel = getDelegationModeLabel(delegationMode);
+  const accentColor = getOperatorAccent(address);
 
   return (
-    <TableRow className="group border-border transition-colors hover:bg-[var(--bg-hover)]">
-      <TableCell className="py-4">
+    <tr className="group border-b border-mono-60/50 dark:border-mono-170/50 transition-colors last:border-0 hover:bg-mono-20/60 dark:hover:bg-mono-190/60">
+      <td className="px-4 py-3.5">
         <div className="flex min-w-0 items-center gap-3">
-          <span
-            className={`h-8 w-1 shrink-0 rounded-full ${getOperatorAccentClass(
-              address,
-            )}`}
-          />
-          <OperatorIdenticon address={address} />
+          <span className={`h-8 w-1 shrink-0 rounded-full ${accentColor}`} />
+          <OperatorIdenticon address={address} accentColor={accentColor} />
           <div className="min-w-0">
-            <p className="truncate font-display font-bold text-foreground text-sm tracking-tight">
+            <p className="truncate font-display font-bold text-sm text-mono-200 dark:text-mono-0">
               {shortenAddress(address)}
             </p>
-            <p className="mt-0.5 truncate font-mono text-muted-foreground text-sm">
+            <p className="mt-0.5 truncate font-mono text-xs text-mono-120 dark:text-mono-100">
               {rpcHost ?? 'No RPC advertised'}
             </p>
           </div>
         </div>
-      </TableCell>
-      <TableCell className="py-4 font-semibold text-foreground text-sm">
+      </td>
+      <td className="px-4 py-3.5">
         <Money
           value={operator.stakingStake}
           options={{ decimals: 18, symbol: 'TNT', displayDecimals: 2 }}
           align="left"
         />
-      </TableCell>
-      <TableCell className="py-4 font-semibold text-foreground text-sm">
+      </td>
+      <td className="px-4 py-3.5 text-sm font-semibold text-mono-200 dark:text-mono-0">
         {formatCount(operator.stakingDelegationCount)}
-      </TableCell>
-      <TableCell className="py-4">
+      </td>
+      <td className="px-4 py-3.5">
         <StatusPill tone={getDelegationModeTone(delegationMode)}>
           {delegationModeLabel}
         </StatusPill>
-      </TableCell>
-      <TableCell className="py-4">
+      </td>
+      <td className="px-4 py-3.5">
         <StatusPill tone={statusToneFor('operator', status)}>
           {formatStatus(status)}
         </StatusPill>
-      </TableCell>
-      <TableCell className="py-4">
+      </td>
+      <td className="px-4 py-3.5">
         <div className="flex justify-end gap-2">
           <Button
-            variant="sandbox"
+            variant="primary"
             size="sm"
-            className="min-w-20 text-primary-foreground"
             onClick={() => onStakeClicked(address)}
           >
             Stake
           </Button>
           <Button
-            variant="outline"
+            variant="secondary"
             size="sm"
-            className="min-w-20"
             onClick={() => onManageClicked(address)}
           >
             Manage
           </Button>
         </div>
-      </TableCell>
-    </TableRow>
+      </td>
+    </tr>
   );
 };
 
-const OperatorIdenticon = ({ address }: { address: string }) => (
+const OperatorIdenticon = ({
+  address,
+  accentColor,
+}: {
+  address: string;
+  accentColor: string;
+}) => (
   <div
-    className={`grid h-9 w-9 shrink-0 place-items-center rounded-lg border bg-[var(--accent-surface-soft)] font-display font-extrabold text-foreground text-xs shadow-[var(--shadow-card)] ${getOperatorIdenticonClass(
-      address,
-    )}`}
+    className={`grid h-9 w-9 shrink-0 place-items-center rounded-lg border-2 ${accentColor.replace('bg-', 'border-').replace('/60', '/40')} bg-mono-20 dark:bg-mono-190 font-display font-extrabold text-xs text-mono-200 dark:text-mono-0`}
   >
     {address.slice(2, 4).toUpperCase()}
   </div>
@@ -466,28 +472,15 @@ const hashAddress = (address: string) =>
     return (hash * 31 + char.charCodeAt(0)) % 997;
   }, 0);
 
-const OPERATOR_ACCENT_CLASSES = [
-  'bg-[color:var(--border-accent-hover)]',
-  'bg-[color:var(--md3-tertiary,#10b981)]',
-  'bg-[color:var(--md3-warning,#f59e0b)]',
-  'bg-muted-foreground/70',
+const OPERATOR_ACCENTS = [
+  'bg-purple-40/60',
+  'bg-emerald-50/60',
+  'bg-amber-50/60',
+  'bg-blue-40/60',
 ] as const;
 
-const OPERATOR_IDENTICON_CLASSES = [
-  'border-[color:var(--border-accent-hover)]/60',
-  'border-[color:var(--md3-tertiary,#10b981)]/50',
-  'border-[color:var(--md3-warning,#f59e0b)]/50',
-  'border-border',
-] as const;
-
-const getOperatorBucket = (address: string) =>
-  hashAddress(address) % OPERATOR_ACCENT_CLASSES.length;
-
-const getOperatorAccentClass = (address: string) =>
-  OPERATOR_ACCENT_CLASSES[getOperatorBucket(address)];
-
-const getOperatorIdenticonClass = (address: string) =>
-  OPERATOR_IDENTICON_CLASSES[getOperatorBucket(address)];
+const getOperatorAccent = (address: string) =>
+  OPERATOR_ACCENTS[hashAddress(address) % OPERATOR_ACCENTS.length];
 
 const getDelegationModeTone = (mode: number | null) =>
   statusToneFor(
@@ -508,10 +501,7 @@ const formatStatus = (status: string) =>
     .replace(/\b\w/g, (char) => char.toUpperCase());
 
 const getRpcHost = (value: string | null) => {
-  if (!value) {
-    return null;
-  }
-
+  if (!value) return null;
   try {
     return new URL(value).host;
   } catch {
