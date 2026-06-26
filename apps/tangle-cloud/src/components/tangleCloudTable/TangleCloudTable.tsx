@@ -1,17 +1,18 @@
-import { flexRender, type RowData } from '@tanstack/react-table';
-import type React from 'react';
 import {
   Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@tangle-network/sandbox-ui/primitives';
+  TableVariant,
+} from '@tangle-network/ui-components/components/Table';
+import type { RowData } from '@tanstack/react-table';
+import type React from 'react';
 import { twMerge } from 'tailwind-merge';
-import TangleCloudCard from '../TangleCloudCard';
+import { Card, CardVariant } from '@tangle-network/ui-components';
 import { type TableStatusProps, type TangleCloudTableProps } from './type';
 
+/**
+ * Cloud table wrapper using the SAME shared Table component the staking dapp
+ * uses (TableVariant.GLASS_OUTER). Handles loading/error/empty states that
+ * the shared Table doesn't provide, then delegates rendering to it.
+ */
 export const TangleCloudTable = <T extends RowData>({
   title,
   hideTitle = false,
@@ -33,13 +34,11 @@ export const TangleCloudTable = <T extends RowData>({
       ? `${errorMessage.slice(0, 137)}...`
       : errorMessage
     : 'Indexer or network request failed.';
-  const hasTitle = !hideTitle;
 
-  if (isLoading) {
+  if (isLoading && data.length === 0) {
     return (
       <TableShell className={tableConfig?.className}>
-        {hasTitle ? <TableTitle>{title}</TableTitle> : null}
-        <div className={twMerge('space-y-3', hasTitle ? 'mt-4' : null)}>
+        <div className="space-y-3">
           <div className="h-10 animate-pulse rounded-lg bg-mono-40 dark:bg-mono-170" />
           <div className="h-14 animate-pulse rounded-lg bg-mono-40 dark:bg-mono-170" />
           <div className="h-14 animate-pulse rounded-lg bg-mono-40 dark:bg-mono-170" />
@@ -48,29 +47,19 @@ export const TangleCloudTable = <T extends RowData>({
     );
   }
 
-  if (error) {
+  if (error && data.length === 0) {
     return (
       <TableShell className={tableConfig?.className}>
-        {hasTitle ? <TableTitle>{title}</TableTitle> : null}
         <TableStatus
-          {...errorTableProps}
           title={errorTableProps?.title ?? 'Unable to load data'}
           description={
             errorTableProps?.description ??
             `We could not load the latest data. ${diagnostics}`
           }
-          icon={errorTableProps?.icon ?? 'Error'}
           buttonText={
             errorTableProps?.buttonText ?? (hasRetry ? 'Retry' : undefined)
           }
-          buttonProps={
-            errorTableProps?.buttonProps ??
-            (hasRetry ? { onClick: () => void onRetry() } : undefined)
-          }
-          className={twMerge(
-            hasTitle ? 'mt-4' : null,
-            errorTableProps?.className,
-          )}
+          buttonProps={hasRetry ? { onClick: () => void onRetry() } : undefined}
         />
       </TableShell>
     );
@@ -79,128 +68,31 @@ export const TangleCloudTable = <T extends RowData>({
   if (isEmpty) {
     return (
       <TableShell className={tableConfig?.className}>
-        {hasTitle ? <TableTitle>{title}</TableTitle> : null}
         <TableStatus
-          {...emptyTableProps}
-          title={emptyTableProps?.title ?? `No ${title.toLowerCase()} yet`}
+          title={
+            emptyTableProps?.title ?? `No ${title?.toLowerCase() ?? 'data'} yet`
+          }
           description={
             emptyTableProps?.description ?? 'There is no indexed data yet.'
           }
-          icon={emptyTableProps?.icon ?? 'Empty'}
-          className={twMerge(
-            hasTitle ? 'mt-4' : null,
-            emptyTableProps?.className,
-          )}
         />
       </TableShell>
     );
   }
 
-  const pageCount = tableProps.getPageCount();
-  const pageIndex = tableProps.getState().pagination?.pageIndex ?? 0;
-  const rowCount = tableProps.getRowCount();
-
   return (
-    <TableShell className={tableConfig?.className}>
-      {hasTitle ? <TableTitle>{title}</TableTitle> : null}
-
-      <div
-        className={twMerge(
-          hasTitle ? 'mt-4' : null,
-          'overflow-x-auto rounded-xl border border-mono-60 dark:border-mono-170 [scrollbar-gutter:stable]',
-          tableConfig?.viewportClassName,
-        )}
-      >
-        <Table
-          className={twMerge(
-            'min-w-full border-separate border-spacing-y-2 py-1',
-            tableConfig?.tableClassName,
-          )}
-        >
-          <TableHeader>
-            {tableProps.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="border-0">
-                {headerGroup.headers.map((header) => (
-                  <TableHead
-                    key={header.id}
-                    className={twMerge(
-                      'whitespace-nowrap border-0 bg-transparent px-4 py-0 font-normal text-mono-120 dark:text-mono-100',
-                      tableConfig?.thClassName,
-                    )}
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-
-          <TableBody className={tableConfig?.tbodyClassName}>
-            {tableProps.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-expanded={row.getIsExpanded()}
-                className={twMerge(
-                  'border-0 transition-colors hover:bg-mono-20 dark:hover:bg-mono-170',
-                  tableConfig?.trClassName,
-                  row.getIsExpanded() && tableConfig?.expandedRowClassName,
-                )}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell
-                    key={cell.id}
-                    className={twMerge(
-                      'border-0 bg-mono-0 dark:bg-mono-180 px-4 py-0 first:rounded-l-xl last:rounded-r-xl text-mono-160 dark:text-mono-60',
-                      tableConfig?.tdClassName,
-                    )}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-
-      <div
-        className={twMerge(
-          'mt-4 flex flex-col gap-3 border-t border-mono-60 dark:border-mono-170 pt-4 text-sm text-mono-100 dark:text-mono-80 sm:flex-row sm:items-center sm:justify-between',
-          tableConfig?.paginationClassName,
-        )}
-      >
-        <span>
-          Showing {rowCount} {rowCount === 1 ? 'row' : 'rows'}
-        </span>
-
-        {pageCount > 1 ? (
-          <div className="flex items-center gap-2">
-            <button
-              disabled={!tableProps.getCanPreviousPage()}
-              onClick={() => tableProps.previousPage()}
-              className="rounded-lg border border-mono-60 dark:border-mono-170 px-3 py-1.5 text-xs font-bold text-mono-200 dark:text-mono-0 transition-colors hover:border-purple-40/40 disabled:opacity-40"
-            >
-              Previous
-            </button>
-            <span className="px-2 font-mono text-xs text-mono-100 dark:text-mono-80">
-              {pageIndex + 1}/{pageCount}
-            </span>
-            <button
-              disabled={!tableProps.getCanNextPage()}
-              onClick={() => tableProps.nextPage()}
-              className="rounded-lg border border-mono-60 dark:border-mono-170 px-3 py-1.5 text-xs font-bold text-mono-200 dark:text-mono-0 transition-colors hover:border-purple-40/40 disabled:opacity-40"
-            >
-              Next
-            </button>
-          </div>
-        ) : null}
-      </div>
-    </TableShell>
+    <Table
+      tableProps={tableProps}
+      variant={TableVariant.GLASS_OUTER}
+      isPaginated
+      title={hideTitle ? undefined : title}
+      tableClassName={tableConfig?.tableClassName}
+      thClassName={tableConfig?.thClassName}
+      tbodyClassName={tableConfig?.tbodyClassName}
+      trClassName={tableConfig?.trClassName}
+      tdClassName={tableConfig?.tdClassName}
+      paginationClassName={tableConfig?.paginationClassName}
+    />
   );
 };
 
@@ -213,43 +105,37 @@ const TableShell = ({
   className?: string;
   children: React.ReactNode;
 }) => (
-  <TangleCloudCard className={twMerge('w-full', className)}>
+  <Card
+    variant={CardVariant.GLASS}
+    withShadow
+    className={twMerge('w-full', className)}
+  >
     {children}
-  </TangleCloudCard>
-);
-
-const TableTitle = ({ children }: { children: React.ReactNode }) => (
-  <div className="font-display text-lg font-bold text-mono-200 dark:text-mono-0">
-    {children}
-  </div>
+  </Card>
 );
 
 const TableStatus = ({
   title,
   description,
-  icon = 'Empty',
   buttonText,
   buttonProps,
-  className,
-}: TableStatusProps) => (
-  <div
-    className={twMerge(
-      'flex min-h-[200px] flex-col items-center justify-center gap-3 rounded-xl border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 p-8 text-center',
-      className,
-    )}
-  >
-    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-mono-20 dark:bg-mono-190 text-xl">
-      {icon}
+}: Pick<
+  TableStatusProps,
+  'title' | 'description' | 'buttonText' | 'buttonProps'
+>) => (
+  <div className="flex min-h-[200px] flex-col items-center justify-center gap-3 p-8 text-center">
+    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-mono-20 dark:bg-mono-190">
+      <span className="text-xl opacity-50">∅</span>
     </div>
     <h3 className="font-display text-lg font-bold text-mono-200 dark:text-mono-0">
       {title}
     </h3>
-    <p className="max-w-md text-sm leading-relaxed text-mono-120 dark:text-mono-80">
+    <p className="max-w-md text-sm leading-relaxed text-mono-120 dark:text-mono-100">
       {description}
     </p>
     {buttonText ? (
       <button
-        className="mt-5 rounded-lg border border-mono-60 dark:border-mono-170 px-4 py-1.5 text-xs font-bold text-mono-200 dark:text-mono-0 transition-colors hover:border-purple-40/40"
+        className="mt-2 rounded-lg border border-mono-60 dark:border-mono-170 px-4 py-1.5 text-xs font-bold text-mono-200 dark:text-mono-0 transition-colors hover:border-purple-40/40"
         {...buttonProps}
       >
         {buttonText}
