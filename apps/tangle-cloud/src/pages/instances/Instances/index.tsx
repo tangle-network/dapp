@@ -76,12 +76,12 @@ export const InstancesTabs: FC<InstancesTabsProps> = ({
       onValueChange={(tab: string) => setSelectedTab(tab as InstancesTab)}
       className="w-full space-y-5"
     >
-      <TabsList className="flex h-auto w-full flex-wrap justify-start gap-2 rounded-lg border border-border bg-card p-1 shadow-[var(--shadow-card)]">
+      <TabsList className="flex w-full flex-wrap gap-1 rounded-xl border border-mono-60 dark:border-mono-170 bg-mono-20 dark:bg-mono-190 p-1">
         {availableTabs.map((tab) => (
           <TabsTrigger
             key={tab}
             value={tab}
-            className="gap-2 rounded-md px-3 py-2 font-semibold text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-mono-120 dark:text-mono-100 transition-colors data-[state=active]:bg-mono-0 data-[state=active]:text-mono-200 dark:data-[state=active]:bg-mono-180 dark:data-[state=active]:text-mono-0"
           >
             {tabIcons[tab]}
             {tab}
