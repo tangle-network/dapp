@@ -81,7 +81,7 @@ export const AssetRequirementFormItem: FC<
           <div className="space-y-2">
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="space-y-1">
-                <div className="flex items-center justify-between text-xs text-mono-120 dark:text-mono-100">
+                <div className="flex items-center justify-between text-xs text-mono-100 dark:text-mono-80">
                   <span>Minimum</span>
                   <span className="font-mono text-mono-200 dark:text-mono-0">
                     {minExposurePercent || 1}%
@@ -104,7 +104,7 @@ export const AssetRequirementFormItem: FC<
                 />
               </div>
               <div className="space-y-1">
-                <div className="flex items-center justify-between text-xs text-mono-120 dark:text-mono-100">
+                <div className="flex items-center justify-between text-xs text-mono-100 dark:text-mono-80">
                   <span>Maximum</span>
                   <span className="font-mono text-mono-200 dark:text-mono-0">
                     {maxExposurePercent || 100}%

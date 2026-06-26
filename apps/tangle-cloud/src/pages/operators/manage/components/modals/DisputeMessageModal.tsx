@@ -30,7 +30,7 @@ const DisputeMessageModal = ({
           </Text>
           <Text
             variant="body2"
-            className="text-mono-120 dark:text-mono-100 mb-2"
+            className="text-mono-100 dark:text-mono-80 mb-2"
           >
             Submitted dispute reason:
           </Text>

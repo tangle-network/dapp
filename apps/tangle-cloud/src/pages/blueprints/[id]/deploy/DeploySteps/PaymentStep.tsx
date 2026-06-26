@@ -212,7 +212,7 @@ export const PaymentStep: FC<PaymentStepProps> = ({
             <Text variant="h5">Checkout</Text>
             <Text
               variant="body2"
-              className="mt-1 text-mono-120 dark:text-mono-100"
+              className="mt-1 text-mono-100 dark:text-mono-80"
             >
               Choose how this service instance will be funded and verified.
             </Text>
@@ -291,7 +291,7 @@ export const PaymentStep: FC<PaymentStepProps> = ({
                   </Text>
                   <Text
                     variant="body3"
-                    className="mt-1 text-mono-120 dark:text-mono-100"
+                    className="mt-1 text-mono-100 dark:text-mono-80"
                   >
                     Sign once. The derived key is encrypted locally and never
                     sent to a server.
@@ -365,7 +365,7 @@ export const PaymentStep: FC<PaymentStepProps> = ({
                 <div>
                   <Text
                     variant="body3"
-                    className="text-mono-120 dark:text-mono-100"
+                    className="text-mono-100 dark:text-mono-80"
                   >
                     Selected commitment
                   </Text>
@@ -379,7 +379,7 @@ export const PaymentStep: FC<PaymentStepProps> = ({
                     <div className="space-y-2">
                       <Text
                         variant="body3"
-                        className="text-mono-120 dark:text-mono-100"
+                        className="text-mono-100 dark:text-mono-80"
                       >
                         Funding asset
                       </Text>
@@ -407,7 +407,7 @@ export const PaymentStep: FC<PaymentStepProps> = ({
                     <div className="space-y-2">
                       <Text
                         variant="body3"
-                        className="text-mono-120 dark:text-mono-100"
+                        className="text-mono-100 dark:text-mono-80"
                       >
                         Amount
                       </Text>
@@ -559,14 +559,14 @@ const PaymentMethodCard = ({
         )}
       />
     </div>
-    <Text variant="body3" className="mt-2 text-mono-120 dark:text-mono-100">
+    <Text variant="body3" className="mt-2 text-mono-100 dark:text-mono-80">
       {description}
     </Text>
     <div className="mt-4 flex flex-wrap gap-2">
       {facts.map((fact) => (
         <span
           key={fact}
-          className="rounded-full border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-190/50 px-2 py-1 text-mono-120 dark:text-mono-100 text-xs"
+          className="rounded-full border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-190/50 px-2 py-1 text-mono-100 dark:text-mono-80 text-xs"
         >
           {fact}
         </span>
@@ -585,12 +585,12 @@ const TrustCell = ({
   detail: string;
 }) => (
   <div className="rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180/70 p-3">
-    <p className="font-medium text-mono-120 dark:text-mono-100 text-[10px] uppercase tracking-wider">
+    <p className="font-medium text-mono-100 dark:text-mono-80 text-[10px] uppercase tracking-wider">
       {label}
     </p>
     <p className="mt-1 font-display font-bold text-mono-200 dark:text-mono-0 text-sm">
       {value}
     </p>
-    <p className="mt-1 text-mono-120 dark:text-mono-100 text-xs">{detail}</p>
+    <p className="mt-1 text-mono-100 dark:text-mono-80 text-xs">{detail}</p>
   </div>
 );

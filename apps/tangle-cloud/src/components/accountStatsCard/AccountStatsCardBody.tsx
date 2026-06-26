@@ -26,7 +26,7 @@ export const AccountStatsCardBody: FC<AccountStatsCardBodyProps> = ({
                 'pl-5': !isLeftColumn,
               })}
             >
-              <p className="text-mono-120 dark:text-mono-100 text-xs">
+              <p className="text-mono-100 dark:text-mono-80 text-xs">
                 {item.title}
               </p>
               {item.children}
@@ -52,7 +52,7 @@ export const AccountStatsCardBody: FC<AccountStatsCardBodyProps> = ({
               href={link.href}
               target="_blank"
               rel="noreferrer"
-              className="rounded-full border border-mono-60 dark:border-mono-170 px-3 py-1 text-mono-120 dark:text-mono-100 text-xs hover:text-mono-200 dark:text-mono-0"
+              className="rounded-full border border-mono-60 dark:border-mono-170 px-3 py-1 text-mono-100 dark:text-mono-80 text-xs hover:text-mono-200 dark:text-mono-0"
             >
               {link.name ?? 'Link'}
             </a>

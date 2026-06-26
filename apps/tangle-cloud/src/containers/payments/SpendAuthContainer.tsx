@@ -193,19 +193,19 @@ const SpendAuthContainer: FC = () => {
         Authorize Spend
       </h2>
 
-      <p className="text-sm text-mono-120 dark:text-mono-100">
+      <p className="text-sm text-mono-100 dark:text-mono-80">
         Sign an off-chain EIP-712 spend authorization. No ZK proof needed — just
         a cheap signature from your ephemeral spending key.
       </p>
 
       {creditAccounts.length === 0 ? (
-        <div className="p-4 text-sm text-center border rounded-lg border-mono-60 dark:border-mono-170 text-mono-120 dark:text-mono-100">
+        <div className="p-4 text-sm text-center border rounded-lg border-mono-60 dark:border-mono-170 text-mono-100 dark:text-mono-80">
           No credit accounts. Fund one first from the shielded pool.
         </div>
       ) : (
         <>
           <div className="space-y-1">
-            <label className="text-sm font-medium text-mono-120 dark:text-mono-100">
+            <label className="text-sm font-medium text-mono-100 dark:text-mono-80">
               Credit Account
             </label>
 
@@ -231,7 +231,7 @@ const SpendAuthContainer: FC = () => {
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1">
-              <label className="text-sm font-medium text-mono-120 dark:text-mono-100">
+              <label className="text-sm font-medium text-mono-100 dark:text-mono-80">
                 Service ID
               </label>
 
@@ -245,7 +245,7 @@ const SpendAuthContainer: FC = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-sm font-medium text-mono-120 dark:text-mono-100">
+              <label className="text-sm font-medium text-mono-100 dark:text-mono-80">
                 Job Index (0-255)
               </label>
 
@@ -260,7 +260,7 @@ const SpendAuthContainer: FC = () => {
           </div>
 
           <div className="space-y-1">
-            <label className="text-sm font-medium text-mono-120 dark:text-mono-100">
+            <label className="text-sm font-medium text-mono-100 dark:text-mono-80">
               Amount
             </label>
 
@@ -279,7 +279,7 @@ const SpendAuthContainer: FC = () => {
           </div>
 
           <div className="space-y-1">
-            <label className="text-sm font-medium text-mono-120 dark:text-mono-100">
+            <label className="text-sm font-medium text-mono-100 dark:text-mono-80">
               Operator Address
             </label>
 
@@ -297,7 +297,7 @@ const SpendAuthContainer: FC = () => {
           </div>
 
           <div className="space-y-1">
-            <label className="text-sm font-medium text-mono-120 dark:text-mono-100">
+            <label className="text-sm font-medium text-mono-100 dark:text-mono-80">
               Expiry (minutes)
             </label>
 
@@ -315,7 +315,7 @@ const SpendAuthContainer: FC = () => {
 
           {signedAuth && (
             <div className="space-y-2">
-              <span className="text-xs font-medium text-mono-120 dark:text-mono-100">
+              <span className="text-xs font-medium text-mono-100 dark:text-mono-80">
                 Signed Authorization (share with operator)
               </span>
 

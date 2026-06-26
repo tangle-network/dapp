@@ -176,7 +176,7 @@ const ServiceOnChainDetails: FC<Props> = ({
       <span className="inline-flex flex-wrap items-baseline gap-1.5">
         <Money value={amount} options={moneyOptions} align="left" />
         {suffix !== undefined && (
-          <span className="text-mono-120 dark:text-mono-100 text-xs">
+          <span className="text-mono-100 dark:text-mono-80 text-xs">
             {suffix}
           </span>
         )}
@@ -370,7 +370,7 @@ const ServiceOnChainDetails: FC<Props> = ({
 
       {isSubscriptionService && (
         <div className="mt-4 p-4 rounded-lg bg-mono-20/50 dark:bg-mono-190/50">
-          <Text variant="body2" className="text-mono-120 dark:text-mono-100">
+          <Text variant="body2" className="text-mono-100 dark:text-mono-80">
             Subscription rewards are generated when billing is triggered.
           </Text>
 
@@ -430,7 +430,7 @@ const ServiceOnChainDetails: FC<Props> = ({
                   href={`${explorerBaseUrl}/tx/${billingTxHash}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="body2 mt-2 inline-flex underline text-mono-120 dark:text-mono-100 hover:text-mono-200 dark:text-mono-0"
+                  className="body2 mt-2 inline-flex underline text-mono-100 dark:text-mono-80 hover:text-mono-200 dark:text-mono-0"
                 >
                   View transaction
                 </a>
@@ -471,7 +471,7 @@ const BillingCondition: FC<{
       {ok ? 'Yes' : 'No'}
     </StatusPill>
     {detail && (
-      <Text variant="body3" className="mt-1 text-mono-120 dark:text-mono-100">
+      <Text variant="body3" className="mt-1 text-mono-100 dark:text-mono-80">
         {detail}
       </Text>
     )}
@@ -486,7 +486,7 @@ const DetailItem: FC<DetailItemProps> = ({ label, value, highlight }) => (
         : undefined
     }
   >
-    <Text variant="body2" className="text-mono-120 dark:text-mono-100 mb-1">
+    <Text variant="body2" className="text-mono-100 dark:text-mono-80 mb-1">
       {label}
     </Text>
     {typeof value === 'string' ? (

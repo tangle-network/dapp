@@ -32,10 +32,7 @@ export const Deployment: FC<BaseDeployStepProps> = (props) => {
           </summary>
           <div className="space-y-4 px-6 pb-6 pt-0">
             <div className="space-y-1">
-              <Text
-                variant="body2"
-                className="text-mono-120 dark:text-mono-100"
-              >
+              <Text variant="body2" className="text-mono-100 dark:text-mono-80">
                 Most services only need a name, operators, and a caller. Open
                 this section when you need custom request args, security
                 commitments, or a non-default payment setup.
@@ -43,7 +40,7 @@ export const Deployment: FC<BaseDeployStepProps> = (props) => {
               {shouldShowAdvancedSummary && (
                 <Text
                   variant="body3"
-                  className="text-mono-120 dark:text-mono-100"
+                  className="text-mono-100 dark:text-mono-80"
                 >
                   {expectedRequestArgsCount > 0
                     ? `This blueprint expects ${expectedRequestArgsCount} request argument${expectedRequestArgsCount === 1 ? '' : 's'}.`

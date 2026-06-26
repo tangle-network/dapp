@@ -52,7 +52,7 @@ const PageToolbar: FC<Props> = ({
     >
       <div className="relative flex min-w-[180px] flex-[1_1_260px] items-center">
         <Search
-          className="pointer-events-none absolute left-3 h-4 w-4 fill-current text-mono-120 dark:text-mono-100"
+          className="pointer-events-none absolute left-3 h-4 w-4 fill-current text-mono-100 dark:text-mono-80"
           aria-hidden
         />
         <input
@@ -62,7 +62,7 @@ const PageToolbar: FC<Props> = ({
           placeholder={search.placeholder}
           autoFocus={search.autoFocus}
           className={twMerge(
-            'h-9 w-full rounded-md border border-transparent bg-transparent pl-9 pr-3 font-sans text-sm leading-tight text-mono-200 dark:text-mono-0 not-italic placeholder:text-mono-120 dark:text-mono-100/70',
+            'h-9 w-full rounded-md border border-transparent bg-transparent pl-9 pr-3 font-sans text-sm leading-tight text-mono-200 dark:text-mono-0 not-italic placeholder:text-mono-100 dark:text-mono-80/70',
             'hover:border-mono-60 dark:border-mono-170 focus:border-[color:var(--border-accent-hover)]',
             focus.ring,
           )}
@@ -73,7 +73,7 @@ const PageToolbar: FC<Props> = ({
         <span
           className={twMerge(
             typeRole.mono,
-            'shrink-0 text-mono-120 dark:text-mono-100 tabular-nums',
+            'shrink-0 text-mono-100 dark:text-mono-80 tabular-nums',
           )}
           aria-live="polite"
         >

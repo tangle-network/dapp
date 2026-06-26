@@ -238,7 +238,7 @@ const OperatorsPanel = ({
         </Typography>
         <Typography
           variant="body2"
-          className="max-w-sm text-mono-120 dark:text-mono-100"
+          className="max-w-sm text-mono-100 dark:text-mono-80"
         >
           Switch networks or wait for the indexer to sync. Operators appear
           automatically once they register on-chain.
@@ -252,7 +252,7 @@ const OperatorsPanel = ({
       {/* Search bar */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full sm:max-w-md">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 fill-current text-mono-120 dark:text-mono-100" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 fill-current text-mono-100 dark:text-mono-80" />
           <input
             value={searchQuery}
             onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -262,7 +262,7 @@ const OperatorsPanel = ({
             className="h-11 w-full rounded-xl border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-190 pl-10 pr-3 text-sm text-mono-200 dark:text-mono-0 placeholder:text-mono-120 dark:placeholder:text-mono-100 outline-none focus:border-purple-40"
           />
         </div>
-        <span className="text-sm text-mono-120 dark:text-mono-100">
+        <span className="text-sm text-mono-100 dark:text-mono-80">
           {filteredOperators.length} of {operators.length} operators
         </span>
       </div>
@@ -272,7 +272,7 @@ const OperatorsPanel = ({
         <div className="py-12 text-center">
           <Typography
             variant="body2"
-            className="text-mono-120 dark:text-mono-100"
+            className="text-mono-100 dark:text-mono-80"
           >
             No operators match this search.
           </Typography>
@@ -283,7 +283,7 @@ const OperatorsPanel = ({
             <thead>
               <tr className="border-b border-mono-60 dark:border-mono-170 bg-mono-20 dark:bg-mono-190">
                 <th className="w-[36%] px-4 py-3 text-left">
-                  <span className="text-xs font-bold uppercase tracking-wider text-mono-120 dark:text-mono-100">
+                  <span className="text-xs font-bold uppercase tracking-wider text-mono-100 dark:text-mono-80">
                     Operator
                   </span>
                 </th>
@@ -304,7 +304,7 @@ const OperatorsPanel = ({
                   />
                 </th>
                 <th className="px-4 py-3 text-left">
-                  <span className="text-xs font-bold uppercase tracking-wider text-mono-120 dark:text-mono-100">
+                  <span className="text-xs font-bold uppercase tracking-wider text-mono-100 dark:text-mono-80">
                     Mode
                   </span>
                 </th>
@@ -317,7 +317,7 @@ const OperatorsPanel = ({
                   />
                 </th>
                 <th className="px-4 py-3 text-right">
-                  <span className="text-xs font-bold uppercase tracking-wider text-mono-120 dark:text-mono-100">
+                  <span className="text-xs font-bold uppercase tracking-wider text-mono-100 dark:text-mono-80">
                     Actions
                   </span>
                 </th>
@@ -360,7 +360,7 @@ const SortableHead = ({
       className={
         isActive
           ? 'text-mono-200 dark:text-mono-0'
-          : 'text-mono-120 dark:text-mono-100'
+          : 'text-mono-100 dark:text-mono-80'
       }
     >
       {label}
@@ -397,7 +397,7 @@ const OperatorTableRow = ({
             <p className="truncate font-display font-bold text-sm text-mono-200 dark:text-mono-0">
               {shortenAddress(address)}
             </p>
-            <p className="mt-0.5 truncate font-mono text-xs text-mono-120 dark:text-mono-100">
+            <p className="mt-0.5 truncate font-mono text-xs text-mono-100 dark:text-mono-80">
               {rpcHost ?? 'No RPC advertised'}
             </p>
           </div>

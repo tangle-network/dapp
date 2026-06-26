@@ -76,7 +76,7 @@ export const Step1Binary: FC<Step1Props> = ({ state, setState }) => {
   return (
     <div className="space-y-5">
       <div className="space-y-2">
-        <p className="font-semibold text-[10px] text-mono-120 dark:text-mono-100 uppercase tracking-wider">
+        <p className="font-semibold text-[10px] text-mono-100 dark:text-mono-80 uppercase tracking-wider">
           Source
         </p>
         <div className="grid grid-cols-2 gap-2">
@@ -107,7 +107,7 @@ export const Step1Binary: FC<Step1Props> = ({ state, setState }) => {
             }}
           />
           {state.binaryFile && (
-            <p className="text-mono-120 dark:text-mono-100 text-xs">
+            <p className="text-mono-100 dark:text-mono-80 text-xs">
               {state.binaryFile.name} ·{' '}
               {(state.binaryFile.size / 1024).toFixed(1)} KB
             </p>
@@ -131,7 +131,7 @@ export const Step1Binary: FC<Step1Props> = ({ state, setState }) => {
             }
             className="font-mono"
           />
-          <p className="text-mono-120 dark:text-mono-100 text-xs">
+          <p className="text-mono-100 dark:text-mono-80 text-xs">
             Use this only if the binary is already pinned somewhere stable and
             you have the canonical sha256 to hand. The contract will store this
             value verbatim — no re-hashing happens on chain.
@@ -161,7 +161,7 @@ const SourceModeCard: FC<{
     <span className="font-display font-bold text-mono-200 dark:text-mono-0 text-sm">
       {title}
     </span>
-    <span className="text-mono-120 dark:text-mono-100 text-xs">
+    <span className="text-mono-100 dark:text-mono-80 text-xs">
       {description}
     </span>
   </button>

@@ -189,7 +189,7 @@ const OperatorMembershipPanel: FC<Props> = ({
                 Active Operator
               </Text>
             </div>
-            <Text variant="body2" className="text-mono-120 dark:text-mono-100">
+            <Text variant="body2" className="text-mono-100 dark:text-mono-80">
               You are currently an operator of this service.
             </Text>
           </div>
@@ -212,7 +212,7 @@ const OperatorMembershipPanel: FC<Props> = ({
               )}
             </div>
           ) : (
-            <Text variant="body2" className="text-mono-120 dark:text-mono-100">
+            <Text variant="body2" className="text-mono-100 dark:text-mono-80">
               This service has an exit queue. Use the Exit Queue panel below to
               manage your exit.
             </Text>
@@ -220,7 +220,7 @@ const OperatorMembershipPanel: FC<Props> = ({
         </div>
       ) : (
         <div className="space-y-4">
-          <Text variant="body2" className="text-mono-120 dark:text-mono-100">
+          <Text variant="body2" className="text-mono-100 dark:text-mono-80">
             This is a dynamic membership service. As a registered operator, you
             can join to provide services and earn rewards.
           </Text>

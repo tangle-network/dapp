@@ -156,7 +156,7 @@ const JoinServiceModal: FC<Props> = ({ serviceId, onClose }) => {
 
         <ModalBody>
           <div className="space-y-4">
-            <Text variant="body2" className="text-mono-120 dark:text-mono-100">
+            <Text variant="body2" className="text-mono-100 dark:text-mono-80">
               Configure your security commitment for this service. This
               determines how much of your staked assets are at risk for slashing
               if you fail to perform your duties.

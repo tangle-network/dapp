@@ -632,7 +632,7 @@ const CreateBlueprintPage: FC = () => {
           </Text>
           <Text
             variant="body1"
-            className="text-mono-120 dark:text-mono-100 mt-1"
+            className="text-mono-100 dark:text-mono-80 mt-1"
           >
             Publish a blueprint definition, service schema, and hosted UI
             metadata.
@@ -657,7 +657,7 @@ const CreateBlueprintPage: FC = () => {
         </Text>
         <Text
           variant="body1"
-          className="text-mono-120 dark:text-mono-100 mt-2 mb-6 text-center"
+          className="text-mono-100 dark:text-mono-80 mt-2 mb-6 text-center"
         >
           Your blueprint has been created successfully.
         </Text>
@@ -695,7 +695,7 @@ const CreateBlueprintPage: FC = () => {
           <Text variant="h4" fw="bold">
             Create Blueprint
           </Text>
-          <Text variant="body2" className="text-mono-120 dark:text-mono-100">
+          <Text variant="body2" className="text-mono-100 dark:text-mono-80">
             Define a new blueprint for operators to register with.
           </Text>
         </div>
@@ -711,14 +711,14 @@ const CreateBlueprintPage: FC = () => {
                   ? 'bg-purple-40 text-purple-40-foreground'
                   : index < step
                     ? 'bg-success text-purple-40-foreground'
-                    : 'bg-mono-20 dark:bg-mono-190 text-mono-120 dark:text-mono-100'
+                    : 'bg-mono-20 dark:bg-mono-190 text-mono-100 dark:text-mono-80'
               }`}
             >
               {index < step ? '✓' : index + 1}
             </div>
             <Text
               variant="body2"
-              className={`ml-2 ${index === step ? 'text-mono-200 dark:text-mono-0' : 'text-mono-120 dark:text-mono-100'}`}
+              className={`ml-2 ${index === step ? 'text-mono-200 dark:text-mono-0' : 'text-mono-100 dark:text-mono-80'}`}
             >
               {label}
             </Text>
@@ -944,7 +944,7 @@ const BasicInfoStep: FC<BasicInfoStepProps> = ({
         placeholder="ipfs://... or https://..."
         isControlled
       />
-      <Text variant="body3" className="text-mono-120 dark:text-mono-100 mt-1">
+      <Text variant="body3" className="text-mono-100 dark:text-mono-80 mt-1">
         Publish the JSON preview below at this URI so cloud.tangle.tools can
         resolve your hosted blueprint surfaces and shared runtime metadata. New
         SDK blueprints ship the same contract shape in
@@ -976,7 +976,7 @@ const BasicInfoStep: FC<BasicInfoStepProps> = ({
           </Text>
           <Text
             variant="body3"
-            className="text-mono-120 dark:text-mono-100 mt-1"
+            className="text-mono-100 dark:text-mono-80 mt-1"
           >
             This drives the shared hosted blueprint pages, generic service
             surfaces, optional safe link-out handoff for publisher apps, and
@@ -1094,7 +1094,7 @@ const BasicInfoStep: FC<BasicInfoStepProps> = ({
                 className={`rounded-full border px-3 py-1.5 text-sm transition ${
                   isSelected
                     ? 'border-purple-40 bg-purple-40 text-purple-40-foreground'
-                    : 'border-mono-60 dark:border-mono-170 bg-transparent text-mono-120 dark:text-mono-100'
+                    : 'border-mono-60 dark:border-mono-170 bg-transparent text-mono-100 dark:text-mono-80'
                 }`}
                 onClick={() =>
                   updateForm(
@@ -1148,7 +1148,7 @@ const BasicInfoStep: FC<BasicInfoStepProps> = ({
           </Select>
           <Text
             variant="body3"
-            className="text-mono-120 dark:text-mono-100 mt-1"
+            className="text-mono-100 dark:text-mono-80 mt-1"
           >
             Third-party iframe embedding is disabled. Publisher apps can only
             open in a new tab after trust and provenance checks pass.
@@ -1323,7 +1323,7 @@ const JobsStep: FC<JobsStepProps> = ({
     </div>
 
     {form.jobs.length === 0 ? (
-      <div className="text-center py-8 text-mono-120 dark:text-mono-100 border border-dashed border-mono-60 dark:border-mono-170 rounded-lg">
+      <div className="text-center py-8 text-mono-100 dark:text-mono-80 border border-dashed border-mono-60 dark:border-mono-170 rounded-lg">
         <Text variant="body1">
           At least one job is required. Jobs define the operations operators can
           perform.
@@ -1404,10 +1404,7 @@ const JobsStep: FC<JobsStepProps> = ({
                 />
               </div>
 
-              <Text
-                variant="body3"
-                className="text-mono-120 dark:text-mono-100"
-              >
+              <Text variant="body3" className="text-mono-100 dark:text-mono-80">
                 Use an array of fields. Example:{' '}
                 <InlineCode>{`[{"kind":"Uint256","name":"value"}]`}</InlineCode>
               </Text>
@@ -1444,7 +1441,7 @@ const SourcesStep: FC<SourcesStepProps> = ({
     </div>
 
     {form.sources.length === 0 ? (
-      <div className="text-center py-8 text-mono-120 dark:text-mono-100 border border-dashed border-mono-60 dark:border-mono-170 rounded-lg">
+      <div className="text-center py-8 text-mono-100 dark:text-mono-80 border border-dashed border-mono-60 dark:border-mono-170 rounded-lg">
         <Text variant="body1">
           Add at least one execution source (Container, Wasm, or Native).
         </Text>
@@ -1592,7 +1589,7 @@ const SourcesStep: FC<SourcesStepProps> = ({
                 {source.binaries.length === 0 ? (
                   <Text
                     variant="body3"
-                    className="text-mono-120 dark:text-mono-100 text-center py-2"
+                    className="text-mono-100 dark:text-mono-80 text-center py-2"
                   >
                     At least one binary is required per source.
                   </Text>
@@ -1748,7 +1745,7 @@ const ReviewStep: FC<{
 
     <div className="grid grid-cols-2 gap-4">
       <div>
-        <Text variant="body2" className="text-mono-120 dark:text-mono-100">
+        <Text variant="body2" className="text-mono-100 dark:text-mono-80">
           Name
         </Text>
         <Text variant="body1" fw="semibold">
@@ -1757,42 +1754,42 @@ const ReviewStep: FC<{
       </div>
 
       <div>
-        <Text variant="body2" className="text-mono-120 dark:text-mono-100">
+        <Text variant="body2" className="text-mono-100 dark:text-mono-80">
           Author
         </Text>
         <Text variant="body1">{form.author || 'Your address'}</Text>
       </div>
 
       <div>
-        <Text variant="body2" className="text-mono-120 dark:text-mono-100">
+        <Text variant="body2" className="text-mono-100 dark:text-mono-80">
           Category
         </Text>
         <Text variant="body1">{form.category || '-'}</Text>
       </div>
 
       <div>
-        <Text variant="body2" className="text-mono-120 dark:text-mono-100">
+        <Text variant="body2" className="text-mono-100 dark:text-mono-80">
           License
         </Text>
         <Text variant="body1">{form.license || '-'}</Text>
       </div>
 
       <div>
-        <Text variant="body2" className="text-mono-120 dark:text-mono-100">
+        <Text variant="body2" className="text-mono-100 dark:text-mono-80">
           Membership
         </Text>
         <Text variant="body1">{form.membership}</Text>
       </div>
 
       <div>
-        <Text variant="body2" className="text-mono-120 dark:text-mono-100">
+        <Text variant="body2" className="text-mono-100 dark:text-mono-80">
           Pricing
         </Text>
         <Text variant="body1">{form.pricing}</Text>
       </div>
 
       <div>
-        <Text variant="body2" className="text-mono-120 dark:text-mono-100">
+        <Text variant="body2" className="text-mono-100 dark:text-mono-80">
           Operators
         </Text>
         <Text variant="body1">
@@ -1802,7 +1799,7 @@ const ReviewStep: FC<{
       </div>
 
       <div>
-        <Text variant="body2" className="text-mono-120 dark:text-mono-100">
+        <Text variant="body2" className="text-mono-100 dark:text-mono-80">
           Jobs / Sources
         </Text>
         <Text variant="body1">
@@ -1813,7 +1810,7 @@ const ReviewStep: FC<{
 
     {form.description && (
       <div>
-        <Text variant="body2" className="text-mono-120 dark:text-mono-100">
+        <Text variant="body2" className="text-mono-100 dark:text-mono-80">
           Description
         </Text>
         <Text variant="body1">{form.description}</Text>
@@ -1823,12 +1820,12 @@ const ReviewStep: FC<{
     <div className="rounded-xl border border-mono-60 dark:border-mono-170 p-4 space-y-3">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <Text variant="body2" className="text-mono-120 dark:text-mono-100">
+          <Text variant="body2" className="text-mono-100 dark:text-mono-80">
             Metadata payload to publish at {form.metadataUri || 'metadata URI'}
           </Text>
           <Text
             variant="body3"
-            className="text-mono-120 dark:text-mono-100 mt-1"
+            className="text-mono-100 dark:text-mono-80 mt-1"
           >
             This is the exact `blueprintUi` contract the shared host will parse.
             Advanced tier-2 sections can be added directly to the JSON after

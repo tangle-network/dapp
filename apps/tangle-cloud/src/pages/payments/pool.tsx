@@ -25,7 +25,7 @@ const StatTile: FC<{ label: string; value: string | number }> = ({
   value,
 }) => (
   <TangleCloudCard className="flex flex-col gap-1">
-    <span className="text-xs font-semibold uppercase tracking-wide text-mono-120 dark:text-mono-100">
+    <span className="text-xs font-semibold uppercase tracking-wide text-mono-100 dark:text-mono-80">
       {label}
     </span>
     <span className="font-mono text-2xl font-bold text-mono-200 dark:text-mono-0">
@@ -68,13 +68,13 @@ const PaymentsPoolContent: FC = () => {
             <TabsList className="flex w-full gap-1 rounded-xl border border-mono-60 dark:border-mono-170 bg-mono-20 dark:bg-mono-190 p-1">
               <TabsTrigger
                 value={PoolTab.DEPOSIT}
-                className="flex-1 rounded-lg px-4 py-2 text-sm font-semibold text-mono-120 dark:text-mono-100 transition-colors data-[state=active]:bg-mono-0 data-[state=active]:text-mono-200 dark:data-[state=active]:bg-mono-180 dark:data-[state=active]:text-mono-0"
+                className="flex-1 rounded-lg px-4 py-2 text-sm font-semibold text-mono-100 dark:text-mono-80 transition-colors data-[state=active]:bg-mono-0 data-[state=active]:text-mono-200 dark:data-[state=active]:bg-mono-180 dark:data-[state=active]:text-mono-0"
               >
                 Deposit
               </TabsTrigger>
               <TabsTrigger
                 value={PoolTab.WITHDRAW}
-                className="flex-1 rounded-lg px-4 py-2 text-sm font-semibold text-mono-120 dark:text-mono-100 transition-colors data-[state=active]:bg-mono-0 data-[state=active]:text-mono-200 dark:data-[state=active]:bg-mono-180 dark:data-[state=active]:text-mono-0"
+                className="flex-1 rounded-lg px-4 py-2 text-sm font-semibold text-mono-100 dark:text-mono-80 transition-colors data-[state=active]:bg-mono-0 data-[state=active]:text-mono-200 dark:data-[state=active]:bg-mono-180 dark:data-[state=active]:text-mono-0"
               >
                 Withdraw
               </TabsTrigger>

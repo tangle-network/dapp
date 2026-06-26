@@ -64,7 +64,7 @@ const CreditBalanceContainer: FC = () => {
           Credit Accounts
         </Text>
 
-        <Text variant="body2" className="mt-1 text-mono-120 dark:text-mono-100">
+        <Text variant="body2" className="mt-1 text-mono-100 dark:text-mono-80">
           Your anonymous credit accounts. Each shows on-chain balance and usage.
         </Text>
       </div>

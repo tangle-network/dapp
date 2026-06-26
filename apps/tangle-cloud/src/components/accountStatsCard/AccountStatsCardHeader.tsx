@@ -35,14 +35,11 @@ export const AccountStatsCardHeader: FC<AccountStatsCardHeaderProps> = ({
             title
           )}
 
-          <div className="flex items-center gap-0.5 text-mono-120 dark:text-mono-100">
+          <div className="flex items-center gap-0.5 text-mono-100 dark:text-mono-80">
             {isPrimitive(description) &&
             description !== null &&
             description !== undefined ? (
-              <Text
-                variant="body3"
-                className="text-mono-120 dark:text-mono-100"
-              >
+              <Text variant="body3" className="text-mono-100 dark:text-mono-80">
                 {description}
               </Text>
             ) : (

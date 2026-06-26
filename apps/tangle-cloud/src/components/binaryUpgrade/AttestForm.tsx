@@ -179,7 +179,7 @@ export const AttestForm: FC<AttestFormProps> = ({
       </header>
 
       <fieldset className="space-y-2">
-        <legend className="font-semibold text-[10px] text-mono-120 dark:text-mono-100 uppercase tracking-wider">
+        <legend className="font-semibold text-[10px] text-mono-100 dark:text-mono-80 uppercase tracking-wider">
           Report
         </legend>
         <label className="flex items-center gap-2 text-xs">
@@ -216,7 +216,7 @@ export const AttestForm: FC<AttestFormProps> = ({
           }
         />
         {mode === 'pdf' && reportFile && (
-          <p className="break-all font-mono text-mono-120 dark:text-mono-100 text-xs">
+          <p className="break-all font-mono text-mono-100 dark:text-mono-80 text-xs">
             sha256 {reportHash}
           </p>
         )}
@@ -290,7 +290,7 @@ export const AttestForm: FC<AttestFormProps> = ({
         </p>
       )}
       {txHash && (
-        <p className="break-all font-mono text-mono-120 dark:text-mono-100 text-xs">
+        <p className="break-all font-mono text-mono-100 dark:text-mono-80 text-xs">
           Tx hash {txHash}
         </p>
       )}

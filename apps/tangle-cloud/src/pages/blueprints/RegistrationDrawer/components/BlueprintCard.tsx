@@ -46,7 +46,7 @@ const BlueprintCard: FC<BlueprintCardProps> = ({
 
         <Text
           variant="body3"
-          className="text-mono-120 dark:text-mono-100 truncate"
+          className="text-mono-100 dark:text-mono-80 truncate"
         >
           {blueprint.author}
         </Text>

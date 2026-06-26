@@ -267,7 +267,7 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
                       <span className="text-sm font-medium">You approved</span>
                     </div>
                     {pendingCount > 0 && (
-                      <span className="text-xs text-mono-120 dark:text-mono-100">
+                      <span className="text-xs text-mono-100 dark:text-mono-80">
                         Waiting for {pendingCount} more{' '}
                         {pendingCount === 1 ? 'operator' : 'operators'}
                       </span>

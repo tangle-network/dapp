@@ -4,7 +4,7 @@
  * Single source of truth for the type ramp across tangle-cloud. Consumes the
  * `@tangle-network/brand` 0.3 token system: `--font-sans`, `--font-display`,
  * `--font-size-*`, `--line-height-*`, plus the Tailwind-mapped `text-mono-200 dark:text-mono-0`
- * / `text-mono-120 dark:text-mono-100` colors driven by the brand HSL bridge.
+ * / `text-mono-100 dark:text-mono-80` colors driven by the brand HSL bridge.
  *
  * Replaces ~13 per-page `Text` shims that all reimplemented the same ramp with
  * subtly different variant unions ('h4' | 'h5' | 'body1' | 'body2' | 'body3' |
@@ -116,9 +116,9 @@ const classFor = (variant: ReturnType<typeof canonicalize>): string => {
     case 'body':
       return 'text-sm text-mono-200 dark:text-mono-0';
     case 'body-sm':
-      return 'text-xs text-mono-120 dark:text-mono-100';
+      return 'text-xs text-mono-100 dark:text-mono-80';
     case 'caption':
-      return 'text-xs text-mono-120 dark:text-mono-100';
+      return 'text-xs text-mono-100 dark:text-mono-80';
   }
 };
 

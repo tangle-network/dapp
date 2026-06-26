@@ -26,7 +26,7 @@ const shortenString = (value: string, chars = 6) =>
     : `${value.slice(0, chars)}...${value.slice(-chars)}`;
 
 const OperatorAvatar = ({ operator }: { operator: Address }) => (
-  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-mono-20 dark:bg-mono-190 font-mono text-[10px] text-mono-120 dark:text-mono-100">
+  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-mono-20 dark:bg-mono-190 font-mono text-[10px] text-mono-100 dark:text-mono-80">
     {operator.slice(2, 4).toUpperCase()}
   </span>
 );
@@ -71,7 +71,7 @@ export const NestedOperatorCell: FC<NestedOperatorCellProps> = ({
                       </div>
                       <button
                         type="button"
-                        className="mt-1 font-mono text-mono-120 dark:text-mono-100 text-xs underline-offset-4 hover:text-mono-200 dark:text-mono-0 hover:underline"
+                        className="mt-1 font-mono text-mono-100 dark:text-mono-80 text-xs underline-offset-4 hover:text-mono-200 dark:text-mono-0 hover:underline"
                         onClick={() =>
                           void navigator.clipboard?.writeText(operator)
                         }

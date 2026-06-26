@@ -48,7 +48,7 @@ const PaymentTermsSection: FC<Props> = ({
 
       <div className="space-y-1">
         <div className="flex items-center gap-2">
-          <span className="text-sm text-mono-120 dark:text-mono-100">
+          <span className="text-sm text-mono-100 dark:text-mono-80">
             Payment Token:
           </span>
           <span className="text-sm font-semibold">
@@ -57,7 +57,7 @@ const PaymentTermsSection: FC<Props> = ({
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-sm text-mono-120 dark:text-mono-100">
+          <span className="text-sm text-mono-100 dark:text-mono-80">
             Payment Amount:
           </span>
           <span className="text-sm font-semibold">

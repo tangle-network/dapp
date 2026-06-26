@@ -98,13 +98,13 @@ export const Stat: FC<StatProps> = ({
     >
       <div className="flex items-center gap-1.5">
         {icon ? (
-          <span className="shrink-0 text-mono-120 dark:text-mono-100 [&_svg]:h-3 [&_svg]:w-3">
+          <span className="shrink-0 text-mono-100 dark:text-mono-80 [&_svg]:h-3 [&_svg]:w-3">
             {icon}
           </span>
         ) : null}
         <p
           className={twMerge(
-            'truncate font-medium text-mono-120 dark:text-mono-100 uppercase tracking-wider',
+            'truncate font-medium text-mono-100 dark:text-mono-80 uppercase tracking-wider',
             sizing.label,
           )}
         >
@@ -134,14 +134,14 @@ export const Stat: FC<StatProps> = ({
             {value}
           </p>
           {inlineDetail ? (
-            <span className="truncate text-mono-120 dark:text-mono-100 text-xs">
+            <span className="truncate text-mono-100 dark:text-mono-80 text-xs">
               {inlineDetail}
             </span>
           ) : null}
         </div>
       )}
       {sublabel ? (
-        <p className="mt-1 truncate text-mono-120 dark:text-mono-100 text-xs">
+        <p className="mt-1 truncate text-mono-100 dark:text-mono-80 text-xs">
           {sublabel}
         </p>
       ) : null}

@@ -42,7 +42,7 @@ const ConfigureStep: FC<ConfigureStepProps> = ({ blueprints, form }) => {
           Configure Settings
         </Text>
 
-        <Text variant="body2" className="text-mono-120 dark:text-mono-100">
+        <Text variant="body2" className="text-mono-100 dark:text-mono-80">
           Configure your RPC URL and registration parameters for each blueprint.
         </Text>
       </div>
@@ -111,7 +111,7 @@ const ConfigureStep: FC<ConfigureStepProps> = ({ blueprints, form }) => {
                 </Text>
                 <Text
                   variant="body3"
-                  className="text-mono-120 dark:text-mono-100"
+                  className="text-mono-100 dark:text-mono-80"
                 >
                   {blueprint.registrationParams.length} parameter
                   {blueprint.registrationParams.length > 1 ? 's' : ''} required
@@ -158,7 +158,7 @@ const ConfigureStep: FC<ConfigureStepProps> = ({ blueprints, form }) => {
       {blueprints.every((bp) => bp.registrationParams.length === 0) && (
         <Text
           variant="body2"
-          className="text-mono-120 dark:text-mono-100 p-4 bg-mono-20/50 dark:bg-mono-190/50 rounded-lg"
+          className="text-mono-100 dark:text-mono-80 p-4 bg-mono-20/50 dark:bg-mono-190/50 rounded-lg"
         >
           None of the selected blueprints require registration parameters.
         </Text>
