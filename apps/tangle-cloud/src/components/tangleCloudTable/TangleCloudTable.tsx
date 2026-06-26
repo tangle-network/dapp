@@ -111,18 +111,20 @@ export const TangleCloudTable = <T extends RowData>({
           tableConfig?.viewportClassName,
         )}
       >
-        <Table className={twMerge('min-w-full', tableConfig?.tableClassName)}>
+        <Table
+          className={twMerge(
+            'min-w-full border-separate border-spacing-y-2 py-1',
+            tableConfig?.tableClassName,
+          )}
+        >
           <TableHeader>
             {tableProps.getHeaderGroups().map((headerGroup) => (
-              <TableRow
-                key={headerGroup.id}
-                className="border-mono-60 dark:border-mono-170 bg-mono-20 dark:bg-mono-190"
-              >
+              <TableRow key={headerGroup.id} className="border-0">
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
                     className={twMerge(
-                      'h-11 whitespace-nowrap px-4 font-bold text-xs uppercase tracking-wider text-mono-100 dark:text-mono-80',
+                      'whitespace-nowrap border-0 bg-transparent px-4 py-0 font-normal text-mono-120 dark:text-mono-100',
                       tableConfig?.thClassName,
                     )}
                   >
@@ -144,7 +146,7 @@ export const TangleCloudTable = <T extends RowData>({
                 key={row.id}
                 data-expanded={row.getIsExpanded()}
                 className={twMerge(
-                  'border-mono-60/50 dark:border-mono-170/50 transition-colors hover:bg-mono-20/60 dark:hover:bg-mono-190/60',
+                  'border-0 transition-colors hover:bg-mono-20 dark:hover:bg-mono-170',
                   tableConfig?.trClassName,
                   row.getIsExpanded() && tableConfig?.expandedRowClassName,
                 )}
@@ -153,7 +155,7 @@ export const TangleCloudTable = <T extends RowData>({
                   <TableCell
                     key={cell.id}
                     className={twMerge(
-                      'px-4 py-3 align-middle text-sm text-mono-200 dark:text-mono-0',
+                      'border-0 bg-mono-0 dark:bg-mono-180 px-4 py-0 first:rounded-l-xl last:rounded-r-xl text-mono-160 dark:text-mono-60',
                       tableConfig?.tdClassName,
                     )}
                   >
