@@ -126,7 +126,7 @@ const Page = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-5">
       <PageHeader
         density="compact"
         title={isConnected ? 'Instances' : 'Tangle Cloud'}

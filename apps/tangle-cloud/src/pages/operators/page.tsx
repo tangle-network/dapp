@@ -221,14 +221,15 @@ const OperatorsPanel = ({
     setSortDir('desc');
   };
 
-  if (isLoading) {
+  if (isLoading && operators === undefined) {
+    // First load with no cached data — show a brief skeleton, not 20s of nothing
     return (
       <TangleCloudCard className="space-y-3">
         <div className="h-11 w-full max-w-md animate-pulse rounded-lg bg-mono-40 dark:bg-mono-170" />
-        {[...Array(4)].map((_, i) => (
+        {[...Array(3)].map((_, i) => (
           <div
             key={i}
-            className="h-16 animate-pulse rounded-lg bg-mono-40 dark:bg-mono-170"
+            className="h-14 animate-pulse rounded-lg bg-mono-40 dark:bg-mono-170"
           />
         ))}
       </TangleCloudCard>

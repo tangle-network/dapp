@@ -70,18 +70,7 @@ const SIDEBAR_ITEMS: SideBarItemProps[] = [
     href: PagePath.PAYMENTS_POOL,
     isInternal: true,
     Icon: ShieldKeyholeLineIcon,
-    subItems: [
-      {
-        name: 'Shielded Pool',
-        href: PagePath.PAYMENTS_POOL,
-        isInternal: true,
-      },
-      {
-        name: 'Credits',
-        href: PagePath.PAYMENTS_CREDITS,
-        isInternal: true,
-      },
-    ],
+    subItems: [],
   },
 ];
 
