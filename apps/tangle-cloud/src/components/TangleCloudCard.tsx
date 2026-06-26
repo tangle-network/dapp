@@ -1,21 +1,27 @@
 import { Card, CardVariant } from '@tangle-network/ui-components';
-import { FC, PropsWithChildren } from 'react';
+import { type CSSProperties, FC, PropsWithChildren } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 type TangleCloudCardProps = PropsWithChildren<{
   className?: string;
   interactive?: boolean;
+  style?: CSSProperties;
+  id?: string;
 }>;
 
 const TangleCloudCard: FC<TangleCloudCardProps> = ({
   children,
   className,
   interactive = false,
+  style,
+  id,
 }) => {
   return (
     <Card
       variant={CardVariant.GLASS}
       withShadow
+      id={id}
+      style={style}
       className={twMerge(
         'relative z-0 w-full overflow-hidden p-5 md:p-6',
         interactive &&
