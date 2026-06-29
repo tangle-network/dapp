@@ -77,7 +77,7 @@
     "@polkadot/keyring": "^13.4.3",
     "@polkadot/react-identicon": "^3.16.7",
     "@polkadot/types": "^13.2.1",
-    "@polkadot/util": "^13.4.3",
+    "@polkadot/util": "^14.0.3",
     "@polkadot/util-crypto": "^13.4.3",
     "@radix-ui/react-accordion": "^1.2.14",
     "@radix-ui/react-avatar": "^1.2.0",
