@@ -34213,7 +34213,7 @@ __metadata:
     "@polkadot/apps-config": "npm:^0.153.1"
     "@polkadot/extension-dapp": "npm:0.58.7"
     "@polkadot/extension-inject": "npm:0.58.7"
-    "@polkadot/keyring": "npm:^13.4.3"
+    "@polkadot/keyring": "npm:^14.0.3"
     "@polkadot/react-identicon": "npm:^3.16.7"
     "@polkadot/types": "npm:^13.2.1"
     "@polkadot/util": "npm:^13.4.3"
