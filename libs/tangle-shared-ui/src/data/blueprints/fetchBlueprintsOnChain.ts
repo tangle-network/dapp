@@ -1,6 +1,7 @@
 import type { Address, PublicClient } from 'viem';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import TANGLE_ABI from '../../abi/tangle';
+import { readBlueprintCore } from './readBlueprintCore';
 import type { Blueprint } from '../graphql/useBlueprints';
 
 /**
@@ -61,18 +62,7 @@ export const fetchBlueprintsOnChain = async (
     ids.map(async (id) => {
       try {
         const [blueprint, mutableMeta] = await Promise.all([
-          publicClient.readContract({
-            address: tangleAddress,
-            abi: TANGLE_ABI,
-            functionName: 'getBlueprint',
-            args: [id],
-          }) as Promise<{
-            owner: Address;
-            manager: Address;
-            createdAt: bigint;
-            operatorCount: number;
-            active: boolean;
-          }>,
+          readBlueprintCore(publicClient, tangleAddress, id, chainId),
           publicClient.readContract({
             address: tangleAddress,
             abi: TANGLE_ABI,
@@ -104,14 +94,14 @@ export const fetchBlueprintsOnChain = async (
               ? definition.metadataHash
               : null,
           active: blueprint.active,
-          createdAt: BigInt(blueprint.createdAt),
+          createdAt: blueprint.createdAt,
           // `updatedAt` is tracked off-chain by the indexer (event log of
           // updateBlueprint calls). Without that, the best we can do is
           // surface the original createdAt so downstream sorts behave
           // predictably; the value is honest about "not seen any
           // updates since creation".
-          updatedAt: BigInt(blueprint.createdAt),
-          operatorCount: BigInt(blueprint.operatorCount),
+          updatedAt: blueprint.createdAt,
+          operatorCount: blueprint.operatorCount,
         };
         return result;
       } catch {
@@ -150,18 +140,7 @@ export const fetchBlueprintByIdOnChain = async (
 
   try {
     const [blueprint, mutableMeta] = await Promise.all([
-      publicClient.readContract({
-        address: tangleAddress,
-        abi: TANGLE_ABI,
-        functionName: 'getBlueprint',
-        args: [blueprintId],
-      }) as Promise<{
-        owner: Address;
-        manager: Address;
-        createdAt: bigint;
-        operatorCount: number;
-        active: boolean;
-      }>,
+      readBlueprintCore(publicClient, tangleAddress, blueprintId, chainId),
       publicClient.readContract({
         address: tangleAddress,
         abi: TANGLE_ABI,
@@ -193,9 +172,9 @@ export const fetchBlueprintByIdOnChain = async (
           ? definition.metadataHash
           : null,
       active: blueprint.active,
-      createdAt: BigInt(blueprint.createdAt),
-      updatedAt: BigInt(blueprint.createdAt),
-      operatorCount: BigInt(blueprint.operatorCount),
+      createdAt: blueprint.createdAt,
+      updatedAt: blueprint.createdAt,
+      operatorCount: blueprint.operatorCount,
     };
   } catch {
     return null;
