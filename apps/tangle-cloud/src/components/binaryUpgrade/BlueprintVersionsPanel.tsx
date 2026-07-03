@@ -24,8 +24,8 @@ import {
   type Auditor,
 } from '@tangle-network/tangle-shared-ui/blueprintApps/trustScore';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
+import { readBlueprintCore } from '@tangle-network/tangle-shared-ui/data/blueprints/readBlueprintCore';
 import type { Address } from 'viem';
-import TangleABI from '@tangle-network/tangle-shared-ui/abi/tangle';
 
 import TrustScoreGauge from './TrustScoreGauge';
 import AttestationBadge from './AttestationBadge';
@@ -94,12 +94,14 @@ const useBlueprintOwner = (blueprintId: bigint | undefined) => {
       try {
         const contracts = getContractsByChainId(chainId);
         const tangle = contracts.tangle as Address;
-        const result = (await publicClient.readContract({
-          address: tangle,
-          abi: TangleABI,
-          functionName: 'getBlueprint',
-          args: [blueprintId],
-        })) as { owner: Address };
+        // Revision-aware: the 0.18 Blueprint struct dropped operatorCount,
+        // so a fixed-ABI getBlueprint decode throws on the other revision.
+        const result = await readBlueprintCore(
+          publicClient,
+          tangle,
+          blueprintId,
+          chainId,
+        );
         return result.owner;
       } catch {
         return null;

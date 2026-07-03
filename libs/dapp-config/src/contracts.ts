@@ -134,6 +134,35 @@ export const ETHEREUM_HOLESKY_CONTRACTS: ContractAddresses = {
   blueprintAuditors: '0x0000000000000000000000000000000000000000',
 };
 
+/**
+ * Which tnt-core contract revision a chain runs.
+ *
+ * - `legacy`: pre-0.18 deployments — `getBlueprint` returns `operatorCount`
+ *   inside the struct, `getOperatorPreferences` persists `rpcAddress`, and
+ *   MultiAssetDelegation `LockInfo.expiryBlock` is a BLOCK NUMBER.
+ * - `v018`: tnt-core 0.18 greenfield redeploys — `operatorCount` moved to the
+ *   `blueprintOperatorCount(uint64)` view (struct is 6 fields; decoding the
+ *   legacy 7-field tuple throws), display prose is event-sourced from
+ *   `BlueprintDefinitionRecorded`, and the `LockInfo` slot named
+ *   `expiryBlock` carries a unix TIMESTAMP.
+ *
+ * Flip a chain to `v018` in the same change that updates its addresses to
+ * the redeployed contracts — never separately.
+ */
+export type TntCoreRevision = 'legacy' | 'v018';
+
+export const getTntCoreRevisionByChainId = (
+  chainId: number,
+): TntCoreRevision => {
+  switch (chainId) {
+    // Every currently-wired chain runs pre-0.18 contracts (Base Sepolia is
+    // pre-#193; local anvil is post-#193 but pre-#194, which for every
+    // surface the dapp branches on behaves like `legacy`).
+    default:
+      return 'legacy';
+  }
+};
+
 // Get contracts by chain ID
 export const getContractsByChainId = (chainId: number): ContractAddresses => {
   switch (chainId) {

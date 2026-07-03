@@ -52,7 +52,10 @@ import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
 import { chainsConfig } from '@tangle-network/dapp-config/chains';
 import AssetListItem from '../../../components/Lists/AssetListItem';
 import MULTI_ASSET_DELEGATION_ABI from '@tangle-network/tangle-shared-ui/abi/multiAssetDelegation';
-import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
+import {
+  getContractsByChainId,
+  getTntCoreRevisionByChainId,
+} from '@tangle-network/dapp-config/contracts';
 import { useResilientReadContract } from '@tangle-network/tangle-shared-ui/hooks/useResilientReadContract';
 import { useResilientReadContracts } from '@tangle-network/tangle-shared-ui/hooks/useResilientReadContracts';
 
@@ -296,15 +299,24 @@ const StakingWithdrawForm: FC = () => {
         expiryBlock: bigint;
       }>;
 
+      // tnt-core 0.18 redefined the LockInfo slot as a unix TIMESTAMP while
+      // keeping the same position/type, so the decode silently succeeds on
+      // both revisions — the comparison basis is what must branch. Comparing
+      // a timestamp against a block number reads "locked for decades".
+      const nowSeconds = BigInt(Math.floor(Date.now() / 1000));
       const locked = locks.reduce((sum, lock) => {
-        return lock.expiryBlock > currentBlockNumber ? sum + lock.amount : sum;
+        const stillLocked =
+          getTntCoreRevisionByChainId(chainId) === 'v018'
+            ? lock.expiryBlock > nowSeconds
+            : lock.expiryBlock > currentBlockNumber;
+        return stillLocked ? sum + lock.amount : sum;
       }, BigInt(0));
 
       map.set(token.toLowerCase(), locked);
     });
 
     return map;
-  }, [currentBlockNumber, lockResults, tokenAddresses]);
+  }, [chainId, currentBlockNumber, lockResults, tokenAddresses]);
 
   const selectedAssetId = watch('assetId');
   const amount = watch('amount');
