@@ -8,10 +8,15 @@
  */
 
 import { useQuery, useQueries } from '@tanstack/react-query';
-import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
+import {
+  getContractsByChainId,
+  getTntCoreRevisionByChainId,
+} from '@tangle-network/dapp-config/contracts';
 import type { Address, PublicClient } from 'viem';
 import { useChainId, usePublicClient } from 'wagmi';
-import BinaryUpgradeABI from '../../abi/tangleBinaryUpgrade';
+import BinaryUpgradeABI, {
+  BINARY_UPGRADE_V019_READ_ABI,
+} from '../../abi/tangleBinaryUpgrade';
 import BlueprintAuditorsABI from '../../abi/blueprintAuditors';
 import {
   type AttestationKind,
@@ -28,7 +33,11 @@ import {
 export interface BinaryVersion {
   versionId: bigint;
   sha256Hash: `0x${string}`;
-  binaryUri: string;
+  // tnt-core 0.19 dropped `binaryUri` from the on-chain `BinaryVersion` struct;
+  // it is event-sourced from `BinaryVersionPublished`. `null` on v019 chains
+  // until the indexer wiring lands (follow-up); a non-empty string on
+  // legacy/v018 chains that still store it in the returned tuple.
+  binaryUri: string | null;
   attestationHash: `0x${string}`;
   publishedAt: bigint;
   deprecated: boolean;
@@ -54,6 +63,20 @@ export interface ServiceUpgradeState {
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
+/**
+ * Selects the read-path ABI for binary-version / attestation struct getters.
+ *
+ * On v019 the returned tuples dropped their URI slots, so decoding them against
+ * the URI-bearing 0.18 tuple mis-aligns every subsequent field. Legacy/v018
+ * chains keep the full ABI. The WRITE path always uses `BinaryUpgradeABI` (the
+ * URI is still a calldata param on every revision) — this helper only governs
+ * the four struct-returning views.
+ */
+const binaryReadAbiFor = (chainId: number) =>
+  getTntCoreRevisionByChainId(chainId) === 'v019'
+    ? BINARY_UPGRADE_V019_READ_ABI
+    : BinaryUpgradeABI;
+
 const tangleAddressFor = (chainId: number): Address | null => {
   try {
     const contracts = getContractsByChainId(chainId);
@@ -74,26 +97,30 @@ const auditorRegistryAddressFor = (chainId: number): Address | null => {
   }
 };
 
+// `binaryUri` is absent from the 0.19 struct returndata. Accept it as optional
+// so a single normalizer covers both tuple shapes; missing → `null`.
 const normalizeBinaryVersion = (raw: {
   versionId: bigint;
   sha256Hash: `0x${string}`;
-  binaryUri: string;
+  binaryUri?: string;
   attestationHash: `0x${string}`;
   publishedAt: bigint;
   deprecated: boolean;
 }): BinaryVersion => ({
   versionId: BigInt(raw.versionId),
   sha256Hash: raw.sha256Hash,
-  binaryUri: raw.binaryUri,
+  binaryUri: raw.binaryUri ?? null,
   attestationHash: raw.attestationHash,
   publishedAt: BigInt(raw.publishedAt),
   deprecated: raw.deprecated,
 });
 
+// `reportUri` is absent from the 0.19 attestation struct returndata; missing →
+// `null` (event-sourced from `BinaryVersionAttested.reportUri` in a follow-up).
 const normalizeAttestation = (raw: {
   attester: Address;
   reportHash: `0x${string}`;
-  reportUri: string;
+  reportUri?: string;
   kind: number;
   severityFound: number;
   attestedAt: bigint;
@@ -102,7 +129,7 @@ const normalizeAttestation = (raw: {
 }): Attestation => ({
   attester: raw.attester,
   reportHash: raw.reportHash,
-  reportUri: raw.reportUri,
+  reportUri: raw.reportUri ?? null,
   kind: raw.kind as AttestationKind,
   severityFound: raw.severityFound,
   attestedAt: BigInt(raw.attestedAt),
@@ -134,13 +161,14 @@ export const fetchBinaryVersions = async (
   // The version count is bounded by publish events; batching all reads in
   // parallel via Promise.all is the same pattern fetchBlueprintsOnChain
   // uses for the blueprint list itself.
+  const readAbi = binaryReadAbiFor(chainId);
   const ids = Array.from({ length: Number(count) }, (_, i) => BigInt(i));
   const versions = await Promise.all(
     ids.map(async (versionId) => {
       try {
         const raw = (await publicClient.readContract({
           address: tangle,
-          abi: BinaryUpgradeABI,
+          abi: readAbi,
           functionName: 'getBinaryVersion',
           args: [blueprintId, versionId],
         })) as Parameters<typeof normalizeBinaryVersion>[0];
@@ -166,7 +194,7 @@ export const fetchAttestations = async (
   try {
     const raw = (await publicClient.readContract({
       address: tangle,
-      abi: BinaryUpgradeABI,
+      abi: binaryReadAbiFor(chainId),
       functionName: 'listAttestations',
       args: [blueprintId, versionId],
     })) as Array<Parameters<typeof normalizeAttestation>[0]>;
@@ -270,7 +298,7 @@ export const useEffectiveBinaryVersion = (
       try {
         const raw = (await publicClient.readContract({
           address: tangle,
-          abi: BinaryUpgradeABI,
+          abi: binaryReadAbiFor(chainId),
           functionName: 'effectiveBinaryVersion',
           args: [serviceId],
         })) as Parameters<typeof normalizeBinaryVersion>[0];
@@ -332,7 +360,7 @@ export const useServiceUpgradeState = (
           try {
             const raw = (await publicClient.readContract({
               address: tangle,
-              abi: BinaryUpgradeABI,
+              abi: binaryReadAbiFor(chainId),
               functionName: 'effectiveBinaryVersion',
               args: [serviceId],
             })) as Parameters<typeof normalizeBinaryVersion>[0];

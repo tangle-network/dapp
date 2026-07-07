@@ -8,7 +8,11 @@
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAccount, useChainId, usePublicClient } from 'wagmi';
-import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
+import {
+  getContractsByChainId,
+  getTntCoreRevisionByChainId,
+  type TntCoreRevision,
+} from '@tangle-network/dapp-config/contracts';
 import { Address, type Hash, isAddress, zeroAddress } from 'viem';
 import TANGLE_ABI from '../../abi/tangle';
 import {
@@ -451,12 +455,19 @@ export const buildSlashTimeline = (
     nowUnixSeconds,
   );
 
+  // `proposedAt` is 0 when it is unknown — on v019 the on-chain read no longer
+  // returns it (event-sourced; backfilled from the `SlashProposed` block in a
+  // follow-up). Surface `null` rather than a bogus 1970 timestamp so the UI can
+  // omit the date instead of rendering the epoch.
+  const hasProposedAt = slash.proposedAt > BigInt(0);
   const proposed: SlashTimelineStage = {
     key: 'proposed',
     label: 'Proposed',
     state: 'done',
-    timestamp: slash.proposedAt,
-    description: 'Slash proposal created on-chain.',
+    timestamp: hasProposedAt ? slash.proposedAt : null,
+    description: hasProposedAt
+      ? 'Slash proposal created on-chain.'
+      : 'Slash proposal created on-chain (exact time not recorded on this chain).',
   };
 
   const disputeWindow: SlashTimelineStage = {
@@ -750,14 +761,78 @@ const fetchProposableServices = async (
   });
 };
 
+/**
+ * Full (pre-0.19) `getSlashProposal` return tuple. tnt-core 0.19 slimmed the
+ * on-chain `SlashProposal` struct — it dropped `proposedAt`, `disputeReason`,
+ * and `disputedAt` (all now reconstructable off-chain from the `SlashProposed`
+ * / `SlashDisputed` event blocks). The synced `TANGLE_ABI` carries the SHORT
+ * 0.19 tuple, so legacy/v018 chains must decode `getSlashProposal` with this
+ * full-tuple ABI or every field after `evidence` mis-aligns.
+ */
+const GET_SLASH_PROPOSAL_V018_ABI = [
+  {
+    type: 'function',
+    name: 'getSlashProposal',
+    stateMutability: 'view',
+    inputs: [{ name: 'slashId', type: 'uint64', internalType: 'uint64' }],
+    outputs: [
+      {
+        name: '',
+        type: 'tuple',
+        internalType: 'struct SlashingLib.SlashProposal',
+        components: [
+          { name: 'serviceId', type: 'uint64', internalType: 'uint64' },
+          { name: 'operator', type: 'address', internalType: 'address' },
+          { name: 'proposer', type: 'address', internalType: 'address' },
+          { name: 'slashBps', type: 'uint16', internalType: 'uint16' },
+          { name: 'effectiveSlashBps', type: 'uint16', internalType: 'uint16' },
+          { name: 'evidence', type: 'bytes32', internalType: 'bytes32' },
+          { name: 'proposedAt', type: 'uint64', internalType: 'uint64' },
+          { name: 'executeAfter', type: 'uint64', internalType: 'uint64' },
+          {
+            name: 'status',
+            type: 'uint8',
+            internalType: 'enum SlashingLib.SlashStatus',
+          },
+          { name: 'disputeReason', type: 'string', internalType: 'string' },
+          { name: 'disputer', type: 'address', internalType: 'address' },
+          { name: 'disputeBond', type: 'uint256', internalType: 'uint256' },
+          { name: 'disputedAt', type: 'uint64', internalType: 'uint64' },
+          { name: 'disputeDeadline', type: 'uint64', internalType: 'uint64' },
+        ],
+      },
+    ],
+  },
+] as const;
+
+/**
+ * Selects the ABI for the `getSlashProposal` READ by revision. v019 uses the
+ * synced (short-tuple) `TANGLE_ABI`; legacy/v018 use the full-tuple fragment.
+ */
+const slashProposalReadAbiFor = (chainId: number) =>
+  getTntCoreRevisionByChainId(chainId) === 'v019'
+    ? TANGLE_ABI
+    : GET_SLASH_PROPOSAL_V018_ABI;
+
 const normalizeOnChainSlashProposal = (
   slashId: bigint,
   proposal: any,
+  revision: TntCoreRevision,
 ): SlashProposal => {
-  // Tuple layout from getSlashProposal (tnt-core v0.13.0):
+  // Full tuple layout (legacy / v018):
   // 0 serviceId, 1 operator, 2 proposer, 3 slashBps, 4 effectiveSlashBps,
   // 5 evidence, 6 proposedAt, 7 executeAfter, 8 status, 9 disputeReason,
   // 10 disputer, 11 disputeBond, 12 disputedAt, 13 disputeDeadline.
+  //
+  // v019 slimmed tuple (proposedAt / disputeReason / disputedAt dropped):
+  // 0 serviceId, 1 operator, 2 proposer, 3 slashBps, 4 effectiveSlashBps,
+  // 5 evidence, 6 executeAfter, 7 status, 8 disputer, 9 disputeBond,
+  // 10 disputeDeadline. On v019 we read by NAME (viem returns a named tuple),
+  // and the dropped fields are left at their event-sourced defaults:
+  // proposedAt = 0, disputeReason = null, disputedAt = 0. A follow-up backfills
+  // proposedAt / disputedAt from the `SlashProposed` / `SlashDisputed` event
+  // blocks and disputeReason from the indexer.
+  const isV019 = revision === 'v019';
   const serviceId =
     proposal?.serviceId !== undefined
       ? BigInt(proposal.serviceId.toString())
@@ -777,27 +852,46 @@ const normalizeOnChainSlashProposal = (
   const evidence = (proposal?.evidence ??
     proposal?.[5] ??
     '0x') as `0x${string}`;
-  const proposedAt = BigInt(
-    proposal?.proposedAt?.toString() ?? proposal?.[6]?.toString() ?? 0,
-  );
+  // Positional fallbacks below diverge by revision: v019 dropped three fields,
+  // shifting every index after `evidence` down by one (executeAfter 7→6, etc.)
+  // and removing proposedAt(6)/disputeReason(9)/disputedAt(12) entirely. viem
+  // returns a named tuple so name access wins; the indices only backstop a
+  // positional decode. Guard the dropped fields on v019 so a positional read
+  // never grabs a neighbouring slot.
+  const proposedAt = isV019
+    ? BigInt(proposal?.proposedAt?.toString() ?? 0)
+    : BigInt(
+        proposal?.proposedAt?.toString() ?? proposal?.[6]?.toString() ?? 0,
+      );
   const executeAfter = BigInt(
-    proposal?.executeAfter?.toString() ?? proposal?.[7]?.toString() ?? 0,
+    proposal?.executeAfter?.toString() ??
+      (isV019 ? proposal?.[6]?.toString() : proposal?.[7]?.toString()) ??
+      0,
   );
-  const statusValue = proposal?.status ?? proposal?.[8] ?? 0;
-  const disputeReason = (proposal?.disputeReason ?? proposal?.[9] ?? null) as
-    | string
-    | null;
+  const statusValue =
+    proposal?.status ?? (isV019 ? proposal?.[7] : proposal?.[8]) ?? 0;
+  const disputeReason = (
+    isV019
+      ? (proposal?.disputeReason ?? null)
+      : (proposal?.disputeReason ?? proposal?.[9] ?? null)
+  ) as string | null;
   const disputer = (proposal?.disputer ??
-    proposal?.[10] ??
+    (isV019 ? proposal?.[8] : proposal?.[10]) ??
     zeroAddress) as Address;
   const disputeBond = BigInt(
-    proposal?.disputeBond?.toString() ?? proposal?.[11]?.toString() ?? 0,
+    proposal?.disputeBond?.toString() ??
+      (isV019 ? proposal?.[9]?.toString() : proposal?.[11]?.toString()) ??
+      0,
   );
-  const disputedAt = BigInt(
-    proposal?.disputedAt?.toString() ?? proposal?.[12]?.toString() ?? 0,
-  );
+  const disputedAt = isV019
+    ? BigInt(proposal?.disputedAt?.toString() ?? 0)
+    : BigInt(
+        proposal?.disputedAt?.toString() ?? proposal?.[12]?.toString() ?? 0,
+      );
   const disputeDeadline = BigInt(
-    proposal?.disputeDeadline?.toString() ?? proposal?.[13]?.toString() ?? 0,
+    proposal?.disputeDeadline?.toString() ??
+      (isV019 ? proposal?.[10]?.toString() : proposal?.[13]?.toString()) ??
+      0,
   );
 
   return {
@@ -955,12 +1049,16 @@ export const useSlashProposalDetails = (
 
       const proposal = await publicClient.readContract({
         address: contracts.tangle,
-        abi: TANGLE_ABI,
+        abi: slashProposalReadAbiFor(chainId),
         functionName: 'getSlashProposal',
         args: [slashId],
       });
 
-      return normalizeOnChainSlashProposal(slashId, proposal);
+      return normalizeOnChainSlashProposal(
+        slashId,
+        proposal,
+        getTntCoreRevisionByChainId(chainId),
+      );
     },
     enabled: enabled && slashId !== undefined && !!publicClient,
     staleTime: 15_000,
@@ -1209,7 +1307,7 @@ export const useProposeSlashTx = () => {
       const contracts = getContractsByChainId(chainId);
       const proposal = await publicClient.readContract({
         address: contracts.tangle,
-        abi: TANGLE_ABI,
+        abi: slashProposalReadAbiFor(chainId),
         functionName: 'getSlashProposal',
         args: [slashId],
       });
@@ -1217,7 +1315,11 @@ export const useProposeSlashTx = () => {
       return {
         hash: result.hash,
         slashId,
-        proposal: normalizeOnChainSlashProposal(slashId, proposal),
+        proposal: normalizeOnChainSlashProposal(
+          slashId,
+          proposal,
+          getTntCoreRevisionByChainId(chainId),
+        ),
       };
     } catch {
       return {

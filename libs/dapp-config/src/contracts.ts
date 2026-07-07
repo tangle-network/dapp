@@ -145,11 +145,21 @@ export const ETHEREUM_HOLESKY_CONTRACTS: ContractAddresses = {
  *   legacy 7-field tuple throws), display prose is event-sourced from
  *   `BlueprintDefinitionRecorded`, and the `LockInfo` slot named
  *   `expiryBlock` carries a unix TIMESTAMP.
+ * - `v019`: tnt-core 0.19 hash+emit shrink — several on-chain reads lost
+ *   storage fields that are now event-sourced. The `getSlashProposal` tuple
+ *   dropped `proposedAt` / `disputeReason` / `disputedAt`; the binary-version
+ *   read (`getBinaryVersion` / `effectiveBinaryVersion`) dropped `binaryUri`;
+ *   the attestation read (`getAttestation` / `listAttestations`) dropped
+ *   `reportUri`; and the `canScheduleExit(uint64,address)` view was removed
+ *   (derive from `getExitStatus`). Publish/attest WRITE params are unchanged —
+ *   only the stored/returned fields moved off-chain. Decoding a v0.18 tuple
+ *   against v0.19 returndata throws, so these reads must select the shorter
+ *   ABI by revision; do not merge the two entries into one ABI.
  *
- * Flip a chain to `v018` in the same change that updates its addresses to
- * the redeployed contracts — never separately.
+ * Flip a chain to `v018` / `v019` in the same change that updates its
+ * addresses to the redeployed contracts — never separately.
  */
-export type TntCoreRevision = 'legacy' | 'v018';
+export type TntCoreRevision = 'legacy' | 'v018' | 'v019';
 
 export const getTntCoreRevisionByChainId = (
   chainId: number,

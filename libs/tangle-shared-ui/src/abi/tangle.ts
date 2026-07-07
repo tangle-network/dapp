@@ -2,6 +2,37 @@
 const ABI = [
   {
     type: 'function',
+    name: 'acceptBlueprintOwnership',
+    inputs: [
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'ackBlueprintSources',
+    inputs: [
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'sourcesHash',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     name: 'addPermittedCaller',
     inputs: [
       {
@@ -180,6 +211,25 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'blueprintDefinitionHash',
+    inputs: [
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     name: 'blueprintMasterRevision',
     inputs: [
       {
@@ -294,7 +344,7 @@ const ABI = [
   },
   {
     type: 'function',
-    name: 'blueprintSources',
+    name: 'blueprintSourcesHash',
     inputs: [
       {
         name: 'blueprintId',
@@ -304,136 +354,9 @@ const ABI = [
     ],
     outputs: [
       {
-        name: 'sources',
-        type: 'tuple[]',
-        internalType: 'struct Types.BlueprintSource[]',
-        components: [
-          {
-            name: 'kind',
-            type: 'uint8',
-            internalType: 'enum Types.BlueprintSourceKind',
-          },
-          {
-            name: 'container',
-            type: 'tuple',
-            internalType: 'struct Types.ImageRegistrySource',
-            components: [
-              {
-                name: 'registry',
-                type: 'string',
-                internalType: 'string',
-              },
-              {
-                name: 'image',
-                type: 'string',
-                internalType: 'string',
-              },
-              {
-                name: 'tag',
-                type: 'string',
-                internalType: 'string',
-              },
-            ],
-          },
-          {
-            name: 'wasm',
-            type: 'tuple',
-            internalType: 'struct Types.WasmSource',
-            components: [
-              {
-                name: 'runtime',
-                type: 'uint8',
-                internalType: 'enum Types.WasmRuntime',
-              },
-              {
-                name: 'fetcher',
-                type: 'uint8',
-                internalType: 'enum Types.BlueprintFetcherKind',
-              },
-              {
-                name: 'artifactUri',
-                type: 'string',
-                internalType: 'string',
-              },
-              {
-                name: 'entrypoint',
-                type: 'string',
-                internalType: 'string',
-              },
-            ],
-          },
-          {
-            name: 'native',
-            type: 'tuple',
-            internalType: 'struct Types.NativeSource',
-            components: [
-              {
-                name: 'fetcher',
-                type: 'uint8',
-                internalType: 'enum Types.BlueprintFetcherKind',
-              },
-              {
-                name: 'artifactUri',
-                type: 'string',
-                internalType: 'string',
-              },
-              {
-                name: 'entrypoint',
-                type: 'string',
-                internalType: 'string',
-              },
-            ],
-          },
-          {
-            name: 'testing',
-            type: 'tuple',
-            internalType: 'struct Types.TestingSource',
-            components: [
-              {
-                name: 'cargoPackage',
-                type: 'string',
-                internalType: 'string',
-              },
-              {
-                name: 'cargoBin',
-                type: 'string',
-                internalType: 'string',
-              },
-              {
-                name: 'basePath',
-                type: 'string',
-                internalType: 'string',
-              },
-            ],
-          },
-          {
-            name: 'binaries',
-            type: 'tuple[]',
-            internalType: 'struct Types.BlueprintBinary[]',
-            components: [
-              {
-                name: 'arch',
-                type: 'uint8',
-                internalType: 'enum Types.BlueprintArchitecture',
-              },
-              {
-                name: 'os',
-                type: 'uint8',
-                internalType: 'enum Types.BlueprintOperatingSystem',
-              },
-              {
-                name: 'name',
-                type: 'string',
-                internalType: 'string',
-              },
-              {
-                name: 'sha256',
-                type: 'bytes32',
-                internalType: 'bytes32',
-              },
-            ],
-          },
-        ],
+        name: '',
+        type: 'bytes32',
+        internalType: 'bytes32',
       },
     ],
     stateMutability: 'view',
@@ -459,32 +382,16 @@ const ABI = [
   },
   {
     type: 'function',
-    name: 'canScheduleExit',
+    name: 'cancelBlueprintTransfer',
     inputs: [
       {
-        name: 'serviceId',
+        name: 'blueprintId',
         type: 'uint64',
         internalType: 'uint64',
       },
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
     ],
-    outputs: [
-      {
-        name: 'canExit',
-        type: 'bool',
-        internalType: 'bool',
-      },
-      {
-        name: 'reason',
-        type: 'string',
-        internalType: 'string',
-      },
-    ],
-    stateMutability: 'view',
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
@@ -938,6 +845,16 @@ const ABI = [
                 internalType: 'enum Types.ConfidentialityPolicy',
               },
               {
+                name: 'operation',
+                type: 'uint8',
+                internalType: 'enum Types.QuoteOperation',
+              },
+              {
+                name: 'serviceId',
+                type: 'uint64',
+                internalType: 'uint64',
+              },
+              {
                 name: 'securityCommitments',
                 type: 'tuple[]',
                 internalType: 'struct Types.AssetSecurityCommitment[]',
@@ -1190,6 +1107,16 @@ const ABI = [
                 internalType: 'enum Types.ConfidentialityPolicy',
               },
               {
+                name: 'operation',
+                type: 'uint8',
+                internalType: 'enum Types.QuoteOperation',
+              },
+              {
+                name: 'serviceId',
+                type: 'uint64',
+                internalType: 'uint64',
+              },
+              {
                 name: 'securityCommitments',
                 type: 'tuple[]',
                 internalType: 'struct Types.AssetSecurityCommitment[]',
@@ -1361,11 +1288,6 @@ const ABI = [
             name: 'createdAt',
             type: 'uint64',
             internalType: 'uint64',
-          },
-          {
-            name: 'operatorCount',
-            type: 'uint32',
-            internalType: 'uint32',
           },
           {
             name: 'membership',
@@ -2171,21 +2093,6 @@ const ABI = [
             type: 'uint64',
             internalType: 'uint64',
           },
-          {
-            name: 'updatedAt',
-            type: 'uint64',
-            internalType: 'uint64',
-          },
-          {
-            name: 'active',
-            type: 'bool',
-            internalType: 'bool',
-          },
-          {
-            name: 'online',
-            type: 'bool',
-            internalType: 'bool',
-          },
         ],
       },
     ],
@@ -2842,11 +2749,6 @@ const ABI = [
             internalType: 'bytes32',
           },
           {
-            name: 'proposedAt',
-            type: 'uint64',
-            internalType: 'uint64',
-          },
-          {
             name: 'executeAfter',
             type: 'uint64',
             internalType: 'uint64',
@@ -2857,11 +2759,6 @@ const ABI = [
             internalType: 'enum SlashingLib.SlashStatus',
           },
           {
-            name: 'disputeReason',
-            type: 'string',
-            internalType: 'string',
-          },
-          {
             name: 'disputer',
             type: 'address',
             internalType: 'address',
@@ -2870,11 +2767,6 @@ const ABI = [
             name: 'disputeBond',
             type: 'uint256',
             internalType: 'uint256',
-          },
-          {
-            name: 'disputedAt',
-            type: 'uint64',
-            internalType: 'uint64',
           },
           {
             name: 'disputeDeadline',
@@ -3081,6 +2973,19 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'managerHookGasLimit',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     name: 'maxBlueprintsPerOperator',
     inputs: [],
     outputs: [
@@ -3114,6 +3019,30 @@ const ABI = [
         name: '',
         type: 'address',
         internalType: 'address',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'operatorAckedCurrentSources',
+    inputs: [
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'bool',
+        internalType: 'bool',
       },
     ],
     stateMutability: 'view',
@@ -3167,6 +3096,25 @@ const ABI = [
         name: 'keeperBps',
         type: 'uint16',
         internalType: 'uint16',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'pendingBlueprintOwner',
+    inputs: [
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'address',
+        internalType: 'address',
       },
     ],
     stateMutability: 'view',
@@ -3679,6 +3627,151 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'setBlueprintSources',
+    inputs: [
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'sources',
+        type: 'tuple[]',
+        internalType: 'struct Types.BlueprintSource[]',
+        components: [
+          {
+            name: 'kind',
+            type: 'uint8',
+            internalType: 'enum Types.BlueprintSourceKind',
+          },
+          {
+            name: 'container',
+            type: 'tuple',
+            internalType: 'struct Types.ImageRegistrySource',
+            components: [
+              {
+                name: 'registry',
+                type: 'string',
+                internalType: 'string',
+              },
+              {
+                name: 'image',
+                type: 'string',
+                internalType: 'string',
+              },
+              {
+                name: 'tag',
+                type: 'string',
+                internalType: 'string',
+              },
+            ],
+          },
+          {
+            name: 'wasm',
+            type: 'tuple',
+            internalType: 'struct Types.WasmSource',
+            components: [
+              {
+                name: 'runtime',
+                type: 'uint8',
+                internalType: 'enum Types.WasmRuntime',
+              },
+              {
+                name: 'fetcher',
+                type: 'uint8',
+                internalType: 'enum Types.BlueprintFetcherKind',
+              },
+              {
+                name: 'artifactUri',
+                type: 'string',
+                internalType: 'string',
+              },
+              {
+                name: 'entrypoint',
+                type: 'string',
+                internalType: 'string',
+              },
+            ],
+          },
+          {
+            name: 'native',
+            type: 'tuple',
+            internalType: 'struct Types.NativeSource',
+            components: [
+              {
+                name: 'fetcher',
+                type: 'uint8',
+                internalType: 'enum Types.BlueprintFetcherKind',
+              },
+              {
+                name: 'artifactUri',
+                type: 'string',
+                internalType: 'string',
+              },
+              {
+                name: 'entrypoint',
+                type: 'string',
+                internalType: 'string',
+              },
+            ],
+          },
+          {
+            name: 'testing',
+            type: 'tuple',
+            internalType: 'struct Types.TestingSource',
+            components: [
+              {
+                name: 'cargoPackage',
+                type: 'string',
+                internalType: 'string',
+              },
+              {
+                name: 'cargoBin',
+                type: 'string',
+                internalType: 'string',
+              },
+              {
+                name: 'basePath',
+                type: 'string',
+                internalType: 'string',
+              },
+            ],
+          },
+          {
+            name: 'binaries',
+            type: 'tuple[]',
+            internalType: 'struct Types.BlueprintBinary[]',
+            components: [
+              {
+                name: 'arch',
+                type: 'uint8',
+                internalType: 'enum Types.BlueprintArchitecture',
+              },
+              {
+                name: 'os',
+                type: 'uint8',
+                internalType: 'enum Types.BlueprintOperatingSystem',
+              },
+              {
+                name: 'name',
+                type: 'string',
+                internalType: 'string',
+              },
+              {
+                name: 'sha256',
+                type: 'bytes32',
+                internalType: 'bytes32',
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     name: 'setDefaultTntMinExposureBps',
     inputs: [
       {
@@ -3721,6 +3814,19 @@ const ABI = [
         name: 'registry',
         type: 'address',
         internalType: 'address',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'setManagerHookGasLimit',
+    inputs: [
+      {
+        name: 'limit',
+        type: 'uint256',
+        internalType: 'uint256',
       },
     ],
     outputs: [],
@@ -4065,6 +4171,11 @@ const ABI = [
                 type: 'uint8',
                 internalType: 'uint8',
               },
+              {
+                name: 'inputsHash',
+                type: 'bytes32',
+                internalType: 'bytes32',
+              },
             ],
           },
           {
@@ -4399,6 +4510,94 @@ const ABI = [
         type: 'uint256',
         indexed: false,
         internalType: 'uint256',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'BlueprintSourcesAcked',
+    inputs: [
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+      {
+        name: 'sourcesHash',
+        type: 'bytes32',
+        indexed: false,
+        internalType: 'bytes32',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'BlueprintSourcesUpdated',
+    inputs: [
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'sourceCount',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'BlueprintTransferCancelled',
+    inputs: [
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'owner',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'BlueprintTransferProposed',
+    inputs: [
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'from',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+      {
+        name: 'pendingOwner',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
       },
     ],
     anonymous: false,

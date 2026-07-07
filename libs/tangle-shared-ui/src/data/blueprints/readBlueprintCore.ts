@@ -6,11 +6,42 @@ import {
 import TANGLE_ABI from '../../abi/tangle';
 
 /**
- * tnt-core 0.18 `Types.Blueprint` — `operatorCount` was removed from the
- * struct (derived from the operator set via `blueprintOperatorCount`), so the
- * legacy 7-field tuple in the synced ABI throws on 0.18 returndata and this
- * 6-field variant throws on legacy returndata. Selection is keyed by the
- * per-chain `TntCoreRevision`; do not merge the two entries into one ABI.
+ * Pre-0.18 `Types.Blueprint` — the 7-field struct that still carries
+ * `operatorCount`. Kept as a local fragment because the synced `TANGLE_ABI` is
+ * now the 0.19 shape (operatorCount moved to the `blueprintOperatorCount` view
+ * in 0.18), so decoding legacy returndata against the synced ABI throws.
+ */
+const GET_BLUEPRINT_LEGACY_ABI = [
+  {
+    type: 'function',
+    name: 'getBlueprint',
+    stateMutability: 'view',
+    inputs: [{ name: 'blueprintId', type: 'uint64' }],
+    outputs: [
+      {
+        name: '',
+        type: 'tuple',
+        components: [
+          { name: 'owner', type: 'address' },
+          { name: 'manager', type: 'address' },
+          { name: 'createdAt', type: 'uint64' },
+          { name: 'operatorCount', type: 'uint64' },
+          { name: 'membership', type: 'uint8' },
+          { name: 'pricing', type: 'uint8' },
+          { name: 'active', type: 'bool' },
+        ],
+      },
+    ],
+  },
+] as const;
+
+/**
+ * tnt-core 0.18+ `Types.Blueprint` — `operatorCount` was removed from the
+ * struct (derived from the operator set via `blueprintOperatorCount`), so this
+ * 6-field variant throws on legacy returndata and the legacy 7-field variant
+ * throws on 0.18/0.19 returndata. Selection is keyed by the per-chain
+ * `TntCoreRevision`; do not merge the two entries into one ABI. The 0.19 struct
+ * is identical to 0.18 for these fields, so v018 and v019 share this ABI.
  */
 const GET_BLUEPRINT_V018_ABI = [
   {
@@ -58,18 +89,12 @@ export const readBlueprintCore = async (
   const revision: TntCoreRevision = getTntCoreRevisionByChainId(chainId);
 
   if (revision === 'legacy') {
-    const blueprint = (await publicClient.readContract({
+    const blueprint = await publicClient.readContract({
       address: tangleAddress,
-      abi: TANGLE_ABI,
+      abi: GET_BLUEPRINT_LEGACY_ABI,
       functionName: 'getBlueprint',
       args: [blueprintId],
-    })) as {
-      owner: Address;
-      manager: Address;
-      createdAt: bigint;
-      operatorCount: number;
-      active: boolean;
-    };
+    });
     return {
       owner: blueprint.owner,
       manager: blueprint.manager,
