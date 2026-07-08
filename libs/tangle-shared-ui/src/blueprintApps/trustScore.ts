@@ -47,8 +47,9 @@ export interface Attestation {
   attester: `0x${string}`;
   reportHash: `0x${string}`;
   // tnt-core 0.19 dropped `reportUri` from the on-chain `Attestation` struct;
-  // it is event-sourced from `BinaryVersionAttested`. `null` on v019 chains
-  // until the indexer wiring lands (follow-up); a string on legacy/v018 chains.
+  // it is event-sourced from `BinaryVersionAttested`. On v019 `fetchAttestations`
+  // backfills it from the attest log (joined by attester); `null` only when no
+  // matching log is found. A string on legacy/v018 chains.
   reportUri: string | null;
   kind: AttestationKind;
   severityFound: number;

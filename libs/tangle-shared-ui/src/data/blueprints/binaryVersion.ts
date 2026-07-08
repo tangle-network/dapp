@@ -26,9 +26,11 @@ export interface BinaryVersion {
   versionId: bigint;
   sha256Hash: `0x${string}`;
   // tnt-core 0.19 dropped `binaryUri` from the on-chain `BinaryVersion` struct;
-  // it is event-sourced from `BinaryVersionPublished`. `null` on v019 chains
-  // until the indexer wiring lands (follow-up); a non-empty string on
-  // legacy/v018 chains that still store it in the returned tuple.
+  // it is event-sourced from `BinaryVersionPublished`. The normalizer leaves it
+  // `null` (the tuple has no URI slot); on v019 the fetchers in
+  // `useBinaryVersions` backfill it from the publish log. `null` only when no
+  // publish event is found. A non-empty string on legacy/v018 chains that still
+  // store it in the returned tuple.
   binaryUri: string | null;
   attestationHash: `0x${string}`;
   publishedAt: bigint;
@@ -68,7 +70,8 @@ export const normalizeBinaryVersion = (raw: {
 });
 
 // `reportUri` is absent from the 0.19 attestation struct returndata; missing →
-// `null` (event-sourced from `BinaryVersionAttested.reportUri` in a follow-up).
+// `null` here. On v019 `fetchAttestations` backfills it from the
+// `BinaryVersionAttested.reportUri` log, joined by attester address.
 export const normalizeAttestation = (raw: {
   attester: Address;
   reportHash: `0x${string}`;

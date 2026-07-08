@@ -38,6 +38,10 @@ export enum NetworkId {
   ANVIL_LOCAL,
   BASE,
   BASE_SEPOLIA,
+  // Tempo Moderato — live tnt-core 0.19 deployment. Keep this last so the
+  // numeric position (9) matches the app-local `NetworkId.TEMPO_MODERATO` in
+  // `apps/tangle-cloud/src/constants/networks.ts`, which mirrors these values.
+  TEMPO_MODERATO,
 }
 
 export type Network = {
@@ -284,6 +288,35 @@ export const BASE_SEPOLIA_NETWORK = {
   },
 } as const satisfies Network;
 
+// Tempo Moderato hosts the live tnt-core 0.19 deployment. Its native gas asset
+// is a USD stablecoin, but `tokenSymbol` here is the staking-token label, so it
+// stays `tTNT` like the other testnets.
+export const TEMPO_MODERATO_NETWORK = {
+  id: NetworkId.TEMPO_MODERATO,
+  evmChainId: EVMChainId.TempoModerato,
+  name: 'Tempo Moderato',
+  tokenSymbol: 'tTNT',
+  nodeType: 'standalone',
+  wsRpcEndpoints: [],
+  httpRpcEndpoints: ['https://rpc.moderato.tempo.xyz'],
+  polkadotJsDashboardUrl: '',
+  evmExplorerUrl: 'https://explore.tempo.xyz',
+  createExplorerAccountUrl: (
+    address: EvmAddress | SubstrateAddress | SolanaAddress,
+  ) => {
+    if (isEvmAddress(address)) {
+      return `https://explore.tempo.xyz/address/${address}`;
+    }
+    return null;
+  },
+  createExplorerTxUrl: (isEvm: boolean, txHash: Hex) => {
+    if (isEvm) {
+      return `https://explore.tempo.xyz/tx/${txHash}`;
+    }
+    return null;
+  },
+} as const satisfies Network;
+
 export const NETWORK_MAP: Partial<Record<NetworkId, Network>> = {
   [NetworkId.TANGLE_MAINNET]: TANGLE_MAINNET_NETWORK,
   [NetworkId.TANGLE_TESTNET]: TANGLE_TESTNET_NATIVE_NETWORK,
@@ -295,4 +328,5 @@ export const NETWORK_MAP: Partial<Record<NetworkId, Network>> = {
   [NetworkId.ANVIL_LOCAL]: ANVIL_LOCAL_NETWORK,
   [NetworkId.BASE]: BASE_NETWORK,
   [NetworkId.BASE_SEPOLIA]: BASE_SEPOLIA_NETWORK,
+  [NetworkId.TEMPO_MODERATO]: TEMPO_MODERATO_NETWORK,
 };
