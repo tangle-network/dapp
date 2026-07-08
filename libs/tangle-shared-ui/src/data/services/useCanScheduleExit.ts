@@ -5,8 +5,32 @@
 import { useQuery } from '@tanstack/react-query';
 import { Address, zeroAddress } from 'viem';
 import { useChainId, usePublicClient } from 'wagmi';
-import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
-import TangleABI from '../../abi/tangle';
+import {
+  getContractsByChainId,
+  getTntCoreRevisionByChainId,
+} from '@tangle-network/dapp-config/contracts';
+
+/**
+ * tnt-core 0.19 removed the `canScheduleExit(uint64,address)` view, so it is no
+ * longer present in the synced `TANGLE_ABI`. Keep a local fragment for the
+ * legacy/v018 direct-read path; v019 chains degrade to a safe default below and
+ * never reach this ABI.
+ */
+const CAN_SCHEDULE_EXIT_ABI = [
+  {
+    type: 'function',
+    name: 'canScheduleExit',
+    stateMutability: 'view',
+    inputs: [
+      { name: 'serviceId', type: 'uint64', internalType: 'uint64' },
+      { name: 'operator', type: 'address', internalType: 'address' },
+    ],
+    outputs: [
+      { name: 'canExit', type: 'bool', internalType: 'bool' },
+      { name: 'reason', type: 'string', internalType: 'string' },
+    ],
+  },
+] as const;
 
 export interface CanScheduleExitResult {
   canExit: boolean;
@@ -52,9 +76,25 @@ export const useCanScheduleExit = (
         return { canExit: false, reason: 'Contract not available' };
       }
 
+      // tnt-core 0.19 removed the `canScheduleExit(uint64,address)` view. There
+      // is no drop-in on-chain read on v019 (the eligibility is derivable from
+      // `getExitStatus` + the service's exit config, wired in a follow-up), so
+      // degrade to a safe, non-blocking default: the chain still enforces exit
+      // rules at `scheduleExit` time. Fail closed on `canExit` so we never
+      // render an exit action as available when we cannot verify it.
+      // TODO(v019): wire getExitStatus-based eligibility so operators on v019
+      // chains can schedule exits through the UI (this fail-closed default
+      // blocks the Schedule-Exit button on every v019 chain until then).
+      if (getTntCoreRevisionByChainId(chainId) === 'v019') {
+        return {
+          canExit: false,
+          reason: 'Exit eligibility unavailable on this chain',
+        };
+      }
+
       const result = await publicClient.readContract({
         address: tangleAddress,
-        abi: TangleABI,
+        abi: CAN_SCHEDULE_EXIT_ABI,
         functionName: 'canScheduleExit',
         args: [serviceId, operator],
       });

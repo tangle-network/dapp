@@ -468,3 +468,111 @@ const ABI = [
 ] as const;
 
 export default ABI;
+
+// ────────────────────────────────────────────────────────────────────────────
+// tnt-core 0.19 read variants
+//
+// The 0.19 "hash+emit shrink" dropped the URI blobs from on-chain STORAGE:
+// `Types.BinaryVersion` no longer carries `binaryUri`, and `Types.Attestation`
+// no longer carries `reportUri`. The URIs are now event-sourced
+// (`BinaryVersionPublished.binaryUri`, `BinaryVersionAttested.reportUri`).
+//
+// The WRITE surface is unchanged — `publishBinaryVersion` / `attestBinaryVersion`
+// still take the URI as a calldata param — so only these read tuples differ.
+// Decoding a 0.18 (URI-bearing) tuple against 0.19 returndata mis-aligns every
+// field after the dropped slot, so v019 chains MUST decode with these shorter
+// tuples. Selection is keyed by the per-chain `TntCoreRevision`.
+// ────────────────────────────────────────────────────────────────────────────
+
+const BINARY_VERSION_V019_COMPONENTS = [
+  { name: 'versionId', type: 'uint64', internalType: 'uint64' },
+  { name: 'sha256Hash', type: 'bytes32', internalType: 'bytes32' },
+  { name: 'attestationHash', type: 'bytes32', internalType: 'bytes32' },
+  { name: 'publishedAt', type: 'uint64', internalType: 'uint64' },
+  { name: 'deprecated', type: 'bool', internalType: 'bool' },
+] as const;
+
+const ATTESTATION_V019_COMPONENTS = [
+  { name: 'attester', type: 'address', internalType: 'address' },
+  { name: 'reportHash', type: 'bytes32', internalType: 'bytes32' },
+  { name: 'kind', type: 'uint8', internalType: 'enum Types.AttestationKind' },
+  { name: 'severityFound', type: 'uint8', internalType: 'uint8' },
+  { name: 'attestedAt', type: 'uint64', internalType: 'uint64' },
+  { name: 'expiresAt', type: 'uint64', internalType: 'uint64' },
+  { name: 'revoked', type: 'bool', internalType: 'bool' },
+] as const;
+
+/**
+ * 0.19 read-only fragment for binary versions + attestations. Same function
+ * names and inputs as the 0.18 ABI above; only the returned struct tuples are
+ * shorter (the URI slots are gone). Use this ABI for the on-chain READ path on
+ * v019 chains; keep the default `ABI` for the WRITE path and for 0.18 reads.
+ */
+export const BINARY_UPGRADE_V019_READ_ABI = [
+  {
+    type: 'function',
+    name: 'getBinaryVersion',
+    inputs: [
+      { name: 'blueprintId', type: 'uint64', internalType: 'uint64' },
+      { name: 'versionId', type: 'uint64', internalType: 'uint64' },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'tuple',
+        internalType: 'struct Types.BinaryVersion',
+        components: BINARY_VERSION_V019_COMPONENTS,
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'effectiveBinaryVersion',
+    inputs: [{ name: 'serviceId', type: 'uint64', internalType: 'uint64' }],
+    outputs: [
+      {
+        name: '',
+        type: 'tuple',
+        internalType: 'struct Types.BinaryVersion',
+        components: BINARY_VERSION_V019_COMPONENTS,
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'getAttestation',
+    inputs: [
+      { name: 'blueprintId', type: 'uint64', internalType: 'uint64' },
+      { name: 'versionId', type: 'uint64', internalType: 'uint64' },
+      { name: 'attestationId', type: 'uint64', internalType: 'uint64' },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'tuple',
+        internalType: 'struct Types.Attestation',
+        components: ATTESTATION_V019_COMPONENTS,
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'listAttestations',
+    inputs: [
+      { name: 'blueprintId', type: 'uint64', internalType: 'uint64' },
+      { name: 'versionId', type: 'uint64', internalType: 'uint64' },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'tuple[]',
+        internalType: 'struct Types.Attestation[]',
+        components: ATTESTATION_V019_COMPONENTS,
+      },
+    ],
+    stateMutability: 'view',
+  },
+] as const;

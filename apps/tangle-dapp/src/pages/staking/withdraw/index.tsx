@@ -296,19 +296,27 @@ const StakingWithdrawForm: FC = () => {
       const locks = res.result as Array<{
         amount: bigint;
         multiplier: number;
-        expiryBlock: bigint;
+        // The synced (0.18+) `MULTI_ASSET_DELEGATION_ABI` names field 2
+        // `expiryTimestamp`; viem keys decoded tuples by ABI component name,
+        // so this is the property to read on every revision. The *value* is a
+        // block number on `legacy` and a unix timestamp on `v018`/`v019` — the
+        // same positional slot (uint64), so the decode succeeds either way and
+        // only the comparison basis must branch below.
+        expiryTimestamp: bigint;
       }>;
 
-      // tnt-core 0.18 redefined the LockInfo slot as a unix TIMESTAMP while
-      // keeping the same position/type, so the decode silently succeeds on
-      // both revisions — the comparison basis is what must branch. Comparing
-      // a timestamp against a block number reads "locked for decades".
+      // Pre-0.18 (`legacy`) stored `expiryBlock` as a BLOCK NUMBER, so it must
+      // be compared against the current block height. tnt-core 0.18 redefined
+      // the slot as a unix TIMESTAMP (seconds) and 0.19 kept that semantics, so
+      // `v018`/`v019` compare against wall-clock seconds. Comparing a timestamp
+      // against a block number (or vice versa) reads "locked for decades".
+      const isLegacyBlockBasis =
+        getTntCoreRevisionByChainId(chainId) === 'legacy';
       const nowSeconds = BigInt(Math.floor(Date.now() / 1000));
       const locked = locks.reduce((sum, lock) => {
-        const stillLocked =
-          getTntCoreRevisionByChainId(chainId) === 'v018'
-            ? lock.expiryBlock > nowSeconds
-            : lock.expiryBlock > currentBlockNumber;
+        const stillLocked = isLegacyBlockBasis
+          ? lock.expiryTimestamp > currentBlockNumber
+          : lock.expiryTimestamp > nowSeconds;
         return stillLocked ? sum + lock.amount : sum;
       }, BigInt(0));
 

@@ -458,7 +458,12 @@ const VersionRow: FC<VersionRowProps> = ({
                       {version.binaryUri}
                     </a>
                   ) : (
-                    '—'
+                    // tnt-core 0.19 no longer returns `binaryUri` on-chain — it
+                    // is event-sourced. Until the indexer wiring lands it reads
+                    // `null` here; show a graceful notice instead of a bare dash.
+                    <span className="text-mono-100 dark:text-mono-80">
+                      (unavailable on this chain)
+                    </span>
                   )
                 }
               />

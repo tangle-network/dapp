@@ -8,7 +8,10 @@
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAccount, useChainId, usePublicClient } from 'wagmi';
-import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
+import {
+  getContractsByChainId,
+  getTntCoreRevisionByChainId,
+} from '@tangle-network/dapp-config/contracts';
 import { Address, type Hash, isAddress, zeroAddress } from 'viem';
 import TANGLE_ABI from '../../abi/tangle';
 import {
@@ -21,16 +24,30 @@ import useNetworkStore from '../../context/useNetworkStore';
 import useContractWrite, {
   TxStatus as ContractTxStatus,
 } from '../../hooks/useContractWrite';
+import {
+  type SlashProposal,
+  type SlashProposerRole,
+  type SlashStatus,
+  parseSlashStatus,
+  normalizeOnChainSlashProposal,
+  slashProposalReadAbiFor,
+} from './slashProposal';
+
+// Re-exported from the pure `slashProposal` module (wagmi-free, unit-tested) so
+// existing importers of these symbols from `useSlashing` keep working.
+export {
+  parseSlashStatus,
+  normalizeOnChainSlashProposal,
+  slashProposalReadAbiFor,
+} from './slashProposal';
+export type {
+  SlashProposal,
+  SlashProposerRole,
+  SlashStatus,
+} from './slashProposal';
 
 export const SLASH_EXECUTION_BUFFER_SECONDS = 15;
 
-// Slash status enum
-export type SlashStatus = 'Pending' | 'Executed' | 'Cancelled' | 'Disputed';
-export type SlashProposerRole =
-  | 'ServiceOwner'
-  | 'BlueprintOwner'
-  | 'SlashingOrigin'
-  | 'Unknown';
 export type SlashFilterScope = 'operator' | 'proposer' | 'actor' | 'all';
 
 export type SlashTimelineState = 'done' | 'current' | 'upcoming' | 'skipped';
@@ -47,33 +64,6 @@ export interface SlashTimelineStage {
   state: SlashTimelineState;
   timestamp: bigint | null;
   description: string;
-}
-
-// Slash proposal structure
-export interface SlashProposal {
-  id: bigint;
-  serviceId: bigint;
-  operator: Address;
-  proposer: Address;
-  proposerRole: SlashProposerRole;
-  slashBps: bigint;
-  effectiveSlashBps: bigint;
-  // Backwards-compatible aliases. Slash values are in bps, not token units.
-  amount: bigint;
-  effectiveAmount: bigint;
-  evidence: `0x${string}`;
-  proposedAt: bigint;
-  executeAfter: bigint;
-  status: SlashStatus;
-  disputeReason: string | null;
-  cancelReason: string | null;
-  // Dispute lifecycle (populated when status === 'Disputed' or after a dispute
-  // was filed and later resolved). Sourced from getSlashProposal on-chain or
-  // backfilled from the indexer when available.
-  disputer: Address;
-  disputeBond: bigint;
-  disputedAt: bigint;
-  disputeDeadline: bigint;
 }
 
 export interface ProposableService {
@@ -162,33 +152,6 @@ interface SlashFilterOptions {
   address?: Address;
   statuses?: SlashStatus[];
 }
-
-// Parse slash status from string or numeric enum value.
-const parseSlashStatus = (status: string | number | bigint): SlashStatus => {
-  if (typeof status === 'number' || typeof status === 'bigint') {
-    switch (Number(status)) {
-      case 1:
-        return 'Disputed';
-      case 2:
-        return 'Executed';
-      case 3:
-        return 'Cancelled';
-      default:
-        return 'Pending';
-    }
-  }
-
-  switch (status.toLowerCase()) {
-    case 'executed':
-      return 'Executed';
-    case 'cancelled':
-      return 'Cancelled';
-    case 'disputed':
-      return 'Disputed';
-    default:
-      return 'Pending';
-  }
-};
 
 const getSlashProposerRole = (
   proposer: string,
@@ -451,12 +414,19 @@ export const buildSlashTimeline = (
     nowUnixSeconds,
   );
 
+  // `proposedAt` is 0 when it is unknown — on v019 the on-chain read no longer
+  // returns it (event-sourced; backfilled from the `SlashProposed` block in a
+  // follow-up). Surface `null` rather than a bogus 1970 timestamp so the UI can
+  // omit the date instead of rendering the epoch.
+  const hasProposedAt = slash.proposedAt > BigInt(0);
   const proposed: SlashTimelineStage = {
     key: 'proposed',
     label: 'Proposed',
     state: 'done',
-    timestamp: slash.proposedAt,
-    description: 'Slash proposal created on-chain.',
+    timestamp: hasProposedAt ? slash.proposedAt : null,
+    description: hasProposedAt
+      ? 'Slash proposal created on-chain.'
+      : 'Slash proposal created on-chain (exact time not recorded on this chain).',
   };
 
   const disputeWindow: SlashTimelineStage = {
@@ -750,79 +720,6 @@ const fetchProposableServices = async (
   });
 };
 
-const normalizeOnChainSlashProposal = (
-  slashId: bigint,
-  proposal: any,
-): SlashProposal => {
-  // Tuple layout from getSlashProposal (tnt-core v0.13.0):
-  // 0 serviceId, 1 operator, 2 proposer, 3 slashBps, 4 effectiveSlashBps,
-  // 5 evidence, 6 proposedAt, 7 executeAfter, 8 status, 9 disputeReason,
-  // 10 disputer, 11 disputeBond, 12 disputedAt, 13 disputeDeadline.
-  const serviceId =
-    proposal?.serviceId !== undefined
-      ? BigInt(proposal.serviceId.toString())
-      : BigInt(proposal?.[0]?.toString() ?? 0);
-  const operator = (proposal?.operator ??
-    proposal?.[1] ??
-    zeroAddress) as Address;
-  const proposer = (proposal?.proposer ??
-    proposal?.[2] ??
-    zeroAddress) as Address;
-  const slashBps = BigInt(
-    proposal?.slashBps?.toString() ?? proposal?.[3]?.toString() ?? 0,
-  );
-  const effectiveSlashBps = BigInt(
-    proposal?.effectiveSlashBps?.toString() ?? proposal?.[4]?.toString() ?? 0,
-  );
-  const evidence = (proposal?.evidence ??
-    proposal?.[5] ??
-    '0x') as `0x${string}`;
-  const proposedAt = BigInt(
-    proposal?.proposedAt?.toString() ?? proposal?.[6]?.toString() ?? 0,
-  );
-  const executeAfter = BigInt(
-    proposal?.executeAfter?.toString() ?? proposal?.[7]?.toString() ?? 0,
-  );
-  const statusValue = proposal?.status ?? proposal?.[8] ?? 0;
-  const disputeReason = (proposal?.disputeReason ?? proposal?.[9] ?? null) as
-    | string
-    | null;
-  const disputer = (proposal?.disputer ??
-    proposal?.[10] ??
-    zeroAddress) as Address;
-  const disputeBond = BigInt(
-    proposal?.disputeBond?.toString() ?? proposal?.[11]?.toString() ?? 0,
-  );
-  const disputedAt = BigInt(
-    proposal?.disputedAt?.toString() ?? proposal?.[12]?.toString() ?? 0,
-  );
-  const disputeDeadline = BigInt(
-    proposal?.disputeDeadline?.toString() ?? proposal?.[13]?.toString() ?? 0,
-  );
-
-  return {
-    id: slashId,
-    serviceId,
-    operator,
-    proposer,
-    proposerRole: 'Unknown',
-    slashBps,
-    effectiveSlashBps,
-    amount: slashBps,
-    effectiveAmount: effectiveSlashBps,
-    evidence,
-    proposedAt,
-    executeAfter,
-    status: parseSlashStatus(statusValue),
-    disputeReason,
-    cancelReason: null,
-    disputer,
-    disputeBond,
-    disputedAt,
-    disputeDeadline,
-  };
-};
-
 /**
  * Hook to fetch slash proposals with lifecycle-aware filtering.
  */
@@ -955,12 +852,16 @@ export const useSlashProposalDetails = (
 
       const proposal = await publicClient.readContract({
         address: contracts.tangle,
-        abi: TANGLE_ABI,
+        abi: slashProposalReadAbiFor(chainId),
         functionName: 'getSlashProposal',
         args: [slashId],
       });
 
-      return normalizeOnChainSlashProposal(slashId, proposal);
+      return normalizeOnChainSlashProposal(
+        slashId,
+        proposal,
+        getTntCoreRevisionByChainId(chainId),
+      );
     },
     enabled: enabled && slashId !== undefined && !!publicClient,
     staleTime: 15_000,
@@ -1209,7 +1110,7 @@ export const useProposeSlashTx = () => {
       const contracts = getContractsByChainId(chainId);
       const proposal = await publicClient.readContract({
         address: contracts.tangle,
-        abi: TANGLE_ABI,
+        abi: slashProposalReadAbiFor(chainId),
         functionName: 'getSlashProposal',
         args: [slashId],
       });
@@ -1217,7 +1118,11 @@ export const useProposeSlashTx = () => {
       return {
         hash: result.hash,
         slashId,
-        proposal: normalizeOnChainSlashProposal(slashId, proposal),
+        proposal: normalizeOnChainSlashProposal(
+          slashId,
+          proposal,
+          getTntCoreRevisionByChainId(chainId),
+        ),
       };
     } catch {
       return {

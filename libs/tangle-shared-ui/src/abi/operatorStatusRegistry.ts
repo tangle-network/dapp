@@ -1532,6 +1532,11 @@ const ABI = [
   },
   {
     type: 'error',
+    name: 'AlreadyRegistered',
+    inputs: [],
+  },
+  {
+    type: 'error',
     name: 'ECDSAInvalidSignature',
     inputs: [],
   },
@@ -1591,6 +1596,81 @@ const ABI = [
   },
   {
     type: 'error',
+    name: 'InternalOnly',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'IntervalTooShort',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'InvalidBounds',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'InvalidMaxMissed',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'InvalidSignature',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'NameTooLong',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'NotAuthorized',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'NotRegistered',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'NotRegisteredOperator',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'NotServiceOwner',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'NotSlashingOracle',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'OnlyTangleCore',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'OperatorNotEligibleForRemoval',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'OperatorSlashed',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'OperatorUnknown',
+    inputs: [],
+  },
+  {
+    type: 'error',
     name: 'OwnableInvalidOwner',
     inputs: [
       {
@@ -1610,6 +1690,16 @@ const ABI = [
         internalType: 'address',
       },
     ],
+  },
+  {
+    type: 'error',
+    name: 'TooManyDefinitions',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'ZeroAddress',
+    inputs: [],
   },
 ] as const;
 

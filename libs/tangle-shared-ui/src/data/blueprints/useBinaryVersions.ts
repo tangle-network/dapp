@@ -14,25 +14,29 @@ import { useChainId, usePublicClient } from 'wagmi';
 import BinaryUpgradeABI from '../../abi/tangleBinaryUpgrade';
 import BlueprintAuditorsABI from '../../abi/blueprintAuditors';
 import {
-  type AttestationKind,
   type Attestation,
   type Auditor,
   type AttestationWithAuditor,
   type AuditorTier,
 } from '../../blueprintApps/trustScore';
+// `BinaryVersion` + the revision-aware ABI selection and tuple normalizers live
+// in the pure (wagmi-free, unit-tested) `binaryVersion` module.
+import {
+  type BinaryVersion,
+  binaryReadAbiFor,
+  normalizeAttestation,
+  normalizeBinaryVersion,
+} from './binaryVersion';
 
-// ─────────────────────────────────────────────────────────────────────────
-// Types — mirror the on-chain ABI exactly so callers don't have to translate
-// ─────────────────────────────────────────────────────────────────────────
-
-export interface BinaryVersion {
-  versionId: bigint;
-  sha256Hash: `0x${string}`;
-  binaryUri: string;
-  attestationHash: `0x${string}`;
-  publishedAt: bigint;
-  deprecated: boolean;
-}
+// Re-exported from the pure `binaryVersion` module so existing importers keep
+// resolving `BinaryVersion` / the normalizers / `binaryReadAbiFor` from
+// `useBinaryVersions`.
+export {
+  binaryReadAbiFor,
+  normalizeAttestation,
+  normalizeBinaryVersion,
+} from './binaryVersion';
+export type { BinaryVersion } from './binaryVersion';
 
 export enum UpgradePolicy {
   APPROVE = 0,
@@ -74,42 +78,6 @@ const auditorRegistryAddressFor = (chainId: number): Address | null => {
   }
 };
 
-const normalizeBinaryVersion = (raw: {
-  versionId: bigint;
-  sha256Hash: `0x${string}`;
-  binaryUri: string;
-  attestationHash: `0x${string}`;
-  publishedAt: bigint;
-  deprecated: boolean;
-}): BinaryVersion => ({
-  versionId: BigInt(raw.versionId),
-  sha256Hash: raw.sha256Hash,
-  binaryUri: raw.binaryUri,
-  attestationHash: raw.attestationHash,
-  publishedAt: BigInt(raw.publishedAt),
-  deprecated: raw.deprecated,
-});
-
-const normalizeAttestation = (raw: {
-  attester: Address;
-  reportHash: `0x${string}`;
-  reportUri: string;
-  kind: number;
-  severityFound: number;
-  attestedAt: bigint;
-  expiresAt: bigint;
-  revoked: boolean;
-}): Attestation => ({
-  attester: raw.attester,
-  reportHash: raw.reportHash,
-  reportUri: raw.reportUri,
-  kind: raw.kind as AttestationKind,
-  severityFound: raw.severityFound,
-  attestedAt: BigInt(raw.attestedAt),
-  expiresAt: BigInt(raw.expiresAt),
-  revoked: raw.revoked,
-});
-
 // ─────────────────────────────────────────────────────────────────────────
 // fetchers — exposed so the publisher dialog can refresh after publish
 // ─────────────────────────────────────────────────────────────────────────
@@ -134,13 +102,14 @@ export const fetchBinaryVersions = async (
   // The version count is bounded by publish events; batching all reads in
   // parallel via Promise.all is the same pattern fetchBlueprintsOnChain
   // uses for the blueprint list itself.
+  const readAbi = binaryReadAbiFor(chainId);
   const ids = Array.from({ length: Number(count) }, (_, i) => BigInt(i));
   const versions = await Promise.all(
     ids.map(async (versionId) => {
       try {
         const raw = (await publicClient.readContract({
           address: tangle,
-          abi: BinaryUpgradeABI,
+          abi: readAbi,
           functionName: 'getBinaryVersion',
           args: [blueprintId, versionId],
         })) as Parameters<typeof normalizeBinaryVersion>[0];
@@ -166,7 +135,7 @@ export const fetchAttestations = async (
   try {
     const raw = (await publicClient.readContract({
       address: tangle,
-      abi: BinaryUpgradeABI,
+      abi: binaryReadAbiFor(chainId),
       functionName: 'listAttestations',
       args: [blueprintId, versionId],
     })) as Array<Parameters<typeof normalizeAttestation>[0]>;
@@ -270,7 +239,7 @@ export const useEffectiveBinaryVersion = (
       try {
         const raw = (await publicClient.readContract({
           address: tangle,
-          abi: BinaryUpgradeABI,
+          abi: binaryReadAbiFor(chainId),
           functionName: 'effectiveBinaryVersion',
           args: [serviceId],
         })) as Parameters<typeof normalizeBinaryVersion>[0];
@@ -332,7 +301,7 @@ export const useServiceUpgradeState = (
           try {
             const raw = (await publicClient.readContract({
               address: tangle,
-              abi: BinaryUpgradeABI,
+              abi: binaryReadAbiFor(chainId),
               functionName: 'effectiveBinaryVersion',
               args: [serviceId],
             })) as Parameters<typeof normalizeBinaryVersion>[0];

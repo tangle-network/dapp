@@ -313,6 +313,13 @@ const OperatorExitPanel: FC<Props> = ({
         </div>
 
         {/* Current Exit Status */}
+        {/*
+          TODO(v019): `useCanScheduleExit` fail-closes to `{ canExit: false }` on
+          v019 chains (tnt-core 0.19 removed the `canScheduleExit` view), so the
+          Schedule-Exit button below is always gated off there and only the
+          yellow "unavailable" reason renders. Wire getExitStatus-based
+          eligibility in the hook to re-enable scheduling on v019.
+        */}
         {exitStatus === ExitStatus.None && (
           <div className="space-y-3">
             {canScheduleExit?.canExit ? (
