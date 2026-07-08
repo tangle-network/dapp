@@ -82,6 +82,9 @@ export const useCanScheduleExit = (
       // degrade to a safe, non-blocking default: the chain still enforces exit
       // rules at `scheduleExit` time. Fail closed on `canExit` so we never
       // render an exit action as available when we cannot verify it.
+      // TODO(v019): wire getExitStatus-based eligibility so operators on v019
+      // chains can schedule exits through the UI (this fail-closed default
+      // blocks the Schedule-Exit button on every v019 chain until then).
       if (getTntCoreRevisionByChainId(chainId) === 'v019') {
         return {
           canExit: false,

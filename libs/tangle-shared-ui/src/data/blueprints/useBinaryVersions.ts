@@ -8,40 +8,35 @@
  */
 
 import { useQuery, useQueries } from '@tanstack/react-query';
-import {
-  getContractsByChainId,
-  getTntCoreRevisionByChainId,
-} from '@tangle-network/dapp-config/contracts';
+import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import type { Address, PublicClient } from 'viem';
 import { useChainId, usePublicClient } from 'wagmi';
-import BinaryUpgradeABI, {
-  BINARY_UPGRADE_V019_READ_ABI,
-} from '../../abi/tangleBinaryUpgrade';
+import BinaryUpgradeABI from '../../abi/tangleBinaryUpgrade';
 import BlueprintAuditorsABI from '../../abi/blueprintAuditors';
 import {
-  type AttestationKind,
   type Attestation,
   type Auditor,
   type AttestationWithAuditor,
   type AuditorTier,
 } from '../../blueprintApps/trustScore';
+// `BinaryVersion` + the revision-aware ABI selection and tuple normalizers live
+// in the pure (wagmi-free, unit-tested) `binaryVersion` module.
+import {
+  type BinaryVersion,
+  binaryReadAbiFor,
+  normalizeAttestation,
+  normalizeBinaryVersion,
+} from './binaryVersion';
 
-// ─────────────────────────────────────────────────────────────────────────
-// Types — mirror the on-chain ABI exactly so callers don't have to translate
-// ─────────────────────────────────────────────────────────────────────────
-
-export interface BinaryVersion {
-  versionId: bigint;
-  sha256Hash: `0x${string}`;
-  // tnt-core 0.19 dropped `binaryUri` from the on-chain `BinaryVersion` struct;
-  // it is event-sourced from `BinaryVersionPublished`. `null` on v019 chains
-  // until the indexer wiring lands (follow-up); a non-empty string on
-  // legacy/v018 chains that still store it in the returned tuple.
-  binaryUri: string | null;
-  attestationHash: `0x${string}`;
-  publishedAt: bigint;
-  deprecated: boolean;
-}
+// Re-exported from the pure `binaryVersion` module so existing importers keep
+// resolving `BinaryVersion` / the normalizers / `binaryReadAbiFor` from
+// `useBinaryVersions`.
+export {
+  binaryReadAbiFor,
+  normalizeAttestation,
+  normalizeBinaryVersion,
+} from './binaryVersion';
+export type { BinaryVersion } from './binaryVersion';
 
 export enum UpgradePolicy {
   APPROVE = 0,
@@ -63,20 +58,6 @@ export interface ServiceUpgradeState {
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
-/**
- * Selects the read-path ABI for binary-version / attestation struct getters.
- *
- * On v019 the returned tuples dropped their URI slots, so decoding them against
- * the URI-bearing 0.18 tuple mis-aligns every subsequent field. Legacy/v018
- * chains keep the full ABI. The WRITE path always uses `BinaryUpgradeABI` (the
- * URI is still a calldata param on every revision) — this helper only governs
- * the four struct-returning views.
- */
-const binaryReadAbiFor = (chainId: number) =>
-  getTntCoreRevisionByChainId(chainId) === 'v019'
-    ? BINARY_UPGRADE_V019_READ_ABI
-    : BinaryUpgradeABI;
-
 const tangleAddressFor = (chainId: number): Address | null => {
   try {
     const contracts = getContractsByChainId(chainId);
@@ -96,46 +77,6 @@ const auditorRegistryAddressFor = (chainId: number): Address | null => {
     return null;
   }
 };
-
-// `binaryUri` is absent from the 0.19 struct returndata. Accept it as optional
-// so a single normalizer covers both tuple shapes; missing → `null`.
-const normalizeBinaryVersion = (raw: {
-  versionId: bigint;
-  sha256Hash: `0x${string}`;
-  binaryUri?: string;
-  attestationHash: `0x${string}`;
-  publishedAt: bigint;
-  deprecated: boolean;
-}): BinaryVersion => ({
-  versionId: BigInt(raw.versionId),
-  sha256Hash: raw.sha256Hash,
-  binaryUri: raw.binaryUri ?? null,
-  attestationHash: raw.attestationHash,
-  publishedAt: BigInt(raw.publishedAt),
-  deprecated: raw.deprecated,
-});
-
-// `reportUri` is absent from the 0.19 attestation struct returndata; missing →
-// `null` (event-sourced from `BinaryVersionAttested.reportUri` in a follow-up).
-const normalizeAttestation = (raw: {
-  attester: Address;
-  reportHash: `0x${string}`;
-  reportUri?: string;
-  kind: number;
-  severityFound: number;
-  attestedAt: bigint;
-  expiresAt: bigint;
-  revoked: boolean;
-}): Attestation => ({
-  attester: raw.attester,
-  reportHash: raw.reportHash,
-  reportUri: raw.reportUri ?? null,
-  kind: raw.kind as AttestationKind,
-  severityFound: raw.severityFound,
-  attestedAt: BigInt(raw.attestedAt),
-  expiresAt: BigInt(raw.expiresAt),
-  revoked: raw.revoked,
-});
 
 // ─────────────────────────────────────────────────────────────────────────
 // fetchers — exposed so the publisher dialog can refresh after publish

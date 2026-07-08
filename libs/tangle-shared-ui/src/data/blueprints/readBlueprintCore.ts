@@ -25,7 +25,11 @@ const GET_BLUEPRINT_LEGACY_ABI = [
           { name: 'owner', type: 'address' },
           { name: 'manager', type: 'address' },
           { name: 'createdAt', type: 'uint64' },
-          { name: 'operatorCount', type: 'uint64' },
+          // Legacy `Types.Blueprint.operatorCount` is `uint32`, not `uint64`
+          // (confirmed against the pre-#194 Solidity struct). A wrong width
+          // here mis-aligns the packed tail (membership/pricing/active), so it
+          // must match the on-chain type exactly.
+          { name: 'operatorCount', type: 'uint32' },
           { name: 'membership', type: 'uint8' },
           { name: 'pricing', type: 'uint8' },
           { name: 'active', type: 'bool' },

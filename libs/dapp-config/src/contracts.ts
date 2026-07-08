@@ -143,18 +143,26 @@ export const ETHEREUM_HOLESKY_CONTRACTS: ContractAddresses = {
  * - `v018`: tnt-core 0.18 greenfield redeploys — `operatorCount` moved to the
  *   `blueprintOperatorCount(uint64)` view (struct is 6 fields; decoding the
  *   legacy 7-field tuple throws), display prose is event-sourced from
- *   `BlueprintDefinitionRecorded`, and the `LockInfo` slot named
- *   `expiryBlock` carries a unix TIMESTAMP.
+ *   `BlueprintDefinitionRecorded`, and the third `LockInfo` slot — renamed
+ *   `expiryBlock` -> `expiryTimestamp` in the synced ABI, same uint64 position
+ *   — carries a unix TIMESTAMP (seconds) rather than a block number.
  * - `v019`: tnt-core 0.19 hash+emit shrink — several on-chain reads lost
  *   storage fields that are now event-sourced. The `getSlashProposal` tuple
  *   dropped `proposedAt` / `disputeReason` / `disputedAt`; the binary-version
  *   read (`getBinaryVersion` / `effectiveBinaryVersion`) dropped `binaryUri`;
  *   the attestation read (`getAttestation` / `listAttestations`) dropped
- *   `reportUri`; and the `canScheduleExit(uint64,address)` view was removed
- *   (derive from `getExitStatus`). Publish/attest WRITE params are unchanged —
- *   only the stored/returned fields moved off-chain. Decoding a v0.18 tuple
- *   against v0.19 returndata throws, so these reads must select the shorter
- *   ABI by revision; do not merge the two entries into one ABI.
+ *   `reportUri`; `blueprintSources(uint64)->BlueprintSource[]` was replaced by
+ *   `blueprintSourcesHash(uint64)->bytes32` (the source list is event-sourced;
+ *   the `setBlueprintSources` WRITE still takes the full `BlueprintSource[]`);
+ *   and the `canScheduleExit(uint64,address)` view was removed (derive from
+ *   `getExitStatus`). `LockInfo.expiryTimestamp` keeps the v018 semantics —
+ *   a uint64 unix TIMESTAMP (seconds), NOT a block number — so the withdraw
+ *   lock/countdown math compares it against wall-clock seconds, not block
+ *   height, exactly as on v018 (confirmed against tnt-core
+ *   `Types.LockInfo.expiryTimestamp`). Publish/attest WRITE params are
+ *   unchanged — only the stored/returned fields moved off-chain. Decoding a
+ *   v0.18 tuple against v0.19 returndata throws, so these reads must select the
+ *   shorter ABI by revision; do not merge the two entries into one ABI.
  *
  * Flip a chain to `v018` / `v019` in the same change that updates its
  * addresses to the redeployed contracts — never separately.
