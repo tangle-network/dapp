@@ -32,6 +32,10 @@ enum EVMChainId {
   // Arbitrum testnets
   ArbitrumSepolia = 421614,
 
+  // Tempo testnets — tnt-core 0.19 lives here (Tempo pays gas in a USD
+  // stablecoin, not ETH; see the custom chain def for the nativeCurrency).
+  TempoModerato = 42431,
+
   // Local development
   AnvilLocal = 31337,
 
