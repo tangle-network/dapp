@@ -42,10 +42,7 @@ import {
   type ReactNode,
 } from 'react';
 
-// Re-export the canonical tangle-cloud Text from the dedicated module so we
-// preserve the existing import surface (`import { Text } from '...sandbox/SandboxUi'`)
-// while routing through a single Text implementation that consumes
-// @tangle-network/brand 0.3 tokens.
+// Re-export the canonical tangle-cloud Text from the dedicated module.
 export { Text } from '../Text';
 export type { TextProps, TextVariant } from '../Text';
 
@@ -397,8 +394,9 @@ export const Chip: FC<{
   className?: string;
   children: ReactNode;
 }> = ({ color, className, children }) => {
-  const variant =
-    (color && CHIP_COLOR_TO_VARIANT[color.toLowerCase()]) ?? 'outline';
+  const variant = color
+    ? (CHIP_COLOR_TO_VARIANT[color.toLowerCase()] ?? 'outline')
+    : 'outline';
 
   return (
     <Badge variant={variant} className={className}>

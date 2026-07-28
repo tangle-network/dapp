@@ -34,7 +34,7 @@ export const AssetCommitmentFormItem: FC<AssetCommitmentFormItemProps> = ({
           isControlled
           value={assetId ?? ''}
           className="hidden"
-          isDisabled
+          disabled
         />
         <div className="flex items-center gap-2">
           <LsTokenIcon
