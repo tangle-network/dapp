@@ -137,7 +137,7 @@ const Page = () => {
         }
         action={
           !isConnected ? (
-            <div className="flex gap-2">
+            <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto">
               <Button
                 variant="secondary"
                 size="sm"
