@@ -65,7 +65,7 @@
     "lodash@npm:~4.17.15": "npm:4.18.1",
     "postcss@npm:8.4.49": "npm:8.5.26",
     "prismjs@npm:~1.27.0": "npm:1.30.0",
-    "qs@npm:6.13.0": "npm:6.15.2",
+    "qs@npm:6.13.0": "npm:6.16.0",
     "shell-quote@npm:1.8.4": "npm:1.10.0",
     "tmp@npm:^0.0.33": "npm:0.2.7",
     "uuid@npm:8.3.2": "npm:11.1.1",
@@ -76,8 +76,7 @@
     "ws@npm:8.18.3": "npm:8.21.3",
     "ws@npm:8.20.1": "npm:8.21.3",
     "ws@npm:~8.17.1": "npm:8.21.3",
-    "qs": ">=6.16.0",
-    "qs@npm:6.15.2": "6.16.0"
+    "qs": ">=6.16.0"
   },
   "dependencies": {
     "@bigmi/react": "^0.6.5",
