@@ -81,12 +81,22 @@ jobs:
         uses: lycheeverse/lychee-action@v2.9.0
         with:
           # Ignore the README.md file as some social sharing links are not valid
-          # Built HTML's root-relative links (/favicon.ico, /src/styles.css) resolve
-          # against each app's served root, not the checkout - lychee >= the 2.9.0
-          # action errors on them without a single --root-dir, and no one root serves
-          # every app. Link-check the sources; build artifacts are verified by the
-          # build/deploy jobs that actually serve them.
+          # Each app's HTML has root-relative asset paths that need its served root.
+          # Check Markdown here and each app's source HTML against its root below.
           args: --verbose --no-progress --exclude-path 'README.md' './**/*.md' './**/*.rst'
           fail: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check source HTML links
+        run: |
+          set -euo pipefail
+          for app in leaderboard tangle-cloud tangle-dapp; do
+            app_dir="$GITHUB_WORKSPACE/apps/$app"
+            root_dir="$RUNNER_TEMP/lychee-html/$app"
+            # Vite serves public files at / and source files at /src.
+            mkdir -p "$root_dir"
+            cp -a "$app_dir/public/." "$root_dir/"
+            ln -s "$app_dir/src" "$root_dir/src"
+            lychee --offline --no-progress --root-dir "$root_dir" "$app_dir/index.html"
+          done
