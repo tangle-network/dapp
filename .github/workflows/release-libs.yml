@@ -11,9 +11,14 @@ on:
   workflow_dispatch:
 
 jobs:
+  # Runs on the self-hosted runners and decides whether this push publishes:
+  # the hosted publish job starts only when a library CHANGELOG changed.
   pre-ci:
-    runs-on: ubuntu-latest
-    timeout-minutes: 1
+    runs-on: [self-hosted, ci-public]
+    timeout-minutes: 5
+    outputs:
+      publish: ${{ steps.detect.outputs.publish }}
+      libs: ${{ steps.detect.outputs.libs }}
     steps:
       - name: 'Block Concurrent Executions'
         uses: softprops/turnstyle@v1
@@ -22,18 +27,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  build-publish:
-    name: Build and Publish
-    needs: pre-ci
-
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    permissions:
-      contents: write
-      id-token: write
-
-    steps:
       - name: 'Checkout'
         uses: actions/checkout@v7
         with:
@@ -47,6 +40,7 @@ jobs:
           separator: ','
 
       - name: 'Detect Libraries to Publish'
+        id: detect
         run: |
           echo "Changed Files: ${{ steps.changed-files.outputs.all_changed_files }}"
 
@@ -59,7 +53,34 @@ jobs:
             sed 's/,$//')
 
           echo "Libraries to publish: $LIBS_TO_PUBLISH"
-          echo "LIBS_TO_PUBLISH=$LIBS_TO_PUBLISH" >> $GITHUB_ENV
+          echo "libs=$LIBS_TO_PUBLISH" >> "$GITHUB_OUTPUT"
+          if [ -n "$LIBS_TO_PUBLISH" ]; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  # npm provenance needs OIDC from a GitHub-hosted runner.
+  build-publish:
+    name: Build and Publish
+    needs: pre-ci
+    if: needs.pre-ci.outputs.publish == 'true'
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    permissions:
+      contents: write
+      id-token: write
+
+    env:
+      LIBS_TO_PUBLISH: ${{ needs.pre-ci.outputs.libs }}
+
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - name: Enable corepack
         run: |
