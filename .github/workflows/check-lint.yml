@@ -9,7 +9,7 @@ on:
 jobs:
   lint:
     name: lint
-    runs-on: [self-hosted, ci-public]
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: ['>=18.18.x']
@@ -39,7 +39,7 @@ jobs:
 
   format:
     name: format
-    runs-on: [self-hosted, ci-public]
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: ['>=18.18.x']
@@ -68,7 +68,7 @@ jobs:
 
   links:
     name: links
-    runs-on: [self-hosted, ci-public]
+    runs-on: ubuntu-latest
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.13.1
