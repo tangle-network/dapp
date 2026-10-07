@@ -12,7 +12,7 @@ on:
 
 jobs:
   pre-ci:
-    runs-on: [self-hosted, ci-public]
+    runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:
       - name: 'Block Concurrent Executions'
@@ -25,7 +25,7 @@ jobs:
   build-publish:
     name: Build and Publish
     needs: pre-ci
-    runs-on: [self-hosted, ci-public]
+    runs-on: ubuntu-latest
 
     if: ( !startsWith(github.event.head_commit.message, '[SKIP CI]') &&
       startsWith(github.event.head_commit.message, '[RELEASE]') &&
