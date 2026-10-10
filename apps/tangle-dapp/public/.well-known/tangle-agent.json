@@ -1,0 +1,67 @@
+{
+  "schema_version": "2026-10-10",
+  "name": "Tangle dApp",
+  "description": "Tangle dApp is the web interface for the Tangle network: staking and restaking TNT, liquid staking, browsing and deploying blueprints, and managing services, plus account, claim, and bridge features. It is a client-side single-page app; every write (bond, nominate, restake, deploy a service) is signed by the user's own wallet, so an agent cannot transact on a user's behalf here. An agent's job on this property is to read public network data and route its user to the right page with context.",
+  "homepage": "https://app.tangle.tools/",
+  "llms": "https://app.tangle.tools/llms.txt",
+  "agent_setup": "https://tangle.tools/agent-setup.md",
+  "docs": "https://docs.tangle.tools/",
+  "agent_setup_note": "This product has no setup skill of its own: there is nothing to install and no API key. agent_setup points at the Tangle ecosystem hub skill, which covers the agent-ready products that do have a self-serve flow.",
+  "custody": "All state-changing actions are signed by the user's own wallet in the browser. An agent must never ask for or handle a user's keys; direct the user to the relevant page instead.",
+  "route_users": {
+    "restake, deposit, delegate, undelegate, withdraw, vaults, operators, rewards": "https://app.tangle.tools/staking",
+    "nominate validators": "https://app.tangle.tools/nomination",
+    "liquid staking: vaults, positions, deposit, redeem": "https://app.tangle.tools/liquid-staking",
+    "browse and deploy service blueprints": "https://app.tangle.tools/blueprints",
+    "running service instances": "https://app.tangle.tools/services",
+    "airdrop and migration claims": "https://app.tangle.tools/claim"
+  },
+  "network_data": {
+    "note": "Public chain endpoints the dapp itself is configured to read. No key is required. They belong to the Tangle network, not to this site; their availability tracks the network's own status.",
+    "tangle_mainnet": {
+      "ws_rpc": "wss://rpc.tangle.tools",
+      "http_rpc": "https://rpc.tangle.tools",
+      "evm_chain_id": 5845,
+      "evm_explorer": "https://explorer.tangle.tools/",
+      "token_symbol": "TNT"
+    },
+    "tangle_testnet": {
+      "ws_rpc": "wss://testnet-rpc.tangle.tools",
+      "http_rpc": "https://testnet-rpc.tangle.tools",
+      "evm_chain_id": 3799,
+      "evm_explorer": "https://testnet-explorer.tangle.tools",
+      "indexer_graphql": "https://standalone-subql.tangle.tools/graphql",
+      "token_symbol": "tTNT",
+      "faucet": "https://faucet.tangle.tools"
+    }
+  },
+  "safe_discovery_calls": [
+    "GET https://app.tangle.tools/llms.txt",
+    "GET https://app.tangle.tools/.well-known/tangle-agent.json",
+    "GET https://app.tangle.tools/ (HTML; client-side app)",
+    "GET https://docs.tangle.tools/"
+  ],
+  "smoke_tests": [
+    "curl -fsS https://app.tangle.tools/llms.txt",
+    "curl -fsS https://app.tangle.tools/.well-known/tangle-agent.json",
+    "curl -fsS https://docs.tangle.tools/"
+  ],
+  "related_surfaces": [
+    {
+      "name": "Tangle Router",
+      "manifest": "https://router.tangle.tools/.well-known/tangle-agent.json"
+    },
+    {
+      "name": "Tangle Sandbox",
+      "manifest": "https://sandbox.tangle.tools/.well-known/tangle-agent.json"
+    },
+    {
+      "name": "Tangle Agents",
+      "manifest": "https://agents.tangle.tools/.well-known/tangle-agent.json"
+    },
+    {
+      "name": "Tangle Browser Agent",
+      "manifest": "https://tangle.tools/.well-known/tangle-browser-agent.json"
+    }
+  ]
+}
