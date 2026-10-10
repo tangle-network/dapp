@@ -101,3 +101,22 @@
   for = "/index.html"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
+
+# ─── Agent-facing surfaces ──────────────────────────────────────────────
+#
+# /llms.txt and /.well-known/tangle-agent.json are real files under
+# public/, so Netlify's static-file shadowing serves them ahead of the
+# SPA fallback in public/_redirects (which is unforced). Pin their content
+# types and keep them revalidating so manifest updates take effect on the
+# next request.
+[[headers]]
+  for = "/llms.txt"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/.well-known/tangle-agent.json"
+  [headers.values]
+    Content-Type = "application/json; charset=utf-8"
+    Cache-Control = "public, max-age=0, must-revalidate"

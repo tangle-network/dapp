@@ -1,0 +1,40 @@
+# Tangle Cloud
+
+> Tangle Cloud (https://cloud.tangle.tools) is the control plane for the Tangle operator layer: discover blueprints and embedded apps, deploy service instances with chosen operators and payment/security settings, register and manage operator capacity, and track requests, jobs, payments, rewards, and earnings. It is a client-side single-page app; every write (deploy a service, register as an operator, approve a request, publish a blueprint, claim rewards) is an EVM transaction signed by the user's own wallet, so an agent does not transact here. An agent's job on this property is to read public on-chain state and route its user to the right console page with context.
+
+This product has no setup skill of its own — there is nothing to install and no API key. For Tangle ecosystem agent onboarding (one owner approval, one scoped key for the agent-ready products), fetch https://tangle.tools/agent-setup.md and follow it. It is a complete prompt and a SKILL.md.
+
+## Start here
+
+- [Tangle ecosystem setup skill](https://tangle.tools/agent-setup.md): one owner approval, one key for every agent-ready Tangle product
+- [Agent manifest](https://cloud.tangle.tools/.well-known/tangle-agent.json): machine-readable contract for this site
+- [Documentation](https://docs.tangle.tools/): blueprints, operators, services
+- [Tangle Cloud](https://cloud.tangle.tools/): the console itself
+
+## Route users
+
+- [Instances](https://cloud.tangle.tools/instances): deployed service instances (default landing page)
+- [Blueprints catalog](https://cloud.tangle.tools/blueprints): browse blueprints and embedded apps; a blueprint detail page is /blueprints/:id and its deploy flow is /blueprints/:id/deploy
+- [Publish and manage blueprints](https://cloud.tangle.tools/blueprints/manage): publisher metadata, versions, embedded app surfaces
+- [Operators](https://cloud.tangle.tools/operators): operator registry; manage capacity at /operators/manage
+- [Rewards](https://cloud.tangle.tools/rewards) and [Earnings](https://cloud.tangle.tools/earnings)
+- [Payments](https://cloud.tangle.tools/payments/pool): payment pool and credits
+
+## Public network data
+
+No key is required. These are the public chain endpoints the console itself is configured to read — they belong to the networks, not to this site, so their availability tracks each network's own status.
+
+- Tempo Moderato (hosts the live tnt-core deployment; native gas is a USD stablecoin): HTTP JSON-RPC https://rpc.moderato.tempo.xyz, EVM chain id 42431, explorer https://explore.tempo.xyz
+- Base Sepolia: HTTP JSON-RPC https://sepolia.base.org, EVM chain id 84532, explorer https://sepolia.basescan.org
+
+## Embedded blueprint apps
+
+Blueprint apps run as sandboxed iframes under `*.blueprint.tangle.tools` behind publisher, host, and metadata trust gates. Agents holding a Tangle key should prefer the agent-facing product behind an app — for example the Tangle Sandbox app (https://agent-sandbox.blueprint.tangle.tools) is served by https://sandbox.tangle.tools, which has its own agent manifest and setup skill.
+
+## Related agent surfaces
+
+- [Tangle Router](https://router.tangle.tools/.well-known/tangle-agent.json): OpenAI-compatible model routing API
+- [Tangle Sandbox](https://sandbox.tangle.tools/.well-known/tangle-agent.json)
+- [Tangle Agents](https://agents.tangle.tools/.well-known/tangle-agent.json)
+- [Tangle dApp](https://app.tangle.tools/.well-known/tangle-agent.json): staking, restaking, liquid staking
+- [Tangle Browser Agent](https://tangle.tools/.well-known/tangle-browser-agent.json)
