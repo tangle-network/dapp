@@ -5,8 +5,7 @@
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "types": ["../../node_modules/vite/client", "../../node_modules/vitest"],
-    "moduleResolution": "bundler"
+    "types": ["../../node_modules/vite/client", "../../node_modules/vitest"]
   },
   "files": [],
   "include": [],
