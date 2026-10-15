@@ -245,7 +245,7 @@ const animation = {
   'accordion-slide-up': 'accordion-slide-up 300ms ease-out',
 } as const satisfies ThemeConfig['animation'];
 
-const preset = {
+const preset: Config = {
   darkMode: 'class',
   content: [],
   theme: {
