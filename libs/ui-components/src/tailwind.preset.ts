@@ -252,6 +252,7 @@ const preset = {
     extend: {
       colors: {
         ...colors,
+        'surface-container-low': 'var(--md3-surface-container-low)',
         background: 'hsl(var(--hsl-background) / <alpha-value>)',
         foreground: 'hsl(var(--hsl-foreground) / <alpha-value>)',
         card: {
@@ -265,6 +266,22 @@ const preset = {
         muted: {
           DEFAULT: 'hsl(var(--hsl-muted) / <alpha-value>)',
           foreground: 'hsl(var(--hsl-muted-foreground) / <alpha-value>)',
+        },
+        secondary: {
+          DEFAULT: 'hsl(var(--hsl-secondary) / <alpha-value>)',
+          foreground: 'hsl(var(--hsl-secondary-foreground) / <alpha-value>)',
+        },
+        destructive: {
+          DEFAULT: 'hsl(var(--hsl-destructive) / <alpha-value>)',
+          foreground: 'hsl(var(--hsl-destructive-foreground) / <alpha-value>)',
+        },
+        popover: {
+          DEFAULT: 'hsl(var(--hsl-popover) / <alpha-value>)',
+          foreground: 'hsl(var(--hsl-popover-foreground) / <alpha-value>)',
+        },
+        accent: {
+          DEFAULT: 'hsl(var(--hsl-accent) / <alpha-value>)',
+          foreground: 'hsl(var(--hsl-accent-foreground) / <alpha-value>)',
         },
         border: 'hsl(var(--hsl-border) / <alpha-value>)',
         input: 'hsl(var(--hsl-input) / <alpha-value>)',

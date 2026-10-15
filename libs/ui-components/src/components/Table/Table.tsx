@@ -122,7 +122,14 @@ export const Table = <T extends RowData>({
       ref={ref}
     >
       {titleElement}
-      <div className={twMerge('w-full overflow-x-auto', tableWrapperClassName)}>
+      {/* Keep the public wrapper's height/sticky behavior; SharedTable's internal
+          wrapper participates as contents so there is a single scroll owner. */}
+      <div
+        className={twMerge(
+          'w-full overflow-x-auto [&>div]:contents',
+          tableWrapperClassName,
+        )}
+      >
         <SharedTable
           className={twMerge(
             'w-full border-collapse table-auto',

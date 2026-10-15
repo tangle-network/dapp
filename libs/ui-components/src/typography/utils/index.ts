@@ -24,7 +24,7 @@ export const getFontWeightClassName = (
         semibold: 'font-semibold',
         bold: 'font-bold',
         black: 'font-black',
-      }[weight];
+      }[variant.includes('mono') && weight === 'semibold' ? 'bold' : weight];
 
 export const getDefaultTextColor = (variant: TypographyVariant) =>
   variant.startsWith('h') || variant.startsWith('mkt-h')

@@ -10,6 +10,10 @@ module.exports = {
     join(__dirname, '../../node_modules/@tangle-network/ui/src/**/*.{ts,tsx}'),
     join(
       __dirname,
+      '../../node_modules/@tangle-network/sandbox-ui/dist/**/*.js',
+    ),
+    join(
+      __dirname,
       '{src,pages,components,app}/**/*!(*.stories|*.spec).{ts,tsx,html}',
     ),
     ...createGlobPatternsForDependencies(__dirname),
