@@ -117,17 +117,23 @@ export const SideBar = forwardRef<HTMLDivElement, MobileSidebarProps>(
                   />
 
                   <IconButton
+                    aria-label={
+                      isSidebarOpen
+                        ? 'Collapse navigation'
+                        : 'Expand navigation'
+                    }
+                    aria-expanded={isSidebarOpen}
                     onClick={handleToggleSidebar}
                     className={cx(
-                      'transition-[right] duration-300 ease-in-out',
                       !isSidebarOpen
                         ? 'absolute -right-[calc(50%_+_8px)]'
                         : 'right-full',
                     )}
                   >
                     <DoubleArrowLeftIcon
+                      aria-hidden="true"
                       className={cx(
-                        'transition-transform duration-300 ease-in-out',
+                        '[transition:transform_var(--motion-control)] motion-reduce:transition-none',
                         isSidebarOpen ? 'rotate-0' : 'rotate-180',
                       )}
                     />
