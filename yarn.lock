@@ -14648,15 +14648,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tangle-network/brand@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@tangle-network/brand@npm:1.1.0"
+"@tangle-network/brand@npm:1.25.0":
+  version: 1.25.0
+  resolution: "@tangle-network/brand@npm:1.25.0"
   peerDependencies:
     react: ">=18"
   peerDependenciesMeta:
     react:
       optional: true
-  checksum: 10c0/63e9d885026595c965c5cee6e1b8a2bbe0b737e049d9cd6eb95a22dd408ce30bfcfedb132f97e1a30a7ceb4d3349b26f9689df6767a2641028c8f44cbb3aef7e
+  bin:
+    tangle-drift: ./bin/tangle-drift.mjs
+  checksum: 10c0/a677025fc5b43f7a3a5e399dc831af808838bd3ac800874b71ab2b03fbe9a186de2ea7a16be95b45bafb9e3d45bfbb4fb9705b2a29db0185bfa6a93327466f75
   languageName: node
   linkType: hard
 
@@ -33743,7 +33745,7 @@ __metadata:
     "@tailwindcss/forms": "npm:^0.5.11"
     "@tangle-network/agent-interface": "npm:0.36.0"
     "@tangle-network/blueprint-ui": "npm:^0.1.2"
-    "@tangle-network/brand": "npm:1.1.0"
+    "@tangle-network/brand": "npm:1.25.0"
     "@tangle-network/sandbox-ui": "npm:0.90.3"
     "@tangle-network/ui": "npm:11.2.1"
     "@tanstack/match-sorter-utils": "npm:^8.19.4"

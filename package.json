@@ -119,7 +119,7 @@
     "@solana/web3.js": "^1.98.4",
     "@tangle-network/agent-interface": "0.36.0",
     "@tangle-network/blueprint-ui": "^0.1.2",
-    "@tangle-network/brand": "1.1.0",
+    "@tangle-network/brand": "1.25.0",
     "@tangle-network/sandbox-ui": "0.90.3",
     "@tangle-network/ui": "11.2.1",
     "@tanstack/react-query": "^5.101.0",
