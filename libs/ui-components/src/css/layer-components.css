@@ -1,143 +1,62 @@
-/** Layer components */
-.h1 {
-  font-size: 64px;
-  line-height: 96px;
+/* Legacy typography names map to the shared Brand scale. */
+.h1,
+.mkt-h1 {
+  font-size: var(--font-size-display);
+  line-height: var(--line-height-display);
 }
-
-.h2 {
-  font-size: 48px;
-  line-height: 72px;
+.h2,
+.mkt-h2 {
+  font-size: var(--font-size-hero);
+  line-height: var(--line-height-heading);
 }
-
-.h3 {
-  font-size: 36px;
-  line-height: 54px;
+.h3,
+.mkt-h3 {
+  font-size: var(--font-size-3xl);
+  line-height: var(--line-height-heading);
 }
-
-.h4 {
-  font-size: 24px;
-  line-height: 36px;
+.h4,
+.mkt-h4 {
+  font-size: var(--font-size-2xl);
+  line-height: var(--line-height-heading);
 }
-
-.h5 {
-  font-size: 20px;
-  line-height: 30px;
+.h5,
+.mkt-subheading {
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height-heading);
 }
-
-.body1 {
-  @apply text-lg;
+.body1,
+.label,
+.para1,
+.utility,
+.mkt-body1 {
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-base);
 }
-
-.body2 {
-  @apply text-base;
+.body2,
+.para2,
+.mono1,
+.mkt-body2,
+.mkt-monospace {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
 }
-
-.body3 {
-  @apply text-sm;
+.body3,
+.mkt-small-caps {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
 }
-
-.body4 {
-  @apply text-xs;
+.body4,
+.mono2,
+.mkt-caption {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-base);
 }
-
-.mono1 {
-  font-size: 16px;
-  line-height: 24px;
-}
-
-.mono2 {
-  font-size: 12px;
-  line-height: 18px;
-}
-
-/* Used for subtitles and buttons */
-.label {
-  @apply body1 font-bold;
-}
-
-/* Default type size, used for paragraphs and inputs */
-.para1 {
-  @apply body1;
-}
-
-/* Used for details, and small informational components */
-.para2 {
-  @apply body2;
-}
-
-/* Small utility used for labels and warnings */
+.label,
 .utility {
-  @apply body1;
   font-weight: 700;
 }
-
-/** Marketing site variant */
-.mkt-h1 {
-  @apply text-[36px] leading-[48px] md:text-[84px] md:leading-[100px];
-}
-
-.mkt-h2 {
-  @apply text-[28px] leading-[36px] tracking-[2px] md:text-[64px] md:leading-[80px] md:tracking-[4px];
-}
-
-.mkt-h3 {
-  @apply text-[24px] leading-[32px] md:text-[48px] md:leading-[60px];
-}
-
-.mkt-h4 {
-  @apply text-[20px] leading-[28px] md:text-[36px] md:leading-[46px];
-}
-
-.mkt-subheading {
-  @apply text-[18px] leading-[24px] md:text-[24px] md:leading-[40px];
-}
-
-.mkt-body1 {
-  @apply text-[16px] leading-[24px] md:text-[20px] md:leading-[32px];
-}
-
-.mkt-body2 {
-  @apply text-[14px] leading-[20px] tracking-[0.01em] md:text-[18px] md:leading-[28px];
-}
-
 .mkt-small-caps {
-  @apply text-[12px] leading-[20px] tracking-[0.4px] uppercase md:text-[14px] md:leading-[24px] md:tracking-[0.8px];
-}
-
-.mkt-caption {
-  @apply text-[10px] leading-[14px] tracking-[0.01em] md:text-[12px] md:leading-[18px];
-}
-
-.mkt-monospace {
-  @apply text-[14px] leading-[20px] md:text-[16px] md:leading-[24px];
-  font-family: 'Satoshi Variable';
-}
-
-@media screen and (max-width: 800px) {
-  .h1 {
-    font-size: 46px;
-    line-height: 69px;
-  }
-
-  .h2 {
-    font-size: 34px;
-    line-height: 51px;
-  }
-
-  .h3 {
-    font-size: 24px;
-    line-height: 36px;
-  }
-
-  .h4 {
-    font-size: 20px;
-    line-height: 30px;
-  }
-
-  .h5 {
-    font-size: 15px;
-    line-height: 22px;
-  }
+  text-transform: uppercase;
 }
 
 .drawer-content {

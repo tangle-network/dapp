@@ -1,4 +1,4 @@
-import { createElement, useMemo } from 'react';
+import { createElement } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import type { TypographyProps } from '../types';
@@ -66,15 +66,13 @@ export const Typography: React.FC<TypographyProps> = ({
 }) => {
   const component_ = component ?? DEFAULT_COMPONENT[variant];
 
-  const className_ = useMemo(() => {
-    return twMerge(
-      `${variant}` as const,
-      getTextAlignClassName(ta),
-      getFontWeightClassName(variant, fw),
-      getDefaultTextColor(variant),
-      className,
-    );
-  }, [className, fw, ta, variant]);
+  const className_ = twMerge(
+    `${variant}` as const,
+    getTextAlignClassName(ta),
+    getFontWeightClassName(variant, fw),
+    getDefaultTextColor(variant),
+    className,
+  );
 
   return createElement(
     component_,

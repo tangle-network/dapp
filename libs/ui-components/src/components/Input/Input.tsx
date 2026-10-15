@@ -1,6 +1,7 @@
 'use client';
 
 import cx from 'classnames';
+import { Input as SharedInput } from '@tangle-network/ui/primitives';
 import { cloneElement, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -120,51 +121,10 @@ export const Input: React.FC<InputProps> = (props) => {
           ? ('pl-4 pr-8' as const)
           : ('px-4' as const);
 
-  const inputClsxBase = useMemo(
-    () =>
-      cx(
-        'form-input w-full transition-none text-[16px] leading-[30px] bg-mono-0 rounded-lg text-mono-140 dark:bg-mono-200 dark:text-mono-40 invalid:border-red-70 dark:invalid:border-red-50 py-2',
-        paddingX,
-        isInvalid
-          ? ('border-red-70 dark:border-red-50' as const)
-          : ('border-mono-80 dark:border-mono-120' as const),
-      ),
-    [isInvalid, paddingX],
-  );
-
-  const inputClsxHover = 'hover:border-blue-40 dark:hover:border-blue-70';
-
-  const inputClsxFocus =
-    'focus:bg-blue-0 focus:border-blue-40 dark:focus:bg-blue-120 dark:focus:border-blue-70';
-
-  const inputClsxDisabled =
-    'disabled:text-mono-100 dark:disabled:text-mono-120 disabled:bg-mono-40 dark:disabled:bg-mono-160 disabled:cursor-not-allowed disabled:hover:border-mono-80 dark:disabled:hover:border-mono-120';
-
-  const mergedInputClsx = useMemo(
-    () =>
-      twMerge(
-        'placeholder:text-mono-100 dark:placeholder:text-mono-80 placeholder:text-[16px]',
-        size === 'md'
-          ? twMerge(
-              inputClsxBase,
-              inputClsxHover,
-              inputClsxFocus,
-              inputClsxDisabled,
-            )
-          : cx(
-              `border-none w-full bg-transparent focus:ring-0 p-0 h5 leading-[30px] font-bold`,
-              'text-mono-200 dark:text-mono-0',
-            ),
-        inputClassName,
-      ),
-    [
-      inputClsxBase,
-      inputClsxDisabled,
-      inputClsxFocus,
-      inputClsxHover,
-      size,
-      inputClassName,
-    ],
+  const mergedInputClsx = twMerge(
+    paddingX,
+    size === 'sm' && 'border-0 bg-transparent h-auto p-0',
+    inputClassName,
   );
 
   const iconClsx = twMerge(
@@ -181,9 +141,13 @@ export const Input: React.FC<InputProps> = (props) => {
           </div>
         )}
 
-        <input
-          ref={inputRef}
-          size={htmlSize}
+        <SharedInput
+          ref={(element) => {
+            if (inputRef) Object.assign(inputRef, { current: element });
+            if (element && htmlSize !== undefined) element.size = htmlSize;
+          }}
+          variant={isInvalid ? 'error' : 'default'}
+          aria-invalid={isInvalid ? true : undefined}
           type={type}
           name={id}
           id={id}

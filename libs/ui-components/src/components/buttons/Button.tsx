@@ -1,5 +1,6 @@
 'use client';
 
+import { Button as SharedButton } from '@tangle-network/ui/primitives';
 import { getFlexBasic } from '@tangle-network/icons/utils';
 import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
@@ -55,8 +56,8 @@ const Button = forwardRef<HTMLElement, ButtonProps>((props, ref) => {
 
   const [buttonProps, { tagName: Component }] = useButtonProps({
     tagName: asProps,
-    isDisabled,
     ...restProps,
+    isDisabled: isDisabled || isLoading,
   });
 
   const mergedClassName = twMerge(
@@ -70,31 +71,33 @@ const Button = forwardRef<HTMLElement, ButtonProps>((props, ref) => {
   const contentProps = { children, leftIcon, rightIcon, variant };
 
   const button = (
-    <Component
-      {...restProps}
-      {...buttonProps}
-      disabled={buttonProps.disabled || isLoading}
-      className={cx(mergedClassName)}
-      ref={ref}
-    >
-      {isLoading && spinnerPlacement === 'start' && (
-        <ButtonSpinner hasLabel={!!loadingText}>{spinner}</ButtonSpinner>
-      )}
-      {isLoading ? (
-        loadingText || (
-          <span className="opacity-0 flex items-center">
-            <ButtonContent {...contentProps} />
-          </span>
-        )
-      ) : (
-        <ButtonContent {...contentProps} />
-      )}
-      {isLoading && spinnerPlacement === 'end' && (
-        <ButtonSpinner hasLabel={!!loadingText} placement="end">
-          {spinner}
-        </ButtonSpinner>
-      )}
-    </Component>
+    <SharedButton asChild className={mergedClassName}>
+      <Component
+        {...restProps}
+        {...buttonProps}
+        disabled={buttonProps.disabled || isLoading}
+        aria-busy={isLoading || undefined}
+        ref={ref}
+      >
+        {isLoading && spinnerPlacement === 'start' && (
+          <ButtonSpinner hasLabel={!!loadingText}>{spinner}</ButtonSpinner>
+        )}
+        {isLoading ? (
+          loadingText || (
+            <span className="opacity-0 flex items-center">
+              <ButtonContent {...contentProps} />
+            </span>
+          )
+        ) : (
+          <ButtonContent {...contentProps} />
+        )}
+        {isLoading && spinnerPlacement === 'end' && (
+          <ButtonSpinner hasLabel={!!loadingText} placement="end">
+            {spinner}
+          </ButtonSpinner>
+        )}
+      </Component>
+    </SharedButton>
   );
 
   // If the button isn't disabled or a tooltip for the disabled state isn't

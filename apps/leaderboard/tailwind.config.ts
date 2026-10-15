@@ -7,6 +7,7 @@ import { Config } from 'tailwindcss/types/config';
 module.exports = {
   presets: [preset],
   content: [
+    join(__dirname, '../../node_modules/@tangle-network/ui/src/**/*.{ts,tsx}'),
     join(
       __dirname,
       '{src,pages,components,app}/**/*!(*.stories|*.spec).{ts,tsx,html}',

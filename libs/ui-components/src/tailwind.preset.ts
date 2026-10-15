@@ -250,7 +250,26 @@ const preset = {
   content: [],
   theme: {
     extend: {
-      colors,
+      colors: {
+        ...colors,
+        background: 'hsl(var(--hsl-background) / <alpha-value>)',
+        foreground: 'hsl(var(--hsl-foreground) / <alpha-value>)',
+        card: {
+          DEFAULT: 'hsl(var(--hsl-card) / <alpha-value>)',
+          foreground: 'hsl(var(--hsl-card-foreground) / <alpha-value>)',
+        },
+        primary: {
+          DEFAULT: 'hsl(var(--hsl-primary) / <alpha-value>)',
+          foreground: 'hsl(var(--hsl-primary-foreground) / <alpha-value>)',
+        },
+        muted: {
+          DEFAULT: 'hsl(var(--hsl-muted) / <alpha-value>)',
+          foreground: 'hsl(var(--hsl-muted-foreground) / <alpha-value>)',
+        },
+        border: 'hsl(var(--hsl-border) / <alpha-value>)',
+        input: 'hsl(var(--hsl-input) / <alpha-value>)',
+        ring: 'hsl(var(--hsl-ring) / <alpha-value>)',
+      },
       keyframes,
       animation,
       boxShadow: {
