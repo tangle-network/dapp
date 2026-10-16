@@ -1,0 +1,303 @@
+
+ NX   Running target build for project tangle-cloud and 1 task it depends on:
+
+
+
+> nx run tangle-cloud:typecheck
+
+> tsc --noEmit -p tsconfig.app.json
+
+
+> nx run tangle-cloud:build
+
+> vite build
+
+[36mvite v6.4.3 [32mbuilding for production...[36m[39m
+transforming...
+
+[1m[33mwarn[39m[22m - The class `duration-[var(--transition-fast)]` is ambiguous and matches multiple utilities.
+[1m[33mwarn[39m[22m - If this is content and not a class, replace it with `duration-&lsqb;var(--transition-fast)&rsqb;` to silence this warning.
+
+[1m[33mwarn[39m[22m - The class `duration-[var(--transition-fast)]` is ambiguous and matches multiple utilities.
+[1m[33mwarn[39m[22m - If this is content and not a class, replace it with `duration-&lsqb;var(--transition-fast)&rsqb;` to silence this warning.
+[33m../../node_modules/viem/node_modules/ox/_esm/core/Base64.js (6:27): A comment
+
+"/*#__PURE__*/"
+
+in "../../node_modules/viem/node_modules/ox/_esm/core/Base64.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.[39m
+[33m../../node_modules/@base-org/account/node_modules/ox/_esm/core/Address.js (6:21): A comment
+
+"/*#__PURE__*/"
+
+in "../../node_modules/@base-org/account/node_modules/ox/_esm/core/Address.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.[39m
+[33m../../node_modules/@base-org/account/node_modules/ox/_esm/core/Base64.js (6:27): A comment
+
+"/*#__PURE__*/"
+
+in "../../node_modules/@base-org/account/node_modules/ox/_esm/core/Base64.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.[39m
+[33m../../node_modules/@coinbase/wallet-sdk/node_modules/ox/_esm/core/Address.js (6:21): A comment
+
+"/*#__PURE__*/"
+
+in "../../node_modules/@coinbase/wallet-sdk/node_modules/ox/_esm/core/Address.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.[39m
+[33m../../node_modules/@coinbase/wallet-sdk/node_modules/ox/_esm/core/Base64.js (6:27): A comment
+
+"/*#__PURE__*/"
+
+in "../../node_modules/@coinbase/wallet-sdk/node_modules/ox/_esm/core/Base64.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.[39m
+[33m../../node_modules/porto/node_modules/ox/_esm/core/Base64.js (6:27): A comment
+
+"/*#__PURE__*/"
+
+in "../../node_modules/porto/node_modules/ox/_esm/core/Base64.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.[39m
+[33m../../node_modules/@base-org/account/node_modules/ox/_esm/core/internal/cursor.js (2:21): A comment
+
+"/*#__PURE__*/"
+
+in "../../node_modules/@base-org/account/node_modules/ox/_esm/core/internal/cursor.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.[39m
+[33m../../node_modules/@coinbase/wallet-sdk/node_modules/ox/_esm/core/internal/cursor.js (2:21): A comment
+
+"/*#__PURE__*/"
+
+in "../../node_modules/@coinbase/wallet-sdk/node_modules/ox/_esm/core/internal/cursor.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.[39m
+[33m../../node_modules/@polkadot/util/node_modules/@polkadot/x-global/index.js (9:23): A comment
+
+"/*#__PURE__*/"
+
+in "../../node_modules/@polkadot/util/node_modules/@polkadot/x-global/index.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.[39m
+[33m../../node_modules/@polkadot/x-global/index.js (9:23): A comment
+
+"/*#__PURE__*/"
+
+in "../../node_modules/@polkadot/x-global/index.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.[39m
+[33m../../node_modules/@wagmi/connectors/node_modules/ox/_esm/core/internal/cursor.js (2:21): A comment
+
+"/*#__PURE__*/"
+
+in "../../node_modules/@wagmi/connectors/node_modules/ox/_esm/core/internal/cursor.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.[39m
+[33m../../node_modules/@wagmi/connectors/node_modules/ox/_esm/core/Address.js (6:21): A comment
+
+"/*#__PURE__*/"
+
+in "../../node_modules/@wagmi/connectors/node_modules/ox/_esm/core/Address.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.[39m
+[32m✓[39m 13993 modules transformed.
+[33mCircular chunk: wallet -> viem -> wallet. Please adjust the manual chunk logic for these chunks.[39m
+[33m../../node_modules/store/plugins/lib/json2.js (493:20): Use of eval in "../../node_modules/store/plugins/lib/json2.js" is strongly discouraged as it poses security risks and may cause issues with minification.[39m
+rendering chunks...
+[33m[plugin vite:reporter] 
+(!) /home/drew/code/_wt/dapp-dedupe-10198/libs/icons/src/chains/default.svg is dynamically imported by /home/drew/code/_wt/dapp-dedupe-10198/libs/icons/src/useDynamicSVGImport.tsx but also statically imported by /home/drew/code/_wt/dapp-dedupe-10198/libs/icons/src/useDynamicSVGImport.tsx, dynamic import will not move module into another chunk.
+[39m
+[33m[plugin vite:reporter] 
+(!) /home/drew/code/_wt/dapp-dedupe-10198/libs/icons/src/tokens/default.svg is dynamically imported by /home/drew/code/_wt/dapp-dedupe-10198/libs/icons/src/useDynamicSVGImport.tsx but also statically imported by /home/drew/code/_wt/dapp-dedupe-10198/libs/icons/src/useDynamicSVGImport.tsx, dynamic import will not move module into another chunk.
+[39m
+computing gzip size...
+[2m../../dist/apps/tangle-cloud/[22m[32mindex.html                                    [39m[1m[2m    1.01 kB[22m[1m[22m[2m │ gzip:   0.43 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[32mSatoshi-Black-Cdex6QMw.woff2           [39m[1m[2m   23.57 kB[22m[1m[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[32mSatoshi-BlackItalic-CXHZ3ljF.woff2     [39m[1m[2m   24.31 kB[22m[1m[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[32mSatoshi-Bold-CJ5nA_kS.woff2            [39m[1m[2m   25.36 kB[22m[1m[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[32mSatoshi-Medium-CAEwpwJ-.woff2          [39m[1m[2m   25.58 kB[22m[1m[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[32mSatoshi-BoldItalic-JpHuv7cT.woff2      [39m[1m[2m   26.33 kB[22m[1m[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[32mSatoshi-Variable-CzmoHP4X.woff2        [39m[1m[2m   42.61 kB[22m[1m[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[32mSatoshi-VariableItalic-DTKIP6md.woff2  [39m[1m[2m   43.84 kB[22m[1m[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[32mbody-bg-B7TDpVal.jpeg                  [39m[1m[2m   77.50 kB[22m[1m[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[32mbody-bg-dark-LirwBu6-.jpeg             [39m[1m[2m   85.71 kB[22m[1m[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[32mCousine-Bold-DiyOpVy0.woff2            [39m[1m[2m  119.64 kB[22m[1m[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[32mCousine-Regular-UDzrz3nd.woff2         [39m[1m[2m  122.68 kB[22m[1m[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[35mindex-DQeBDShd.css                     [39m[1m[2m  280.94 kB[22m[1m[22m[2m │ gzip:  44.93 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mindex-DzlLOo0j.js                      [39m[1m[2m    0.01 kB[22m[1m[22m[2m │ gzip:   0.03 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mpayments-BrwprsZ7.js                   [39m[1m[2m    0.05 kB[22m[1m[22m[2m │ gzip:   0.06 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mruntime-CwjdtjC5.js                    [39m[1m[2m    0.12 kB[22m[1m[22m[2m │ gzip:   0.13 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mArrowLeft-D2ylJt7o.js                  [39m[1m[2m    0.21 kB[22m[1m[22m[2m │ gzip:   0.18 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36museParamWithSchema-jJJXEfYb.js         [39m[1m[2m    0.23 kB[22m[1m[22m[2m │ gzip:   0.19 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mplaceholder-ftDdxVYE.js                [39m[1m[2m    0.27 kB[22m[1m[22m[2m │ gzip:   0.22 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mpollWithBackoff-TFjRGSA3.js            [39m[1m[2m    0.27 kB[22m[1m[22m[2m │ gzip:   0.22 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mCard-DeddMUdh.js                       [39m[1m[2m    0.38 kB[22m[1m[22m[2m │ gzip:   0.30 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mTangleCloudCard-CONR3pWf.js            [39m[1m[2m    0.40 kB[22m[1m[22m[2m │ gzip:   0.30 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mlink-CtduPNf-.js                       [39m[1m[2m    0.50 kB[22m[1m[22m[2m │ gzip:   0.33 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mSearch-HWl81OkT.js                     [39m[1m[2m    0.50 kB[22m[1m[22m[2m │ gzip:   0.30 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mchainlink-Bt8TOphK.js                  [39m[1m[2m    0.50 kB[22m[1m[22m[2m │ gzip:   0.33 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mpha-8HGyIliJ.js                        [39m[1m[2m    0.57 kB[22m[1m[22m[2m │ gzip:   0.35 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mphala-C9ywW_sO.js                      [39m[1m[2m    0.57 kB[22m[1m[22m[2m │ gzip:   0.36 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mErrorMessage-O4Mnq-vQ.js               [39m[1m[2m    0.59 kB[22m[1m[22m[2m │ gzip:   0.38 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mtokenPresentation-CPTWwCR8.js          [39m[1m[2m    0.63 kB[22m[1m[22m[2m │ gzip:   0.42 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mPageHeader-Dt84oFKs.js                 [39m[1m[2m    0.63 kB[22m[1m[22m[2m │ gzip:   0.39 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mpage-CVkfbfS4.js                       [39m[1m[2m    0.68 kB[22m[1m[22m[2m │ gzip:   0.42 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mPaymentsNav-l3aWAzTv.js                [39m[1m[2m    0.73 kB[22m[1m[22m[2m │ gzip:   0.43 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mnotFound-WIzzT81F.js                   [39m[1m[2m    0.75 kB[22m[1m[22m[2m │ gzip:   0.45 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36musdt-BpXa6WYk.js                       [39m[1m[2m    0.79 kB[22m[1m[22m[2m │ gzip:   0.49 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mpage-D5BLxlKL.js                       [39m[1m[2m    0.80 kB[22m[1m[22m[2m │ gzip:   0.47 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36museTokenMetadata-B0HzZNjb.js           [39m[1m[2m    0.85 kB[22m[1m[22m[2m │ gzip:   0.50 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mbase-sepolia-bUjlYimm.js               [39m[1m[2m    0.86 kB[22m[1m[22m[2m │ gzip:   0.44 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mbase-bUjlYimm.js                       [39m[1m[2m    0.86 kB[22m[1m[22m[2m │ gzip:   0.44 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36museBlueprintConfig-DuiIceOw.js         [39m[1m[2m    0.90 kB[22m[1m[22m[2m │ gzip:   0.54 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mweth-Dw7wCTQ5.js                       [39m[1m[2m    0.92 kB[22m[1m[22m[2m │ gzip:   0.39 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mksm-C5DGD0ks.js                        [39m[1m[2m    0.95 kB[22m[1m[22m[2m │ gzip:   0.57 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mchain-config-CURRfgH5.js               [39m[1m[2m    0.95 kB[22m[1m[22m[2m │ gzip:   0.59 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36methereum-zFIW4Auw.js                   [39m[1m[2m    0.99 kB[22m[1m[22m[2m │ gzip:   0.41 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mgoerli-zFIW4Auw.js                     [39m[1m[2m    0.99 kB[22m[1m[22m[2m │ gzip:   0.41 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mholesky-zFIW4Auw.js                    [39m[1m[2m    0.99 kB[22m[1m[22m[2m │ gzip:   0.41 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mrinkeby-zFIW4Auw.js                    [39m[1m[2m    0.99 kB[22m[1m[22m[2m │ gzip:   0.41 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36msepolia-DNFYvpYK.js                    [39m[1m[2m    0.99 kB[22m[1m[22m[2m │ gzip:   0.42 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mpage-BXCN5Gs1.js                       [39m[1m[2m    0.99 kB[22m[1m[22m[2m │ gzip:   0.54 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mavax-68u4ZxXJ.js                       [39m[1m[2m    1.01 kB[22m[1m[22m[2m │ gzip:   0.61 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mnear-DkK4wemx.js                       [39m[1m[2m    1.04 kB[22m[1m[22m[2m │ gzip:   0.59 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mMetricStrip-CLL0OzGy.js                [39m[1m[2m    1.07 kB[22m[1m[22m[2m │ gzip:   0.55 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mlinea-CCx0xoOk.js                      [39m[1m[2m    1.08 kB[22m[1m[22m[2m │ gzip:   0.52 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mbtc-B0xGwj9a.js                        [39m[1m[2m    1.09 kB[22m[1m[22m[2m │ gzip:   0.66 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mavalanche-fuji-DmC9thQI.js             [39m[1m[2m    1.11 kB[22m[1m[22m[2m │ gzip:   0.57 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mavalanche-Bv_hbTtH.js                  [39m[1m[2m    1.11 kB[22m[1m[22m[2m │ gzip:   0.56 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mthe-graph-iCLmESLf.js                  [39m[1m[2m    1.13 kB[22m[1m[22m[2m │ gzip:   0.57 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mmatic-BR_QlFXZ.js                      [39m[1m[2m    1.13 kB[22m[1m[22m[2m │ gzip:   0.55 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mwmatic-BR_QlFXZ.js                     [39m[1m[2m    1.13 kB[22m[1m[22m[2m │ gzip:   0.55 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mdai-DNkmHE68.js                        [39m[1m[2m    1.19 kB[22m[1m[22m[2m │ gzip:   0.67 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mschemaParser-Bu4f1Tg6.js               [39m[1m[2m    1.28 kB[22m[1m[22m[2m │ gzip:   0.65 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36msteth-B0_ylrjr.js                      [39m[1m[2m    1.40 kB[22m[1m[22m[2m │ gzip:   0.53 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mwsteth-B0_ylrjr.js                     [39m[1m[2m    1.40 kB[22m[1m[22m[2m │ gzip:   0.53 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mkusama-BMBbjKtH.js                     [39m[1m[2m    1.47 kB[22m[1m[22m[2m │ gzip:   0.77 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36meth-HfgszhpK.js                        [39m[1m[2m    1.49 kB[22m[1m[22m[2m │ gzip:   0.69 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36morbt-HfgszhpK.js                       [39m[1m[2m    1.49 kB[22m[1m[22m[2m │ gzip:   0.69 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36msep-HfgszhpK.js                        [39m[1m[2m    1.49 kB[22m[1m[22m[2m │ gzip:   0.69 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36msweth-DUYXMXg_.js                      [39m[1m[2m    1.58 kB[22m[1m[22m[2m │ gzip:   0.83 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36musdc-BYgd_mYp.js                       [39m[1m[2m    1.61 kB[22m[1m[22m[2m │ gzip:   0.81 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mwebbusdc-BYgd_mYp.js                   [39m[1m[2m    1.61 kB[22m[1m[22m[2m │ gzip:   0.81 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mpol-CVZgY4I2.js                        [39m[1m[2m    1.73 kB[22m[1m[22m[2m │ gzip:   0.84 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36museBlueprintJobs-BcfAWFLF.js           [39m[1m[2m    1.74 kB[22m[1m[22m[2m │ gzip:   0.82 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mtbtc-De7khMjd.js                       [39m[1m[2m    1.77 kB[22m[1m[22m[2m │ gzip:   0.81 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mbnb-DlsL3Vul.js                        [39m[1m[2m    1.81 kB[22m[1m[22m[2m │ gzip:   0.70 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mbsc-Cie5M7WN.js                        [39m[1m[2m    1.85 kB[22m[1m[22m[2m │ gzip:   0.70 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mdedupe-Dhi-zKGM.js                     [39m[1m[2m    1.95 kB[22m[1m[22m[2m │ gzip:   0.87 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36meigen-zwtVAEKg.js                      [39m[1m[2m    1.95 kB[22m[1m[22m[2m │ gzip:   0.81 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mdot-Ah786xSP.js                        [39m[1m[2m    1.95 kB[22m[1m[22m[2m │ gzip:   0.86 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mcrv-DPQSGqoT.js                        [39m[1m[2m    1.96 kB[22m[1m[22m[2m │ gzip:   0.94 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mpolkadot-Cy_Fw41L.js                   [39m[1m[2m    1.96 kB[22m[1m[22m[2m │ gzip:   0.85 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mcbeth-Cr2vLC8H.js                      [39m[1m[2m    1.98 kB[22m[1m[22m[2m │ gzip:   0.77 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mserviceRequest-D3EfbNt-.js             [39m[1m[2m    2.02 kB[22m[1m[22m[2m │ gzip:   1.07 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mmeth-Df0kUtkE.js                       [39m[1m[2m    2.03 kB[22m[1m[22m[2m │ gzip:   0.64 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mcbbtc-q7UGz7bG.js                      [39m[1m[2m    2.04 kB[22m[1m[22m[2m │ gzip:   1.08 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mone-B_dcLJex.js                        [39m[1m[2m    2.08 kB[22m[1m[22m[2m │ gzip:   0.99 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36musdx-DpAlQAu5.js                       [39m[1m[2m    2.11 kB[22m[1m[22m[2m │ gzip:   1.12 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mstavail-B7zTotpK.js                    [39m[1m[2m    2.18 kB[22m[1m[22m[2m │ gzip:   1.14 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mop-CsAb4fQZ.js                         [39m[1m[2m    2.26 kB[22m[1m[22m[2m │ gzip:   1.15 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mMoney-RBKM9B0U.js                      [39m[1m[2m    2.33 kB[22m[1m[22m[2m │ gzip:   1.08 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mldo-DcNHT0at.js                        [39m[1m[2m    2.49 kB[22m[1m[22m[2m │ gzip:   0.84 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mrouter-LeHS1vmF.js                     [39m[1m[2m    2.60 kB[22m[1m[22m[2m │ gzip:   1.11 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mpage-B-qrTcjy.js                       [39m[1m[2m    2.64 kB[22m[1m[22m[2m │ gzip:   1.25 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mezeth-CMZvApTR.js                      [39m[1m[2m    2.73 kB[22m[1m[22m[2m │ gzip:   0.90 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mRequireWallet-BICd1cXt.js              [39m[1m[2m    2.79 kB[22m[1m[22m[2m │ gzip:   1.24 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36magor-BhCm1UOE.js                       [39m[1m[2m    2.80 kB[22m[1m[22m[2m │ gzip:   1.30 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36marbitrum-BhCm1UOE.js                   [39m[1m[2m    2.80 kB[22m[1m[22m[2m │ gzip:   1.30 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36marb-BcYFe3-l.js                        [39m[1m[2m    2.84 kB[22m[1m[22m[2m │ gzip:   1.31 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36marbitrum-goerli-Bf7cH02t.js            [39m[1m[2m    2.89 kB[22m[1m[22m[2m │ gzip:   1.32 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36marbitrum-DJz_F2lZ.js                   [39m[1m[2m    2.89 kB[22m[1m[22m[2m │ gzip:   1.32 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36msolana-HNiNlisH.js                     [39m[1m[2m    2.99 kB[22m[1m[22m[2m │ gzip:   1.28 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mTableCellWrapper-Bnbrd-Y9.js           [39m[1m[2m    3.00 kB[22m[1m[22m[2m │ gzip:   1.27 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mPagination-C7LLEXjd.js                 [39m[1m[2m    3.05 kB[22m[1m[22m[2m │ gzip:   1.31 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36moptimism-0YrneOOg.js                   [39m[1m[2m    3.05 kB[22m[1m[22m[2m │ gzip:   1.39 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mheth-CXcPwSDx.js                       [39m[1m[2m    3.09 kB[22m[1m[22m[2m │ gzip:   1.38 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mlbtc-BO4XkKbV.js                       [39m[1m[2m    3.09 kB[22m[1m[22m[2m │ gzip:   1.21 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mmanta-XNAVIZM2.js                      [39m[1m[2m    3.37 kB[22m[1m[22m[2m │ gzip:   1.66 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mmanta-lxc2VK87.js                      [39m[1m[2m    3.38 kB[22m[1m[22m[2m │ gzip:   1.67 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36museOperatorManagement-BOVnzUqB.js      [39m[1m[2m    3.40 kB[22m[1m[22m[2m │ gzip:   1.47 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mwbtc-CnYwg-n2.js                       [39m[1m[2m    3.87 kB[22m[1m[22m[2m │ gzip:   1.71 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mwebb-tnm2-hWO.js                       [39m[1m[2m    3.93 kB[22m[1m[22m[2m │ gzip:   1.35 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mpolygon-mumbai-Vye235y9.js             [39m[1m[2m    4.04 kB[22m[1m[22m[2m │ gzip:   2.46 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mpolygon-Vye235y9.js                    [39m[1m[2m    4.04 kB[22m[1m[22m[2m │ gzip:   2.46 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mmoondev-ePWcwVWU.js                    [39m[1m[2m    4.08 kB[22m[1m[22m[2m │ gzip:   1.23 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mglmr-Cbj2CYIB.js                       [39m[1m[2m    4.15 kB[22m[1m[22m[2m │ gzip:   1.33 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mathena-CH3DMdTA.js                     [39m[1m[2m    4.22 kB[22m[1m[22m[2m │ gzip:   1.92 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mdemeter-CH3DMdTA.js                    [39m[1m[2m    4.22 kB[22m[1m[22m[2m │ gzip:   1.92 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mhermes-CH3DMdTA.js                     [39m[1m[2m    4.22 kB[22m[1m[22m[2m │ gzip:   1.92 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mmoonbase-alpha-CYBjI3ZL.js             [39m[1m[2m    4.23 kB[22m[1m[22m[2m │ gzip:   1.35 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mmoonbeam-CYBjI3ZL.js                   [39m[1m[2m    4.23 kB[22m[1m[22m[2m │ gzip:   1.35 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36msolvbtc.bbn-Dso2U-Ia.js                [39m[1m[2m    4.92 kB[22m[1m[22m[2m │ gzip:   2.19 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36msolvbtc-Dso2U-Ia.js                    [39m[1m[2m    4.92 kB[22m[1m[22m[2m │ gzip:   2.19 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mTable-CnMeCcd-.js                      [39m[1m[2m    5.09 kB[22m[1m[22m[2m │ gzip:   1.86 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36meeth-aA3LtWOU.js                       [39m[1m[2m    5.10 kB[22m[1m[22m[2m │ gzip:   2.05 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36methfi-aA3LtWOU.js                      [39m[1m[2m    5.10 kB[22m[1m[22m[2m │ gzip:   2.05 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mcosmos-21jVZc0R.js                     [39m[1m[2m    5.12 kB[22m[1m[22m[2m │ gzip:   1.94 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mwebb-Cxv_Uk6v.js                       [39m[1m[2m    5.19 kB[22m[1m[22m[2m │ gzip:   1.80 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mwebb_2-Cxv_Uk6v.js                     [39m[1m[2m    5.19 kB[22m[1m[22m[2m │ gzip:   1.80 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mwebbalpha-Cxv_Uk6v.js                  [39m[1m[2m    5.19 kB[22m[1m[22m[2m │ gzip:   1.80 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mwebbdev-Cxv_Uk6v.js                    [39m[1m[2m    5.19 kB[22m[1m[22m[2m │ gzip:   1.80 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mwebbeth-Cxv_Uk6v.js                    [39m[1m[2m    5.19 kB[22m[1m[22m[2m │ gzip:   1.80 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mwebbstandalone-Cxv_Uk6v.js             [39m[1m[2m    5.19 kB[22m[1m[22m[2m │ gzip:   1.80 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mwebbttnt-standalone-Cxv_Uk6v.js        [39m[1m[2m    5.19 kB[22m[1m[22m[2m │ gzip:   1.80 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mwebbweth-Cxv_Uk6v.js                   [39m[1m[2m    5.19 kB[22m[1m[22m[2m │ gzip:   1.80 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36msubstrate-Cxv_Uk6v.js                  [39m[1m[2m    5.19 kB[22m[1m[22m[2m │ gzip:   1.80 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mzod-CP3Cl-Wa.js                        [39m[1m[2m    5.29 kB[22m[1m[22m[2m │ gzip:   2.02 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mBlueprintItem-CxS903i5.js              [39m[1m[2m    5.42 kB[22m[1m[22m[2m │ gzip:   2.05 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mtnt-DkO-Venr.js                        [39m[1m[2m    5.69 kB[22m[1m[22m[2m │ gzip:   2.17 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mttnt-DkO-Venr.js                       [39m[1m[2m    5.69 kB[22m[1m[22m[2m │ gzip:   2.17 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mwebbttnt-DkO-Venr.js                   [39m[1m[2m    5.69 kB[22m[1m[22m[2m │ gzip:   2.17 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mwtnt-DkO-Venr.js                       [39m[1m[2m    5.69 kB[22m[1m[22m[2m │ gzip:   2.17 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mtangle-DPJBDXxC.js                     [39m[1m[2m    5.76 kB[22m[1m[22m[2m │ gzip:   2.17 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mtangle-transparent-HKRmfvRh.js         [39m[1m[2m    5.84 kB[22m[1m[22m[2m │ gzip:   2.28 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mBlueprintVisual-D3kCeqPs.js            [39m[1m[2m    6.12 kB[22m[1m[22m[2m │ gzip:   2.41 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36museResolvedBlueprintView-ByRGWnoD.js   [39m[1m[2m    6.40 kB[22m[1m[22m[2m │ gzip:   2.51 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mExposureCommitmentInput-CXr2x5X1.js    [39m[1m[2m    6.65 kB[22m[1m[22m[2m │ gzip:   2.68 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36museStakingAssets-Bq_HfPfE.js           [39m[1m[2m    6.69 kB[22m[1m[22m[2m │ gzip:   2.63 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36museBlueprintManagement-B3G415QP.js     [39m[1m[2m    6.79 kB[22m[1m[22m[2m │ gzip:   2.48 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36museContractWrite-BlOrvF0v.js           [39m[1m[2m    6.88 kB[22m[1m[22m[2m │ gzip:   2.90 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36museExpireServiceRequest-DI4s8HdA.js    [39m[1m[2m    6.91 kB[22m[1m[22m[2m │ gzip:   2.44 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mreth-pTTHi--n.js                       [39m[1m[2m    8.31 kB[22m[1m[22m[2m │ gzip:   2.48 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36muni-C5xLZv4m.js                        [39m[1m[2m    8.50 kB[22m[1m[22m[2m │ gzip:   3.77 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36museServices-gZ0_PqEx.js                [39m[1m[2m    8.97 kB[22m[1m[22m[2m │ gzip:   2.56 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mpool-D9mRF4IM.js                       [39m[1m[2m    8.98 kB[22m[1m[22m[2m │ gzip:   2.86 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mBlueprintAppServicePage-DJ0PE5mQ.js    [39m[1m[2m    9.45 kB[22m[1m[22m[2m │ gzip:   2.54 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mindex-BwCtrjMg.js                      [39m[1m[2m    9.51 kB[22m[1m[22m[2m │ gzip:   3.16 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36museBlueprints-zP36S92N.js              [39m[1m[2m    9.69 kB[22m[1m[22m[2m │ gzip:   3.13 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mpage-BN6nXnvw.js                       [39m[1m[2m   10.64 kB[22m[1m[22m[2m │ gzip:   3.72 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36morbit-athena-CrLukqJ3.js               [39m[1m[2m   12.59 kB[22m[1m[22m[2m │ gzip:   4.91 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36morbit-demeter-CrLukqJ3.js              [39m[1m[2m   12.59 kB[22m[1m[22m[2m │ gzip:   4.91 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36morbit-hermes-CrLukqJ3.js               [39m[1m[2m   12.59 kB[22m[1m[22m[2m │ gzip:   4.91 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mregistry-Bg8RCMGt.js                   [39m[1m[2m   13.26 kB[22m[1m[22m[2m │ gzip:   2.81 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mpage-BkaES-sA.js                       [39m[1m[2m   13.38 kB[22m[1m[22m[2m │ gzip:   4.70 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mebtc-Db0OzJkw.js                       [39m[1m[2m   13.80 kB[22m[1m[22m[2m │ gzip:   5.11 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mauthoring-CUcOo7Bg.js                  [39m[1m[2m   13.82 kB[22m[1m[22m[2m │ gzip:   4.80 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mpage-3W9-ERGF.js                       [39m[1m[2m   15.41 kB[22m[1m[22m[2m │ gzip:   4.96 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mpage-CC96JHAd.js                       [39m[1m[2m   16.04 kB[22m[1m[22m[2m │ gzip:   5.34 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mcredits-BMmpITHf.js                    [39m[1m[2m   16.05 kB[22m[1m[22m[2m │ gzip:   4.38 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mindex-CTJZ3-70.js                      [39m[1m[2m   18.34 kB[22m[1m[22m[2m │ gzip:   4.84 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mavail-Bx30mbsg.js                      [39m[1m[2m   19.87 kB[22m[1m[22m[2m │ gzip:   5.35 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mindex-5o63GrK_.js                      [39m[1m[2m   20.98 kB[22m[1m[22m[2m │ gzip:   6.37 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mindex-BXdVv2of.js                      [39m[1m[2m   24.40 kB[22m[1m[22m[2m │ gzip:   4.76 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36metc-5iWLSqCu.js                        [39m[1m[2m   30.42 kB[22m[1m[22m[2m │ gzip:  22.98 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mindex.esm-4HZngcFm.js                  [39m[1m[2m   30.71 kB[22m[1m[22m[2m │ gzip:  11.16 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mpage-BcGfCcgK.js                       [39m[1m[2m   31.01 kB[22m[1m[22m[2m │ gzip:   7.31 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mBlueprintAppLandingPage-BYu6xnxe.js    [39m[1m[2m   40.82 kB[22m[1m[22m[2m │ gzip:  10.63 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mindex-Cs-onntv-CKPsLKMG.js             [39m[1m[2m   40.90 kB[22m[1m[22m[2m │ gzip:  12.79 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mrouter-ChAfdGiU.js                     [39m[1m[2m   41.10 kB[22m[1m[22m[2m │ gzip:  14.89 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36museOperators-BfZR_-BK.js               [39m[1m[2m   44.37 kB[22m[1m[22m[2m │ gzip:   5.94 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mpage-y1kN5f66.js                       [39m[1m[2m   56.78 kB[22m[1m[22m[2m │ gzip:  15.46 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mpage-B2B_GnMN.js                       [39m[1m[2m   61.83 kB[22m[1m[22m[2m │ gzip:  16.27 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mpage-Dzo_cUrY.js                       [39m[1m[2m   67.15 kB[22m[1m[22m[2m │ gzip:  19.59 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mpage-2Nnxrxyp.js                       [39m[1m[2m   68.97 kB[22m[1m[22m[2m │ gzip:  18.56 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mbn-DFnH9HrW.js                         [39m[1m[2m   70.84 kB[22m[1m[22m[2m │ gzip:  19.40 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mscroll-testnet-ie3yBA5f.js             [39m[1m[2m   72.19 kB[22m[1m[22m[2m │ gzip:  28.55 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mscroll-ie3yBA5f.js                     [39m[1m[2m   72.19 kB[22m[1m[22m[2m │ gzip:  28.55 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mdev-CD-BnKvo.js                        [39m[1m[2m   79.55 kB[22m[1m[22m[2m │ gzip:  57.62 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36museJobs-Cp5ZrYRU.js                    [39m[1m[2m   81.33 kB[22m[1m[22m[2m │ gzip:  11.15 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mtanstack-CJCTDHi9.js                   [39m[1m[2m   98.17 kB[22m[1m[22m[2m │ gzip:  28.36 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36moptimism-goerli-CSmM_Wbh.js            [39m[1m[2m  107.90 kB[22m[1m[22m[2m │ gzip:  78.19 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mpage-CkduX8aV.js                       [39m[1m[2m  113.28 kB[22m[1m[22m[2m │ gzip:  29.43 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mpage-DpMcwdkL.js                       [39m[1m[2m  168.91 kB[22m[1m[22m[2m │ gzip:  54.28 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mtangle-ui-D53Pz88C.js                  [39m[1m[2m  200.36 kB[22m[1m[22m[2m │ gzip:  58.37 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mindex-CHrspODu.js                      [39m[1m[2m  262.80 kB[22m[1m[22m[2m │ gzip:  82.99 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mindex-CgtD6m4I.js                      [39m[1m[2m  332.71 kB[22m[1m[22m[2m │ gzip: 100.98 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mindex-D75V8UFF.js                      [39m[1m[2m  379.21 kB[22m[1m[22m[2m │ gzip: 228.51 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mreact-DphQrRnB.js                      [39m[1m[2m  419.85 kB[22m[1m[22m[2m │ gzip: 124.89 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mindex-DI2bKHo9.js                      [39m[1m[33m  504.23 kB[39m[22m[2m │ gzip: 214.82 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mviem-3Jn8JL1j.js                       [39m[1m[33m  917.77 kB[39m[22m[2m │ gzip: 254.46 kB[22m
+[2m../../dist/apps/tangle-cloud/[22m[2massets/[22m[36mwallet-Du3E7lEZ.js                     [39m[1m[33m2,068.84 kB[39m[22m[2m │ gzip: 633.32 kB[22m
+[33m
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+[32m✓ built in 43.25s[39m
+
+
+
+ NX   Successfully ran target build for project tangle-cloud and 1 task it depends on
+
+
