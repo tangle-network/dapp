@@ -1,4 +1,6 @@
 @import '@tangle-network/brand/styles/tokens.css';
+@import '@tangle-network/brand/styles/presentation.css';
+@import '@tangle-network/ui/styles/presentation.css';
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
