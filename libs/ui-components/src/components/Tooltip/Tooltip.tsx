@@ -24,7 +24,7 @@ export const TooltipBody = forwardRef<
   >
     <div
       className={twMerge(
-        'body2 !text-inherit text-center break-normal font-normal min-w-0 max-w-[250px]',
+        'body2 text-center break-normal font-normal min-w-0 max-w-[250px]',
         className,
       )}
     >
