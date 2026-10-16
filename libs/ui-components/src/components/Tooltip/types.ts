@@ -1,8 +1,9 @@
-import {
-  TooltipContentProps as RdxTooltipContentProps,
-  TooltipProps as RdxTooltipPropsBase,
-  TooltipTriggerProps as RdxTooltipTriggerProps,
-} from '@radix-ui/react-tooltip';
+import type { Tooltip as SharedTooltip, TooltipContent, TooltipTrigger } from '@tangle-network/ui/tooltip';
+import type { ComponentPropsWithoutRef } from 'react';
+
+type RdxTooltipContentProps = Omit<ComponentPropsWithoutRef<typeof TooltipContent>, 'portal'>;
+type RdxTooltipPropsBase = ComponentPropsWithoutRef<typeof SharedTooltip>;
+type RdxTooltipTriggerProps = ComponentPropsWithoutRef<typeof TooltipTrigger>;
 import { IComponentBase } from '../../types';
 
 type OmittedKeys =
