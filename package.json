@@ -121,7 +121,7 @@
     "@tangle-network/blueprint-ui": "^0.1.2",
     "@tangle-network/brand": "1.25.1",
     "@tangle-network/sandbox-ui": "0.90.3",
-    "@tangle-network/ui": "11.38.1",
+    "@tangle-network/ui": "11.38.2",
     "@tanstack/react-query": "^5.101.0",
     "@walletconnect/ethereum-provider": "^2.23.9",
     "blo": "^2.0.0",
