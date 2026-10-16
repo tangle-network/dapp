@@ -1,0 +1,208 @@
+{
+  "gate": "beelink2-cf6658666e2380e2e17faf45dbca5082",
+  "terminalExit": 0,
+  "terminalUTC": "2026-10-16T03:52:57Z",
+  "durationSeconds": 319,
+  "waitSeconds": 0,
+  "commandSeconds": 302,
+  "testedAndPushedSource": "ecffdbc7f9cfb854c4e2910b652353aa97a4d036",
+  "cacheSource": "0e3e8d2ebc7901509ddb2151ad00269be31f5884",
+  "UI": "11.38.2",
+  "UIReleaseSource": "79240479cc73c1eaa252b7cae54aa89e338f3bc0",
+  "UIIntegrity": "sha512-J+oCJnG1zj2SallvRLZidjncfyhTBP1H7cAcW0SZP30uWpTDv4AVrODGK2zFuRG2SDwcy81kzED6nCBfFm7+iQ==",
+  "actualUIRelativeActors": {
+    "react": {
+      "version": "18.3.1",
+      "resolvedFrom": "@tangle-network/ui/package.json",
+      "entry": "/home/drew/code/_wt/dapp-dedupe-10198/node_modules/react/index.js",
+      "entrySHA256": "a216c390bf956cbb906c66d29fdb2e2ad6999464a5ca83e476533a6f25ad0ef3",
+      "packageSHA256": "d4e68a5c96babb20cad1daafea8b78822eae45b341552cf5418d06a5304fa64c"
+    },
+    "react-dom": {
+      "version": "18.3.1",
+      "resolvedFrom": "@tangle-network/ui/package.json",
+      "entry": "/home/drew/code/_wt/dapp-dedupe-10198/node_modules/react-dom/index.js",
+      "entrySHA256": "f26fcb81b5d1dc32c6edea34645c75b60d259916293d3208c8be48ac33e882e4",
+      "packageSHA256": "d2f29e31bd48b833e48cd7bbf41f192e8ee4ff8da249fdbe10d4ac4114b8b12e"
+    },
+    "@radix-ui/react-tooltip": {
+      "version": "1.4.1",
+      "resolvedFrom": "@tangle-network/ui/package.json",
+      "entry": "/home/drew/code/_wt/dapp-dedupe-10198/node_modules/@tangle-network/ui/node_modules/@radix-ui/react-tooltip/dist/index.js",
+      "entrySHA256": "0858986beb23e591798003c079ea3cddd2ea36b0ac63cbc0ab7c7c0de37dbe77",
+      "packageSHA256": "5aca00d0868666988514ac53638253d2b2273d00b5c74c2ed8cfc1f6b3379774"
+    },
+    "@radix-ui/react-presence": {
+      "version": "1.1.11",
+      "resolvedFrom": "@tangle-network/ui/package.json",
+      "entry": "/home/drew/code/_wt/dapp-dedupe-10198/node_modules/@tangle-network/ui/node_modules/@radix-ui/react-presence/dist/index.js",
+      "entrySHA256": "69322a0601ad31bcb3fcd1d7826c59675166cff00103e6b5ad3f6ecce815147d",
+      "packageSHA256": "f18c8e3a59aeb29796d9b55f8be683674b994b68e43c8f9adf97f218cae15af7"
+    },
+    "sharedTooltip": {
+      "source": "/home/drew/code/_wt/dapp-dedupe-10198/node_modules/@tangle-network/ui/src/primitives/tooltip.tsx",
+      "sha256": "f6d3108345db7786dcf30af9e4bed8129f2b84b11817f71941cbd3be9b3a9063"
+    }
+  },
+  "frozenObserverHash": "a677639ef427c3dfaa734fe6036c0fcdc918c881b6135aee90e883788cb71003",
+  "correctedObserverHash": "5a53dfe3e6b4e461ce2750eab414c2c04d48a4f9cdee471647d6efb789410919",
+  "cases": {
+    "phone-light-no-preference": {
+      "reopenAcceptance": "PASS_SCOPED_NATIVE_REOPEN",
+      "actualViewport": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "meta": "width=device-width, initial-scale=1",
+        "reducedMotion": false
+      },
+      "documentOverflow": 0,
+      "consoleErrors": [],
+      "originalClosed": {
+        "at": 2156.3000000715256,
+        "stage": "tooltip-native-close-reopen",
+        "reason": "dom-mutation",
+        "triggerFocused": false,
+        "triggerState": "closed",
+        "describedBy": null,
+        "childDisabled": true,
+        "surfaceConnected": true,
+        "surfaceState": "closed",
+        "sameRetainedNode": true,
+        "retainedConnected": true,
+        "mutationAttribute": "data-state",
+        "mutationTargetIsRetainedSurface": true,
+        "mutationTargetIsTrigger": false,
+        "oldValue": "instant-open"
+      },
+      "originalDeadline": 2246.3000000715256,
+      "trustedReturnedFocus": {
+        "at": 2160.3000000715256,
+        "stage": "tooltip-native-close-reopen",
+        "reason": "native-event",
+        "eventType": "focusin",
+        "isTrusted": true,
+        "targetTag": "SPAN",
+        "targetID": "",
+        "triggerFocused": true,
+        "triggerState": "closed",
+        "describedBy": null,
+        "childDisabled": true,
+        "surfaceConnected": true,
+        "surfaceState": "closed",
+        "sameRetainedNode": true,
+        "retainedConnected": true,
+        "mutationTargetIsRetainedSurface": false,
+        "mutationTargetIsTrigger": false
+      },
+      "publishedSameNodeOpen": {
+        "at": 2164.3000000715256,
+        "stage": "tooltip-native-close-reopen",
+        "reason": "dom-mutation",
+        "triggerFocused": true,
+        "triggerState": "instant-open",
+        "describedBy": "radix-:r6:",
+        "childDisabled": true,
+        "surfaceConnected": true,
+        "surfaceState": "instant-open",
+        "sameRetainedNode": true,
+        "retainedConnected": true,
+        "mutationAttribute": "data-state",
+        "mutationTargetIsRetainedSurface": true,
+        "mutationTargetIsTrigger": false,
+        "oldValue": "closed"
+      },
+      "acceptedBeforeDeadline": true,
+      "oldEventPublishedPredicate": false,
+      "oldPredicateStatus": "OBSERVER_ASSUMPTION_UNQUALIFIED: internal CustomEvent can precommit after checked Root fix",
+      "snapshot": {
+        "at": 2362.3000000715256,
+        "stage": "tooltip-native-close-reopen",
+        "reason": "after-owner-deadline",
+        "triggerFocused": true,
+        "triggerState": "instant-open",
+        "describedBy": "radix-:r6:",
+        "childDisabled": true,
+        "surfaceConnected": true,
+        "surfaceState": "instant-open",
+        "sameRetainedNode": true,
+        "retainedConnected": true,
+        "mutationTargetIsRetainedSurface": false,
+        "mutationTargetIsTrigger": false
+      },
+      "safety": {
+        "role": "group",
+        "labelledBy": "disabled-action",
+        "nativeChildDisabled": true,
+        "description": "Fixture action is unavailable"
+      },
+      "siblingBehavior": "UNCHECKED: original frozen fixture has one shared Tooltip root",
+      "finalDismissed": true
+    },
+    "phone-light-reduce": {
+      "reopenAcceptance": "PASS_SCOPED_NATIVE_REOPEN",
+      "actualViewport": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "meta": "width=device-width, initial-scale=1",
+        "reducedMotion": true
+      },
+      "documentOverflow": 0,
+      "consoleErrors": [],
+      "originalClosed": null,
+      "originalDeadline": null,
+      "trustedReturnedFocus": {
+        "at": 1873.2000000476837,
+        "stage": "tooltip-native-close-reopen",
+        "reason": "native-event",
+        "eventType": "focusin",
+        "isTrusted": true,
+        "targetTag": "SPAN",
+        "targetID": "",
+        "triggerFocused": true,
+        "triggerState": "closed",
+        "describedBy": null,
+        "childDisabled": true,
+        "surfaceConnected": false,
+        "sameRetainedNode": false,
+        "retainedConnected": false,
+        "mutationTargetIsRetainedSurface": false,
+        "mutationTargetIsTrigger": false
+      },
+      "publishedSameNodeOpen": null,
+      "acceptedBeforeDeadline": "NOT_APPLICABLE_REDUCED",
+      "oldEventPublishedPredicate": false,
+      "oldPredicateStatus": "OBSERVER_ASSUMPTION_UNQUALIFIED: internal CustomEvent can precommit after checked Root fix",
+      "snapshot": {
+        "at": 1919.8000000715256,
+        "stage": "tooltip-native-close-reopen",
+        "reason": "after-owner-deadline",
+        "triggerFocused": true,
+        "triggerState": "instant-open",
+        "describedBy": "radix-:r6:",
+        "childDisabled": true,
+        "surfaceConnected": true,
+        "surfaceState": "instant-open",
+        "sameRetainedNode": false,
+        "retainedConnected": false,
+        "mutationTargetIsRetainedSurface": false,
+        "mutationTargetIsTrigger": false
+      },
+      "safety": {
+        "role": "group",
+        "labelledBy": "disabled-action",
+        "nativeChildDisabled": true,
+        "description": "Fixture action is unavailable"
+      },
+      "siblingBehavior": "UNCHECKED: original frozen fixture has one shared Tooltip root",
+      "finalDismissed": true
+    }
+  },
+  "mediaInspected": {
+    "PNGs": 6,
+    "uncutWebMs": 2,
+    "normalSeconds": 3.52,
+    "reducedSeconds": 3.0
+  },
+  "sourceGuards": "before/beforepush/after all ecff clean; frozeninstall/typecheck/cloudbuild and normal hookedpush PASS, hookTSdiagnostics0",
+  "limits": "Sibling behavior UNKNOWN in originalsingle-rootfixture; nonportalvariant separatelyowneraccepted/unpublished; fullmotion/calibratedtiming/latency/physical/served UNKNOWN"
+}

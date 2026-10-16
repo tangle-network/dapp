@@ -1,0 +1,14 @@
+{
+  "originalReceiptPreserved": "dapp-ui11381-accepted-reopen-receipt.json",
+  "originalReceiptIdentityLimit": "root resolution metadata was mislabeled as actual sharedUI actor",
+  "correctedUIRelativeActor": {
+    "uiResolvedRadixTooltip": "1.4.1",
+    "uiResolvedRadixPresence": "1.1.11",
+    "rootDirectRadixTooltip": "1.2.10",
+    "rootDirectRadixPresence": "1.1.6",
+    "radixIdentityCorrection": "Prior1.2.10/1.1.6 fields came from root node_modules and did not identify nested UI dependencies. Current unchanged UI11.38.1 node_modules plus frozen7d65 lock resolve UI Tooltip1.4.1/Presence1.1.11; originalrun did not separately snapshot these module resolutions. React18.3.1 remainsrootresolvedpeer. Actual trace/source/deps/CSS guards unchanged."
+  },
+  "historicalProvenance": "unchangedinstalledUI11.38.1 plus frozen7d65 lock resolves nested1.4.1/1.1.11; originalbrowserrun did not separately snapshot these modulepaths",
+  "ownerNotification": "dedupe-dapp-tooltip-radix-resolution-correction-10198 ACCEPTED once",
+  "newUI11382": "pin/lock authored only; no installed claim before freshfrozenlink"
+}
