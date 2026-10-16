@@ -73,7 +73,11 @@
       "!{projectRoot}/src/test-setup.[jt]s",
       "!{projectRoot}/eslint.config.js"
     ],
-    "sharedGlobals": []
+    "sharedGlobals": [
+      "{workspaceRoot}/tsconfig.base.json",
+      "{workspaceRoot}/tailwind.preset.ts",
+      "{workspaceRoot}/libs/ui-components/src/tailwind.preset.ts"
+    ]
   },
   "generators": {
     "@nx/react": {
