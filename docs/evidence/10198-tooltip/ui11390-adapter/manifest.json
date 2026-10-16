@@ -1,8 +1,10 @@
 {
   "schema": 1,
-  "evidenceCommit": "b94de02e09c7af67a3c507e1e9c6c0e4560e797d",
+  "evidenceCommit": "5d6ec41b40e6ab1fc8d45179e9a8653f509ad72b",
   "testedExecutableSource": "6925ec46adadc526971c5f92cbfacbbf9a567e00",
   "prefix": "docs/evidence/10198-tooltip/ui11390-adapter/",
+  "formattedSourceCommit": "bf31ee0e7a433916b35b3bdd7e306e851204c83e",
+  "formatEquivalence": "Three files differ bytewise from tested692; normalized TypeScript and emitted JS AST equivalence in provenance/format-equivalence.raw.txt; final source delta +125/-194/net69",
   "basis": "Committed Git blobs after normal hooks, verified again at final publication head against retained source bytes and blob OIDs; excludes only this manifest. Old parent evidence stays immutable at81a78b36.",
   "sourceGates": {
     "install": "beelink2-f4022c1af6fac1841681c84b9c01f7e1 valid frozen installation only; overall2",
@@ -29,9 +31,9 @@
   "files": [
     {
       "path": "README.md",
-      "gitBlob": "bf0f48b354188d463df82f80f4ccd6a9d0d6b6b8",
-      "sha256": "c2eefd9ad28d6a57b62c58ca640e2d90f378cf24533991cf747bee9f87f100f7",
-      "bytes": 9420
+      "gitBlob": "6439f26d78a2a93de458c6a49d11c8eb1b88051c",
+      "sha256": "11e1d227655757c44ddccb951af665daef3c55b20c97634fcbbb237bef7513fb",
+      "bytes": 10477
     },
     {
       "path": "observer-baseline-888c7d/actual-ui-actor-identity.raw.txt",
@@ -346,6 +348,12 @@
       "bytes": 142530
     },
     {
+      "path": "provenance/format-equivalence.raw.txt",
+      "gitBlob": "9cd210eea4ebba23dffbba435c1501492464c1eb",
+      "sha256": "5a09714c8933459302389bda3dc5b16ae58f71d298aed7cb0fe86bb7ff0b26b1",
+      "bytes": 1776
+    },
+    {
       "path": "provenance/gate-888c7d.raw.txt",
       "gitBlob": "1acade00aa2b0ce8ba0c7bd4bf777fe5c996cc39",
       "sha256": "bd7fd72fc63ef69b5068f3cf51a3fe834d15033ff94b5c929e8e5c6a246406f7",
@@ -362,6 +370,12 @@
       "gitBlob": "0d2ee22f60c07eaa1bd82a63ecc25e8c1ca66940",
       "sha256": "5406b3fcb9a4b1d6f836f2da33cf8c44546964aad0cb0da59f8bc894956aec47",
       "bytes": 7011
+    },
+    {
+      "path": "provenance/gate-f0dd02-publication-failure.raw.txt",
+      "gitBlob": "74b86f33c583e7f8c63ebcabe60d0c9a6499b366",
+      "sha256": "14e371b96e4f63ec1ffa19d705970e5b82e87704f5865a4ecc580812afb665d8",
+      "bytes": 40209
     },
     {
       "path": "provenance/gate-f4022c.raw.txt",
