@@ -14883,9 +14883,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@tangle-network/ui@npm:11.37.0":
-  version: 11.37.0
-  resolution: "@tangle-network/ui@npm:11.37.0"
+"@tangle-network/ui@npm:11.38.1":
+  version: 11.38.1
+  resolution: "@tangle-network/ui@npm:11.38.1"
   dependencies:
     "@pierre/theme": "npm:1.1.0"
     "@pierre/trees": "npm:1.0.0-beta.6"
@@ -14958,7 +14958,7 @@ __metadata:
       optional: true
     yjs:
       optional: true
-  checksum: 10c0/ae98705028e71ec72a2a37cc72898361d845b9e1350276f16d9f1d63e8aaac358a25e449d79ce7076e24c10d3e7ab1eb9addcd46c1a73a8f7aed13b0920f6c06
+  checksum: 10c0/cb858fc741960d5187e4cf528c2709822a490c881cca7af0dcfdac0e45a960bf00432d01a95012a499c92d82f28dd55f7cf8ed6c316a691dfc2a58b9cf001b1d
   languageName: node
   linkType: hard
 
@@ -33688,7 +33688,7 @@ __metadata:
     "@tangle-network/blueprint-ui": "npm:^0.1.2"
     "@tangle-network/brand": "npm:1.25.1"
     "@tangle-network/sandbox-ui": "npm:0.90.3"
-    "@tangle-network/ui": "npm:11.37.0"
+    "@tangle-network/ui": "npm:11.38.1"
     "@tanstack/match-sorter-utils": "npm:^8.19.4"
     "@tanstack/react-query": "npm:^5.101.0"
     "@tanstack/react-table": "npm:^8.21.3"

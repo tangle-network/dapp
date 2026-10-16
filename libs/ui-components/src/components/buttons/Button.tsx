@@ -1,6 +1,12 @@
 'use client';
 
-import { Button as SharedButton } from '@tangle-network/ui/primitives';
+import {
+  Button as SharedButton,
+  Tooltip as SharedTooltip,
+  TooltipContent as SharedTooltipContent,
+  TooltipProvider as SharedTooltipProvider,
+  TooltipTrigger as SharedTooltipTrigger,
+} from '@tangle-network/ui/primitives';
 import { getFlexBasic } from '@tangle-network/icons/utils';
 import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
@@ -9,7 +15,6 @@ import { ButtonContentProps, ButtonProps } from './types';
 import { useButtonProps } from './use-button-props';
 import { getButtonClassNameByVariant } from './utils';
 import { forwardRef, useId } from 'react';
-import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 
 /**
  * The Button Component
@@ -113,20 +118,24 @@ const Button = forwardRef<HTMLElement, ButtonProps>((props, ref) => {
   }
 
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <span
-          className={cx('inline-flex', isFullWidth && 'w-full')}
-          tabIndex={0}
-          role="group"
-          aria-labelledby={buttonId}
-        >
-          {button}
-        </span>
-      </TooltipTrigger>
+    <SharedTooltipProvider>
+      <SharedTooltip delayDuration={100}>
+        <SharedTooltipTrigger asChild>
+          <span
+            className={cx('inline-flex', isFullWidth && 'w-full')}
+            tabIndex={0}
+            role="group"
+            aria-labelledby={buttonId}
+          >
+            {button}
+          </span>
+        </SharedTooltipTrigger>
 
-      <TooltipBody>{disabledTooltip}</TooltipBody>
-    </Tooltip>
+        <SharedTooltipContent sideOffset={4}>
+          {disabledTooltip}
+        </SharedTooltipContent>
+      </SharedTooltip>
+    </SharedTooltipProvider>
   );
 });
 
