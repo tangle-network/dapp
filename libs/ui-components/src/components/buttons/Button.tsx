@@ -8,7 +8,7 @@ import ButtonSpinner from './ButtonSpinner';
 import { ButtonContentProps, ButtonProps } from './types';
 import { useButtonProps } from './use-button-props';
 import { getButtonClassNameByVariant } from './utils';
-import { forwardRef } from 'react';
+import { forwardRef, useId } from 'react';
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 
 /**
@@ -34,6 +34,7 @@ import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
  * ```
  */
 const Button = forwardRef<HTMLElement, ButtonProps>((props, ref) => {
+  const disabledTooltipId = useId();
   const {
     as: asProps,
     children,
@@ -53,6 +54,10 @@ const Button = forwardRef<HTMLElement, ButtonProps>((props, ref) => {
     disabledTooltip,
     ...restProps
   } = props;
+
+  const hasDisabledTooltip = isDisabled && disabledTooltip !== undefined;
+  const buttonId =
+    restProps.id ?? (hasDisabledTooltip ? disabledTooltipId : undefined);
 
   const [buttonProps, { tagName: Component }] = useButtonProps({
     tagName: asProps,
@@ -75,6 +80,7 @@ const Button = forwardRef<HTMLElement, ButtonProps>((props, ref) => {
       <Component
         {...restProps}
         {...buttonProps}
+        id={buttonId}
         disabled={buttonProps.disabled || isLoading}
         aria-busy={isLoading || undefined}
         ref={ref}
@@ -102,14 +108,19 @@ const Button = forwardRef<HTMLElement, ButtonProps>((props, ref) => {
 
   // If the button isn't disabled or a tooltip for the disabled state isn't
   // provided, just return the button as is.
-  if (disabledTooltip === undefined || !isDisabled) {
+  if (!hasDisabledTooltip) {
     return button;
   }
 
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <span className={cx('inline-flex', isFullWidth && 'w-full')}>
+        <span
+          className={cx('inline-flex', isFullWidth && 'w-full')}
+          tabIndex={0}
+          role="group"
+          aria-labelledby={buttonId}
+        >
           {button}
         </span>
       </TooltipTrigger>
