@@ -1,0 +1,5 @@
+9:36:24 PM [vite] (client) Re-optimizing dependencies because lockfile has changed
+
+  VITE v6.4.3  ready in 524 ms
+
+  ➜  Local:   http://127.0.0.1:43198/

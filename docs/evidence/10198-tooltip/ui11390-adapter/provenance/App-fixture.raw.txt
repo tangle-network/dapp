@@ -1,0 +1,77 @@
+import React, { useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import { type ColumnDef, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
+import Button from '../../libs/ui-components/src/components/buttons/Button';
+import { Card } from '../../libs/ui-components/src/components/Card/Card';
+import { Input } from '../../libs/ui-components/src/components/Input/Input';
+import { Table } from '../../libs/ui-components/src/components/Table/Table';
+import { SideBar } from '../../libs/ui-components/src/components/SideBar/SideBar';
+import { MobileSidebar } from '../../libs/ui-components/src/components/SideBar/MobileSidebar';
+import { Logo } from '../../libs/ui-components/src/components/Logo';
+import { HomeFillIcon } from '../../libs/icons/src';
+
+import SideBarItem from '../../libs/ui-components/src/components/SideBar/Item';
+import { SubItem } from '../../libs/ui-components/src/components/SideBar/SubItem';
+import { Tooltip, TooltipBody, TooltipTrigger } from '../../libs/ui-components/src/components/Tooltip';
+import { Link } from '../../libs/ui-components/src/components/Link';
+
+const assets = Array.from({ length: 8 }, (_, index) => ({ id: index + 1, name: `Asset ${index + 1}`, note: index === 0 ? 'x'.repeat(200) : 'Disposable fixture state' }));
+type Asset = (typeof assets)[number];
+const columns: ColumnDef<Asset>[] = [
+  { id: 'selection', header: 'Select', cell: ({ row }) => <input type="checkbox" aria-label={`Select ${row.original.name}`} checked={row.getIsSelected()} onChange={row.getToggleSelectedHandler()} /> },
+  { accessorKey: 'name', header: ({ column }) => <button id="sort-name" type="button" onClick={column.getToggleSortingHandler()}>Name</button>, cell: ({ row }) => <button type="button" onClick={row.getToggleExpandedHandler()}>{row.original.name}</button> },
+  { accessorKey: 'note', header: 'Note' },
+];
+const navItems = [{ name: 'Fixture', href: '/', isInternal: true, Icon: HomeFillIcon, subItems: [] }];
+const footer = { name: 'Fixture documentation', href: '#proof-anchor', isInternal: true, Icon: HomeFillIcon };
+
+function App() {
+  const [adapterActivations, setAdapterActivations] = useState(0);
+  const recordRef = (name: string) => (node: HTMLElement | null) => { node?.setAttribute('data-forwarded-ref', name); };
+  const [value, setValue] = useState('');
+  const [invalid, setInvalid] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [selected, setSelected] = useState(false);
+  const [activations, setActivations] = useState(0);
+  const table = useReactTable({ data: assets, columns, getCoreRowModel: getCoreRowModel(), getSortedRowModel: getSortedRowModel(), enableRowSelection: true, getRowCanExpand: () => true });
+  const navProps = { Logo: Logo, items: navItems, footer, logoLink: '/', pathnameOrHash: '/' };
+  return <div className="proof-layout">
+    <aside id="desktop-navigation"><SideBar {...navProps} /></aside>
+    <main id="proof-content">
+      <div id="phone-navigation"><MobileSidebar {...navProps} /></div>
+      <h1>Disposable component fixture</h1>
+      <p>Actual dapp adapters; local state only. No wallet or provider requests.</p>
+      <Card id="card"><h2>Controls</h2><div className="proof-controls">
+        <Button id="enabled-action" onClick={() => setActivations((count) => count + 1)}>Enabled action</Button>
+        <Button id="selected-action" aria-pressed={selected} onClick={() => setSelected(!selected)}>Select action</Button>
+        <Button id="disabled-action" isDisabled disabledTooltip="Fixture action is unavailable">Unavailable action</Button>
+        <p id="disabled-explanation">Unavailable action is disabled in this fixture.</p>
+        <Button id="disabled-anchor" href="#unexpected-navigation" isDisabled onClick={() => setActivations((count) => count + 1)}>Disabled anchor</Button>
+        <Button id="loading-anchor" href="#unexpected-navigation" isLoading onClick={() => setActivations((count) => count + 1)}>Loading anchor</Button>
+        <Button id="pending-action" isLoading={pending}>Run action</Button>
+        <label><input id="pending-toggle" type="checkbox" checked={pending} onChange={(event) => setPending(event.target.checked)} /> Pending fixture state</label>
+      </div><output id="activation-count">{activations}</output></Card>
+      <Card id="adapter-proof"><h2>Actual Tooltip adapters</h2>
+        <div id="adapter-item" style={{ maxWidth: '18rem' }}><SideBarItem name="Adapter item" href="#adapter-safe-anchor" isInternal Icon={HomeFillIcon} subItems={[]} isExpanded info="Actual item explanation" onClick={() => setAdapterActivations(count => count+1)} /></div>
+        <div id="adapter-subitem" style={{ maxWidth: '18rem' }}><SubItem name="Adapter subitem" href="#adapter-safe-anchor" isInternal info="Actual subitem explanation" onClick={() => setAdapterActivations(count => count+1)} /></div>
+        <div id="adapter-default-host"><Tooltip isDefaultOpen><TooltipTrigger asChild ref={recordRef('default-trigger')}><Link id="adapter-default-trigger" href="#adapter-safe-anchor">Default portal trigger</Link></TooltipTrigger><TooltipBody id="adapter-default-content" ref={recordRef('default-content')} side="bottom" sideOffset={11}>Default portal explanation</TooltipBody></Tooltip></div>
+        <div id="adapter-local-host"><Tooltip><TooltipTrigger asChild ref={recordRef('local-trigger')}><Link id="adapter-local-trigger" href="#adapter-safe-anchor">Local asChild trigger</Link></TooltipTrigger><TooltipBody id="adapter-local-content" ref={recordRef('local-content')} side="bottom" sideOffset={13} isDisablePortal asChild><span>Local asChild explanation</span></TooltipBody></Tooltip></div>
+        <div id="adapter-disabled-item"><SideBarItem name="Disabled adapter item" href="#adapter-safe-anchor" isInternal isDisabled Icon={HomeFillIcon} subItems={[]} isExpanded info="Disabled item explanation" onClick={() => setAdapterActivations(count => count+1)} /></div>
+        <div id="adapter-disabled-subitem"><SubItem name="Disabled adapter subitem" href="#adapter-safe-anchor" isInternal isDisabled info="Disabled subitem explanation" onClick={() => setAdapterActivations(count => count+1)} /></div>
+        <div id="adapter-nohref"><Link><strong>No href remains text</strong></Link></div>
+        <output id="adapter-activations">{adapterActivations}</output><span id="adapter-safe-anchor">Local fragment target</span>
+      </Card>
+      <Card><h2>Input states</h2><label htmlFor="proof-input">Fixture value</label>
+        <Input id="proof-input" isControlled value={value} onChange={setValue} isInvalid={invalid} errorMessage={invalid ? 'Enter a valid fixture value' : undefined} />
+        <label><input id="invalid-toggle" type="checkbox" checked={invalid} onChange={(event) => setInvalid(event.target.checked)} /> Invalid fixture state</label>
+        <label htmlFor="readonly-input">Readonly value</label><Input id="readonly-input" isControlled value="Retained value" isReadOnly />
+        <label htmlFor="disabled-input">Disabled value</label><Input id="disabled-input" isControlled value="Unavailable" isDisabled />
+      </Card>
+      <section aria-label="Assets"><h2>Assets</h2><Table tableProps={table} tableClassName="proof-table" tableWrapperClassName="proof-table-scroll" getExpandedRowContent={(row) => <p>Expanded {row.original.name}</p>} /><output id="selected-count">{table.getSelectedRowModel().rows.length}</output></section>
+      <section id="proof-anchor" className="proof-anchor"><h2>Reading anchor</h2><p id="anchor-text">Keep this line in the same vertical position while navigation changes.</p>{Array.from({ length: 12 }, (_, index) => <p key={index}>Retained fixture paragraph {index + 1}.</p>)}</section>
+    </main>
+  </div>;
+}
+
+createRoot(document.getElementById('root')!).render(<BrowserRouter><App /></BrowserRouter>);
