@@ -1,0 +1,215 @@
+{
+  "schema": 1,
+  "evidenceCommit": "23781010ec6e70dc0770b22b00e355cb117fdc89",
+  "testedExecutableSource": "ecffdbc7f9cfb854c4e2910b652353aa97a4d036",
+  "runtimeGate": "beelink2-cf6658666e2380e2e17faf45dbca5082",
+  "basis": "Committed Git blobs after normal hooks, verified again at final publication head; excludes only this manifest. Original raw files and media compared byte-for-byte with retained capture sources.",
+  "PNGs": 12,
+  "originalUncutWebMs": 4,
+  "files": [
+    {
+      "path": "README.md",
+      "gitBlob": "f28c6ded6f399797e42f6e373e58a03d2580e76d",
+      "sha256": "2c03f9f4812cd8fc1703c71c792067c45f38e7e6dc78d0735f8c55fe6ceaba97",
+      "bytes": 7462
+    },
+    {
+      "path": "baseline-ui11381/identity.raw.txt",
+      "gitBlob": "9343210d0f8fbfce92f073e4046ab8b97fc69a3e",
+      "sha256": "d6f5c2bbe243ac84c964cbec407ec5832a716ba95a21a4067c18e6623447f51f",
+      "bytes": 2088
+    },
+    {
+      "path": "baseline-ui11381/original-receipt.raw.txt",
+      "gitBlob": "c1ad3f07051871a22ae3dfd978c9a7e8984c764c",
+      "sha256": "1c1675fc94aedab303562fa6b407dd9f5f73a023125d137b8cbdad3b0bde01d9",
+      "bytes": 9945
+    },
+    {
+      "path": "baseline-ui11381/phone-light-no-preference/00-rest.png",
+      "gitBlob": "c7942aa8cfa2a73befe8a6f9a7d275fa0c8294a8",
+      "sha256": "43bc44cefa65d47ac4c72b7687b41f50434e07db1096d263df54feb31667f8da",
+      "bytes": 45250
+    },
+    {
+      "path": "baseline-ui11381/phone-light-no-preference/01-tooltip-native-fresh-open.png",
+      "gitBlob": "ed948fade7261b84cd82f5832fe874b51ac0f1a2",
+      "sha256": "e22b287a9b1cea7d43ce235baa4f8ca514130867b5572312e15035b5508d1189",
+      "bytes": 47662
+    },
+    {
+      "path": "baseline-ui11381/phone-light-no-preference/observations.raw.txt",
+      "gitBlob": "4fa14b9a03cf7ffe3c642544974809a7f28dbfeb",
+      "sha256": "82ee9c1fca81e10a2a113ea142cbb11da10179caa3794e73d68e57d2a345f644",
+      "bytes": 31354
+    },
+    {
+      "path": "baseline-ui11381/phone-light-no-preference/page@541ac887bb6bdc5329752427bd8895fa.webm",
+      "gitBlob": "aa7fcd9f629bafe4cdabf985ffaabcf1a65c4579",
+      "sha256": "f24c7412367cc517370badc80b1efbc8102a1f4d3b2650f4527fe9c5c43f1ec3",
+      "bytes": 104420
+    },
+    {
+      "path": "baseline-ui11381/phone-light-no-preference/tooltip-native-close-reopen-failure.png",
+      "gitBlob": "aed882f87ed9c94bf4c63866d61b997e99655b1d",
+      "sha256": "366ca5b60cc728f50a5a2abf656c5ae77f8e9d28467a24d3efc48bc19578a609",
+      "bytes": 45406
+    },
+    {
+      "path": "baseline-ui11381/phone-light-reduce/00-rest.png",
+      "gitBlob": "205e0066b19be1906312990e21bef276d407cebc",
+      "sha256": "4ab679d6d081022dbe418647cd4ad98a99be09deff7acf91eb1ea80eae1550ab",
+      "bytes": 45283
+    },
+    {
+      "path": "baseline-ui11381/phone-light-reduce/01-tooltip-native-fresh-open.png",
+      "gitBlob": "07eb035958b3384c8da01f7ba3c6735a333424bb",
+      "sha256": "d465f607670b762b28780ae77941f96ddde08c2aede7d090b2ceed876c573c80",
+      "bytes": 47633
+    },
+    {
+      "path": "baseline-ui11381/phone-light-reduce/02-tooltip-native-close-reopen.png",
+      "gitBlob": "062c008da7206a362a831790491406757e6373e2",
+      "sha256": "765523a2e0837fa3e49975ef8a5f3319b978a17c7899c6de917014b0b0fa526d",
+      "bytes": 45401
+    },
+    {
+      "path": "baseline-ui11381/phone-light-reduce/observations.raw.txt",
+      "gitBlob": "ad220a4502ffd8be82eaa2b81aa5e804bee45ceb",
+      "sha256": "d86df76eeb6fdd5db25f4ade63442a7d0e66e17dca6e8e839fa5bc2c16f6db7d",
+      "bytes": 25256
+    },
+    {
+      "path": "baseline-ui11381/phone-light-reduce/page@0dd4503ee08b042ac870ce64547fd5da.webm",
+      "gitBlob": "f1f8e579b3f76c8c238e4516164d0306a10e1cdd",
+      "sha256": "04a1280ebf21e9940843d965ccc29ab803f8b2194b607f879a23774b2865cce2",
+      "bytes": 61140
+    },
+    {
+      "path": "baseline-ui11381/server.log.raw.txt",
+      "gitBlob": "55823166ca54fcdeb4deeb71e428b43017fafe90",
+      "sha256": "32268f8f0c7acb060bbf8d1b25480576605111003bb964866c1063056f89b9a3",
+      "bytes": 73
+    },
+    {
+      "path": "checked-ui11382/actual-ui-actor-identity.raw.txt",
+      "gitBlob": "3a906e2d282a2f3452355ec61e5e5e7eda314126",
+      "sha256": "b705c922bc6b80acdccd99a1818da199b36200d9cf69030af7cfd0bea8a8051d",
+      "bytes": 1799
+    },
+    {
+      "path": "checked-ui11382/build.log.raw.txt",
+      "gitBlob": "bbe0eb3714c9d70329b4231f46de3b3a0661b5df",
+      "sha256": "e87522aba16af7a0560752727866835a14853164b488a2f26b53a54f016aa87e",
+      "bytes": 38916
+    },
+    {
+      "path": "checked-ui11382/consumer-receipt.raw.txt",
+      "gitBlob": "64375df23980277271ef332afb46e86d376dd6d9",
+      "sha256": "0fc6e0746eb374775dc3bb5528a33f4a55907f4e95e19c9d6a4c73e7e3c4e68d",
+      "bytes": 8355
+    },
+    {
+      "path": "checked-ui11382/identity.raw.txt",
+      "gitBlob": "f543e6599039a61015b4d9a28eccf60fb8e110d2",
+      "sha256": "503906346c4169cfb93cce6f5f45135ea9aa8734dad69024b9dec156f71f5bf9",
+      "bytes": 2088
+    },
+    {
+      "path": "checked-ui11382/phone-light-no-preference/00-rest.png",
+      "gitBlob": "f43f1d23e19f0d716e6fad0686827a4ffe38121d",
+      "sha256": "e13a712e4988d056d7fdc154ccb465916db96b3d20df8d38a6def4015b351cd0",
+      "bytes": 45251
+    },
+    {
+      "path": "checked-ui11382/phone-light-no-preference/01-tooltip-native-fresh-open.png",
+      "gitBlob": "47a95cbd7813eb5caf99b5444035ba72b97c6e51",
+      "sha256": "8ad539ea1e9ca646c8bd08d7036cf60bba12f157089af7ae21dddc7355c7ec93",
+      "bytes": 48116
+    },
+    {
+      "path": "checked-ui11382/phone-light-no-preference/02-tooltip-native-close-reopen.png",
+      "gitBlob": "c89a35698cd05cd6d0752e420a0b5e77c164c70e",
+      "sha256": "37c26b98f7d4943a0015e62c038e478175b07ea5564e4c1bd0e737e30cceb354",
+      "bytes": 45426
+    },
+    {
+      "path": "checked-ui11382/phone-light-no-preference/observations.raw.txt",
+      "gitBlob": "42ba50f91a7fcf80e6be431625d99d87b11a2ed1",
+      "sha256": "a9b18bab25a4021e4ef790fcfe4acf73c10d0fa1e69b58a9e5e27d04ab456c2e",
+      "bytes": 29717
+    },
+    {
+      "path": "checked-ui11382/phone-light-no-preference/page@3909afb04ac4dd58440975e0672f0b19.webm",
+      "gitBlob": "80109f939ae176f71fd481162f11e38779d2700d",
+      "sha256": "850f1f184a5550d7e4983882fe07e5d8c757fdfd9525303fbebc6aebd1fefa2f",
+      "bytes": 66667
+    },
+    {
+      "path": "checked-ui11382/phone-light-reduce/00-rest.png",
+      "gitBlob": "b81c7d3cf170ebd2ad5415699e97aa64ef2456bd",
+      "sha256": "ff790162988d27bec2ea5afa939f13928938674651ba1865a015af1346e9f970",
+      "bytes": 45242
+    },
+    {
+      "path": "checked-ui11382/phone-light-reduce/01-tooltip-native-fresh-open.png",
+      "gitBlob": "e1c220314ba89af33ed685b3345985eae81d6ddd",
+      "sha256": "2a55614a050f5ed166dcd52dd6f2d6645f0f624738ab06818d10546ad57c118d",
+      "bytes": 47696
+    },
+    {
+      "path": "checked-ui11382/phone-light-reduce/02-tooltip-native-close-reopen.png",
+      "gitBlob": "abeb055efa6243efe6874871a3ef7f22b4a13982",
+      "sha256": "f797012775baddef26539db769710441e99965627c96fec5a49d1f6efe412716",
+      "bytes": 45389
+    },
+    {
+      "path": "checked-ui11382/phone-light-reduce/observations.raw.txt",
+      "gitBlob": "8f962232bde7cfe50bc2687f1c9c1365b877a959",
+      "sha256": "ebcc9ed0c13ce5c7b8991b8de9412465c988d502f40c661eaea9c67b62e1e0b6",
+      "bytes": 29996
+    },
+    {
+      "path": "checked-ui11382/phone-light-reduce/page@7a00df77f8436a2dc3a2a72ca9a9154c.webm",
+      "gitBlob": "8a6eb96a93d6f48c99ec64fc23dc179f916ec771",
+      "sha256": "106658ec9c04e3f7082e1906982dfbc969bdd6358162d401da4b1c02dd60d9c9",
+      "bytes": 58388
+    },
+    {
+      "path": "checked-ui11382/post-build-css-identity.raw.txt",
+      "gitBlob": "39bb9f497e161397343f83df2e306db21f4833e9",
+      "sha256": "e0c8802dbbd7520d901c86fbc57badd8773810d0cec5cbc53933f45e53eb5dc0",
+      "bytes": 125
+    },
+    {
+      "path": "checked-ui11382/push.log.raw.txt",
+      "gitBlob": "f7d0885263c47a9ef13399cd1b5bba691135451e",
+      "sha256": "e1a819eab4b0e2072079795e4e2f85674ba579e60043280eb95025bac1945748",
+      "bytes": 1104886
+    },
+    {
+      "path": "checked-ui11382/server.log.raw.txt",
+      "gitBlob": "2caec04d85f69ed040e6fe9c8f30943530179fd4",
+      "sha256": "116f7c98b664d026667c70901e0b8ef4cf4b327783efa77e31c87e6c9437e052",
+      "bytes": 293
+    },
+    {
+      "path": "provenance/actor-resolution-correction.raw.txt",
+      "gitBlob": "2c634a4370563b1f44c23847362f75d266806304",
+      "sha256": "1b6eb3154e8cd86749491cd46fb549aa07e3ef040e9f9828dca8455387cbb7ac",
+      "bytes": 1111
+    },
+    {
+      "path": "provenance/corrected-cf6658.mjs.raw.txt",
+      "gitBlob": "8930f9600ff541043299df5d84f88de49fcd9b75",
+      "sha256": "5a53dfe3e6b4e461ce2750eab414c2c04d48a4f9cdee471647d6efb789410919",
+      "bytes": 30655
+    },
+    {
+      "path": "provenance/frozen-2ce255.mjs.raw.txt",
+      "gitBlob": "8091c164bdb7d6051bb6ed8e586b1b7859f43614",
+      "sha256": "a677639ef427c3dfaa734fe6036c0fcdc918c881b6135aee90e883788cb71003",
+      "bytes": 28459
+    }
+  ]
+}
