@@ -108,8 +108,11 @@ const Button = forwardRef<HTMLElement, ButtonProps>((props, ref) => {
 
   return (
     <Tooltip>
-      {/** NOTE: Erroring due to need for `asChild`, but when `asChild` is passed, the tooltip doesn't appear. */}
-      <TooltipTrigger>{button}</TooltipTrigger>
+      <TooltipTrigger asChild>
+        <span className={cx('inline-flex', isFullWidth && 'w-full')}>
+          {button}
+        </span>
+      </TooltipTrigger>
 
       <TooltipBody>{disabledTooltip}</TooltipBody>
     </Tooltip>
