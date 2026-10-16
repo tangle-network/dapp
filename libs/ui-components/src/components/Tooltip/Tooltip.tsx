@@ -24,11 +24,11 @@ export const TooltipBody = forwardRef<
   >
     <div
       className={twMerge(
-        'body2 text-center break-normal font-normal min-w-0 max-w-[250px]',
+        'body2 !text-inherit text-center break-normal font-normal min-w-0 max-w-[250px]',
         className,
       )}
     >
-      {title && <h6 className="mb-2 utility">{title}</h6>}
+      {title && <h6 className="mb-2 utility !text-inherit">{title}</h6>}
       {children}
       {button && <div className="flex justify-end mt-4">{button}</div>}
     </div>

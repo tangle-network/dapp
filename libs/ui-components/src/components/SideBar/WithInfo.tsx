@@ -25,16 +25,12 @@ function WithInfo({
 
   return (
     <Tooltip isOpen={isOpen} onChange={setIsOpen}>
-      <TooltipTrigger
-        asChild
-        onMouseEnter={() => setIsOpen(true)}
-        onMouseLeave={() => setIsOpen(false)}
-      >
+      <TooltipTrigger asChild>
         {children}
       </TooltipTrigger>
       <TooltipBody {...tooltipBodyProps} isDisablePortal>
         {typeof info === 'string' ? (
-          <Typography variant={'body1'} className="break-normal">
+          <Typography variant={'body1'} className="break-normal !text-inherit">
             {info}
           </Typography>
         ) : (
