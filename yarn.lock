@@ -14883,9 +14883,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@tangle-network/ui@npm:11.36.0":
-  version: 11.36.0
-  resolution: "@tangle-network/ui@npm:11.36.0"
+"@tangle-network/ui@npm:11.37.0":
+  version: 11.37.0
+  resolution: "@tangle-network/ui@npm:11.37.0"
   dependencies:
     "@pierre/theme": "npm:1.1.0"
     "@pierre/trees": "npm:1.0.0-beta.6"
@@ -14912,7 +14912,7 @@ __metadata:
     github-slugger: "npm:^2.0.0"
     lucide-react: "npm:^1.48.0"
     marked: "npm:^18.0.14"
-    motion: "npm:14.2.0"
+    motion: "npm:14.1.0"
     react-markdown: "npm:^10.1.0"
     rehype-sanitize: "npm:^6.0.0"
     rehype-slug: "npm:^6.0.0"
@@ -14958,7 +14958,7 @@ __metadata:
       optional: true
     yjs:
       optional: true
-  checksum: 10c0/be63d21a0b4c5c97063cf2aaa243db44020f2c4005b159e90958cc11e1e0b63c7bb4d88a2f8ff875ccc051972d158106d46957193de437a7c630e23a24bddaa7
+  checksum: 10c0/ae98705028e71ec72a2a37cc72898361d845b9e1350276f16d9f1d63e8aaac358a25e449d79ce7076e24c10d3e7ab1eb9addcd46c1a73a8f7aed13b0920f6c06
   languageName: node
   linkType: hard
 
@@ -23720,12 +23720,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:14.2.0":
-  version: 14.2.0
-  resolution: "framer-motion@npm:14.2.0"
+"framer-motion@npm:14.1.0":
+  version: 14.1.0
+  resolution: "framer-motion@npm:14.1.0"
   dependencies:
-    motion-dom: "npm:14.2.0"
-    motion-utils: "npm:14.1.1"
+    motion-dom: "npm:14.1.0"
+    motion-utils: "npm:14.1.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     react: ^18.0.0 || ^19.0.0
@@ -23735,7 +23735,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10c0/d469b770a7089b7703be8adf40817ce8d3395eb0c6c85b25fb39c3e9dfd749202d6b498aa5ec6b5ad0ab8776ae5f6bce0f34d8791a87daa2529f7b83af558e0d
+  checksum: 10c0/cf167172d041c2d20d844da7aaba91826aa3767aafa2251acb43c6271294e5f60ea3ab99d198ff21521d1f72fc24aeb391ea7ff1faf54f80764ef3a76114966a
   languageName: node
   linkType: hard
 
@@ -28560,12 +28560,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"motion-dom@npm:14.2.0":
-  version: 14.2.0
-  resolution: "motion-dom@npm:14.2.0"
+"motion-dom@npm:14.1.0":
+  version: 14.1.0
+  resolution: "motion-dom@npm:14.1.0"
   dependencies:
-    motion-utils: "npm:14.1.1"
-  checksum: 10c0/3b15f5bbb67a04da9d18224e2c6cb22838e80fff02ed4b7b9e5278e1611a471fd539e46e2612346506f1801c3e1a44148718bcda82804001db91b047ee652188
+    motion-utils: "npm:14.1.0"
+  checksum: 10c0/ad5d65e10cd88b2e2f2d2728eb936c0607c8862b04246f8732dad07559ec632a09f5d5ee547afa08d4898ef0fd3fc8d3f5c1615e4d32bda477daac7017f2dd35
   languageName: node
   linkType: hard
 
@@ -28578,10 +28578,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"motion-utils@npm:14.1.1":
-  version: 14.1.1
-  resolution: "motion-utils@npm:14.1.1"
-  checksum: 10c0/ee89684857aae2b02897d7297568e1e6dc6c1eec08c61533fbc0a9650de5d5c454aa888532b825baabac92defddecd364cbb8cd7fa63b2171152edf8f9f819f0
+"motion-utils@npm:14.1.0":
+  version: 14.1.0
+  resolution: "motion-utils@npm:14.1.0"
+  checksum: 10c0/d48bb8bf9e78af2ee9dd5b4f6ef54e4357b876b950be7be1216f40b7e8f080270109741a02ac168a9b202505a12e9809538c90e36821591dc2a2b8489a6048f2
   languageName: node
   linkType: hard
 
@@ -28592,11 +28592,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"motion@npm:14.2.0":
-  version: 14.2.0
-  resolution: "motion@npm:14.2.0"
+"motion@npm:14.1.0":
+  version: 14.1.0
+  resolution: "motion@npm:14.1.0"
   dependencies:
-    framer-motion: "npm:14.2.0"
+    framer-motion: "npm:14.1.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     react: ^18.0.0 || ^19.0.0
@@ -28606,7 +28606,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10c0/4c288db5503dd4cc7879437f3fef1b7fd5add4903307a333b9ee631dfb301d8db68417e96fb1345119bc77cfeebd9ff1c4305926e4fe0606c73dbe68a052ca67
+  checksum: 10c0/515a1e78e4b810899436ad5a23862d190927533ea98c8c02f567e993c7b54d4b3b6d044a04d18fdff38fa52f7432600fc0ac2dec0267272bf7b393b66c0fc66f
   languageName: node
   linkType: hard
 
@@ -33688,7 +33688,7 @@ __metadata:
     "@tangle-network/blueprint-ui": "npm:^0.1.2"
     "@tangle-network/brand": "npm:1.25.1"
     "@tangle-network/sandbox-ui": "npm:0.90.3"
-    "@tangle-network/ui": "npm:11.36.0"
+    "@tangle-network/ui": "npm:11.37.0"
     "@tanstack/match-sorter-utils": "npm:^8.19.4"
     "@tanstack/react-query": "npm:^5.101.0"
     "@tanstack/react-table": "npm:^8.21.3"
