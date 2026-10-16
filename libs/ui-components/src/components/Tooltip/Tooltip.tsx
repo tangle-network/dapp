@@ -5,7 +5,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@tangle-network/ui/tooltip';
+} from '@tangle-network/ui/primitives';
 import { forwardRef, type ElementRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import type { TooltipBodyProps, TooltipProps } from './types';

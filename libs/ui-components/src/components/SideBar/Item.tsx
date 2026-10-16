@@ -138,7 +138,6 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
     </div>
   );
 
-
   return (
     <>
       {hasAnchor ? item : <WithInfo info={info}>{item}</WithInfo>}

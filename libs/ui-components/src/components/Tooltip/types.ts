@@ -2,7 +2,7 @@ import type {
   Tooltip as SharedTooltip,
   TooltipContent,
   TooltipTrigger,
-} from '@tangle-network/ui/tooltip';
+} from '@tangle-network/ui/primitives';
 import type { ComponentPropsWithoutRef } from 'react';
 import { IComponentBase } from '../../types';
 
