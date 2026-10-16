@@ -1,0 +1,31 @@
+{
+  "testedExecutableSource": "6925ec46adadc526971c5f92cbfacbbf9a567e00",
+  "typescript": "5.8.3",
+  "method": "AST node kinds/text/children excluding source trivia/positions, redundant parenthesis and whitespace-only JSX nodes; equivalent ReactJSX ESNext emitted JavaScript AST",
+  "files": [
+    {
+      "path": "libs/ui-components/src/components/Link/Link.tsx",
+      "beforeSHA256": "499250a929a9c6eefebac225127f89c7a190361299ebfe40c08732615c5128b3",
+      "afterSHA256": "10266860e53d0470d10049f9250d3d617df101631f282335ecd31b0ba7f83b37",
+      "normalizedAstSHA256": "924ff5e9c0bcd46833a85ade905291d06b7da909abe2cf6a7bba78fbe4efb2b0",
+      "normalizedEmittedJsAstSHA256": "29d9d4825a5e4363c01d524057bda795c2e2a02c1005298bd2f22d5d88517943",
+      "equivalence": "PASS"
+    },
+    {
+      "path": "libs/ui-components/src/components/SideBar/WithInfo.tsx",
+      "beforeSHA256": "b28eea5fe0be38c918bdf7ba2ccb18e4b2aea01316caded30f434e3d1f273988",
+      "afterSHA256": "10f84379618e604021d5575ac4464f3258692ff7789985ca8547153b6a521dad",
+      "normalizedAstSHA256": "daab8b254515a187b6019672be98e9c5ad92acb6d4b69327718aafc5f17fc113",
+      "normalizedEmittedJsAstSHA256": "ee7e0a4bb73404b2106275cb765fdb06f2ddf505caaad7500c5c4339d6dcb828",
+      "equivalence": "PASS"
+    },
+    {
+      "path": "libs/ui-components/src/components/Tooltip/Tooltip.tsx",
+      "beforeSHA256": "d27943c1554387d235116904d7c79bc78eb6b8304ef7ca5e738a80d0248863ae",
+      "afterSHA256": "6f408d22ef4e392b0a7e10d4b85204c70f170a787612e3aefdee4ceea8784f09",
+      "normalizedAstSHA256": "fc2f47bea2b64f5928ca72fa3f258281391fd334d1d8aa49bfcf115edce05813",
+      "normalizedEmittedJsAstSHA256": "98dc6555292a902e048320fe052c69a4277e4867cebe61c45f65f3a0934d4a19",
+      "equivalence": "PASS"
+    }
+  ]
+}

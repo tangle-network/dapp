@@ -51,3 +51,10 @@ Disabled/no-href Sidebar fragment and nonfocusable-wrapper keyboard-description 
 Dark/full touched-surface coverage, shared Sandbox SidebarS1 frame adoption, design-bible/launch QA, calibrated timing, latency, physical-device and served-production acceptance remain incomplete or UNKNOWN. PR3339 remains draft and board10198 remains open. The [prior11.38.2 proof](https://github.com/tangle-network/dapp/tree/81a78b36b1f35fff7b1eee2fab66b8ef156cf2a2/docs/evidence/10198-tooltip) and its original historical actor correction remain immutable at that commit.
 
 The manifest is produced from committed Git objects after normal hooks, then verified again at the final publication head against original capture bytes and blob OIDs. Documentation commits differ from the tested executable source and do not imply a new runtime run.
+
+
+## Publication formatting correction
+
+The first normal publication push (f0dd02) failed its existing `format:check` on Link, WithInfo and Tooltip. Lint passed; source tests/build and remote publication were not reached. The original full hook output is retained in [the failure log](provenance/gate-f0dd02-publication-failure.raw.txt).
+
+Installed repository Prettier formatted exactly those three files in `bf31ee0e`. These bytes differ from tested executable692; [the separate equivalence receipt](provenance/format-equivalence.raw.txt) records before/after hashes and equivalent normalized TypeScript and emitted-JavaScript ASTs. The normalization excludes trivia, redundant parentheses and whitespace-only JSX nodes. Runtime proof remains at692, rather than claiming an exact byte-equivalent final source. The formatter delta is +7/-10; final source changes relative to81a78 are +126/-195, net69 lines removed. No runtime replay was requested for formatting. Final documentation publication verifies committed objects and normal push hooks separately.
