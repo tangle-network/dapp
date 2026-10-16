@@ -1,0 +1,389 @@
+// Supporting real-browser evidence only; run inside the maintained Beelink gate.
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { createHash } from 'node:crypto';
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const purpose = process.env.DAPP_CAPTURE_PURPOSE ?? 'final-cohort';
+if (!['final-cohort', 'diagnostic-supported-controls'].includes(purpose)) throw new Error('Unknown capture purpose');
+const diagnostic = purpose === 'diagnostic-supported-controls';
+const adapterDiagnostic = process.env.DAPP_CAPTURE_SCOPE === 'tooltip-adapter-adoption';
+const reopenDiagnostic = process.env.DAPP_CAPTURE_SCOPE === 'tooltip-reopen-diagnostic';
+const dismissOnly = adapterDiagnostic || reopenDiagnostic || process.env.DAPP_CAPTURE_SCOPE === 'disabled-tooltip-dismiss';
+const receipt = process.env.DAPP_QUALIFIED_COHORT_RECEIPT;
+const modulePath = process.env.DAPP_PLAYWRIGHT_MODULE;
+const outputRoot = process.env.DAPP_CAPTURE_OUTPUT;
+if (!receipt || !modulePath || !outputRoot) throw new Error('Require a checked cohort receipt, existing Playwright module and retained output directory.');
+const qualification = await fs.readFile(receipt, 'utf8');
+if (!qualification.trim()) throw new Error('Cohort receipt must contain owner qualification evidence.');
+if (diagnostic) {
+  const owner = JSON.parse(qualification);
+  if (owner.purpose !== purpose || owner.sidebar !== 'BLOCKED' || owner.finalMotion !== 'BLOCKED') throw new Error('Diagnostic receipt must preserve final/Sidebar blockers');
+  for (const [name, version] of Object.entries(owner.dependencies)) {
+    const actual = JSON.parse(await fs.readFile(new URL(`../../node_modules/${name}/package.json`, import.meta.url), 'utf8')).version;
+    if (actual !== version) throw new Error(`Installed ${name}: ${actual} differs from supported receipt ${version}`);
+  }
+}
+let failures = 0;
+let uncheckedPremises = 0;
+const { chromium } = require(modulePath);
+const browser = await chromium.launch({ headless: true });
+const browserIdentity = { version: browser.version(), executable: chromium.executablePath(), playwright: require(path.join(modulePath, 'package.json')).version, captureNode: process.version };
+try {
+  for (const [device, viewport] of Object.entries(diagnostic && !adapterDiagnostic ? { phone: { width: 390, height: 844 } } : { desktop: { width: 1440, height: 1000 }, phone: { width: 390, height: 844 } })) {
+    for (const theme of (diagnostic ? ['light'] : ['dark', 'light'])) for (const reducedMotion of (diagnostic && !dismissOnly ? ['no-preference'] : ['no-preference', 'reduce'])) {
+      if(process.env.DAPP_CAPTURE_CASE&&process.env.DAPP_CAPTURE_CASE!==`${device}-${theme}-${reducedMotion}`)continue;
+      const directory = path.join(outputRoot, `${device}-${theme}-${reducedMotion}`);
+      await fs.mkdir(directory, { recursive: true });
+      const context = await browser.newContext({ viewport, colorScheme: theme, reducedMotion, recordVideo: { dir: directory, size: viewport } });
+      const page = await context.newPage();
+      page.setDefaultTimeout(6000);
+      const report = { browserIdentity, purpose, sidebarAcceptance: 'BLOCKED', motionAcceptance: 'UNKNOWN', physicalAcceptance: 'UNKNOWN', qualificationReceipt: receipt, device, viewport, theme, reducedMotion, steps: [], consoleErrors: [], timingAcceptance: 'UNKNOWN', persistenceAcceptance: 'UNCHECKED', productionAcceptance: 'UNKNOWN' };
+      const caseUncheckedStart = uncheckedPremises;
+      page.on('pageerror', (error) => report.consoleErrors.push(error.message));
+      page.on('console', (message) => { if (message.type() === 'error') report.consoleErrors.push(message.text()); });
+      const stylesheetTasks = []; const loadedStylesheets = [];
+      page.on('response', (response) => {
+        if (response.status() >= 400) report.consoleErrors.push(`HTTP ${response.status()} ${response.url()}`);
+        if (response.request().resourceType() === 'stylesheet' && response.url().startsWith('http://127.0.0.1:43198/')) {
+          stylesheetTasks.push(response.body().then((bytes) => loadedStylesheets.push({ url: response.url(), status: response.status(), bytes: bytes.length, sha256: createHash('sha256').update(bytes).digest('hex') })).catch((error) => report.consoleErrors.push(`CSS response observation failed: ${error.message}`)));
+        }
+      });
+      if (adapterDiagnostic) await context.addInitScript(() => {
+        window.__adapterTrace = [];
+        window.__adapterWatch = { selector: '#adapter-item a', actor: 'before-first-input' };
+        window.__adapterSnapshot = (reason, event, mutation) => {
+          const watch = window.__adapterWatch;
+          const trigger = document.querySelector(watch.selector);
+          const described = (trigger?.getAttribute('aria-describedby') ?? '').split(' ').filter(Boolean);
+          const surface = described.map(id => document.getElementById(id)?.closest('[data-state]')).find(Boolean) ?? (window.__adapterRetained?.isConnected ? window.__adapterRetained : null);
+          const row = { at: performance.now(), actor: watch.actor, reason, eventType: event?.type, isTrusted: event?.isTrusted, key: event?.key,shiftKey:event?.shiftKey,targetTag: event?.target?.tagName, targetID: event?.target?.id,targetNodeName:event?.target?.nodeName,scrollTargetContainsTrigger:event?.target instanceof Node&&!!trigger&&event.target.contains(trigger),scrollX,scrollY,triggerBox:trigger?.getBoundingClientRect().toJSON(), targetWithinSibling: event?.target instanceof Node && !!document.querySelector('#adapter-subitem')?.contains(event.target), focused: trigger === document.activeElement, triggerState: trigger?.dataset.state, describedBy: trigger?.getAttribute('aria-describedby'), surfaceConnected: !!surface?.isConnected, surfaceState: surface?.dataset.state, sameRetainedNode: !!surface && surface === window.__adapterRetained, retainedConnected: !!window.__adapterRetained?.isConnected, mutationAttribute: mutation?.attributeName, mutationTargetTag: mutation?.target?.tagName, mutationTargetID: mutation?.target?.id, mutationTargetState: mutation?.target?.dataset?.state, mutationTargetIsRetainedSurface: mutation?.target === window.__adapterRetained, mutationTargetIsTrigger: mutation?.target === trigger, oldValue: mutation?.oldValue };
+          if (window.__adapterTrace.length < 5000) window.__adapterTrace.push(row);
+          return row;
+        };
+        window.addEventListener('scroll', event=>window.__adapterSnapshot('native-scroll',event), true);
+        for (const name of ['focusin','focusout','keydown','pointerover','pointerdown','pointerup','tooltip.open']) document.addEventListener(name, event => {
+          window.__adapterSnapshot('native-event', event);
+          if (name === 'tooltip.open') queueMicrotask(() => window.__adapterSnapshot('after-tooltip-open-microtask'));
+        }, true);
+        new MutationObserver(records => {
+          for (const mutation of records) window.__adapterSnapshot('dom-mutation', null, mutation);
+        }).observe(document, { subtree: true, childList: true, attributes: true, attributeOldValue: true, attributeFilter: ['data-state','aria-describedby'] });
+        window.__adapterSuppressedEvents = [];
+        for (const name of ['animationend','animationcancel','transitionend','transitioncancel']) window.addEventListener(name, event => { window.__adapterSuppressedEvents.push(event.type); event.stopImmediatePropagation(); }, true);
+      });
+
+      if (dismissOnly && !adapterDiagnostic) await context.addInitScript(() => {
+        window.__dedupeSuppressedEvents = [];
+        window.__dedupeNativeTrace = [];
+        window.__dedupeTraceStage = 'before-first-input';
+        window.__dedupeReadOnlySnapshot = (reason, event, mutation) => {
+          const trigger = document.querySelector('#disabled-action')?.parentElement;
+          if (!trigger) return null;
+          const surface = document.querySelector('[role=tooltip]')?.closest('[data-state]');
+          const snapshot = { at: performance.now(), stage: window.__dedupeTraceStage, reason, eventType: event?.type, isTrusted: event?.isTrusted, targetTag: event?.target?.tagName, targetID: event?.target?.id, triggerFocused: trigger===document.activeElement, triggerState: trigger.dataset.state, describedBy: trigger.getAttribute('aria-describedby'), childDisabled: document.querySelector('#disabled-action').disabled, surfaceConnected: !!surface?.isConnected, surfaceState: surface?.dataset.state, sameRetainedNode: !!surface && surface===window.__dedupeRetainedSurface, retainedConnected: !!window.__dedupeRetainedSurface?.isConnected, mutationAttribute: mutation?.attributeName, mutationTargetIsRetainedSurface: mutation?.target === window.__dedupeRetainedSurface, mutationTargetIsTrigger: mutation?.target === trigger, oldValue: mutation?.oldValue };
+          if (window.__dedupeNativeTrace.length < 1000) window.__dedupeNativeTrace.push(snapshot);
+          return snapshot;
+        };
+        for (const name of ['focusin','focusout','pointerdown','pointerup','tooltip.open']) document.addEventListener(name, event => {
+          const trigger = document.querySelector('#disabled-action')?.parentElement;
+          if (name === 'tooltip.open' || trigger?.contains(event.target)) window.__dedupeReadOnlySnapshot('native-event',event);
+          if (name === 'tooltip.open') queueMicrotask(()=>window.__dedupeReadOnlySnapshot('after-tooltip-open-microtask'));
+        },true);
+        new MutationObserver(records => {
+          for (const mutation of records) if (mutation.type==='childList' || ['data-state','aria-describedby'].includes(mutation.attributeName)) window.__dedupeReadOnlySnapshot('dom-mutation',null,mutation);
+        }).observe(document,{subtree:true,childList:true,attributes:true,attributeOldValue:true,attributeFilter:['data-state','aria-describedby']});
+        for (const name of ['animationend','animationcancel','transitionend','transitioncancel']) window.addEventListener(name, (event) => { window.__dedupeSuppressedEvents.push(event.type); event.stopImmediatePropagation(); }, true);
+      });
+      await context.addCookies([{ name: 'isSidebarOpen', value: 'true', url: 'http://127.0.0.1:43198' }]);
+      await page.addInitScript(({ theme }) => { localStorage.setItem('theme', JSON.stringify(theme)); localStorage.setItem('isSidebarOpen', 'true'); }, { theme });
+      const step = async (name, action) => {
+        if (adapterDiagnostic && name !== 'rest' && !name.startsWith('adapter-')) return true;
+        if (dismissOnly && !adapterDiagnostic && !(reopenDiagnostic ? ['rest','tooltip-native-fresh-open','tooltip-native-close-reopen'] : ['rest','disabled-tooltip','disabled-tooltip-keyboard','tooltip-lost-events-dismiss','tooltip-interrupted-reopen']).includes(name)) return true;
+        if (dismissOnly) await page.evaluate(name => { window.__dedupeTraceStage=name; window.__dedupeReadOnlySnapshot?.('step-start'); },name);
+        try { const observed = await action(); await page.screenshot({ path: path.join(directory, `${String(report.steps.length).padStart(2, '0')}-${name}.png`), fullPage: false }); report.steps.push({ name, status: 'OBSERVED', observed: observed ?? null }); return true; }
+        catch (error) { failures++; report.steps.push({ name, status: 'FAIL', failure: error.message, stack: error.stack?.split('\n').slice(0,5), snapshot: await page.evaluate(()=>window.__dedupeReadOnlySnapshot?.('step-failure')).catch(()=>null) }); await page.screenshot({ path: path.join(directory, `${name}-failure.png`) }).catch(() => {}); return false; }
+      };
+      try {
+        await page.goto('http://127.0.0.1:43198', { waitUntil: 'networkidle', timeout: 45000 });
+        if (!await step('rest', () => page.locator('#enabled-action').waitFor())) throw new Error('Fixture did not render actual controls');
+        await step('keyboard-focus', async () => {
+          for (let count = 0; count < 40; count++) { await page.keyboard.press('Tab'); if (await page.locator('#enabled-action').evaluate((node) => node === document.activeElement)) return 'Enabled action reached with native Tab'; }
+          throw new Error('Enabled action not reached in 40 native Tab presses');
+        });
+        await step('enabled-hover', () => page.locator('#enabled-action').hover());
+        await step('enabled-action', async () => { await page.locator('#enabled-action').click(); const count = await page.locator('#activation-count').textContent(); if (count !== '1') throw new Error(`Activation count ${count}`); return count; });
+        for (const id of ['disabled-anchor', 'loading-anchor']) await step(id, async () => {
+          const before = await page.locator('#activation-count').textContent(); const url = page.url(); const control = page.locator(`#${id}`); await control.scrollIntoViewIfNeeded(); const bounds = await control.boundingBox(); if (!bounds) throw new Error('Control has no visible box');
+          await page.mouse.click(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+          const after = await page.locator('#activation-count').textContent(); if (after !== before || page.url() !== url) throw new Error('Disabled/loading anchor activated or navigated'); return { before, after, url: page.url() };
+        });
+        await step('disabled-tooltip', async () => {
+          const control = page.locator('#disabled-action'); await control.locator('..').hover(); const tooltip = page.getByRole('tooltip'); await tooltip.waitFor({ state: 'visible' });
+          const observed = { disabled: await control.isDisabled(), tooltip: await tooltip.textContent(), nestedButtons: await page.locator('button button').count() };
+          if (!observed.disabled || !observed.tooltip.includes('Fixture action is unavailable') || observed.nestedButtons !== 0) throw new Error(JSON.stringify(observed)); return observed;
+        });
+        await step('disabled-tooltip-keyboard', async () => {
+          const control = page.locator('#disabled-action'); const trigger = control.locator('..'); await page.mouse.move(0, 0); await page.keyboard.press('Escape');
+          let reached = false;
+          for (let count = 0; count < 40; count++) { await page.keyboard.press('Tab'); if (await trigger.evaluate((node) => node === document.activeElement)) { reached = true; break; } }
+          if (!reached) throw new Error('Explanatory trigger not reached with native Tab');
+          const tooltip = page.getByRole('tooltip'); await tooltip.waitFor({ state: 'visible' });
+          const observed = await trigger.evaluate((node) => ({ role: node.getAttribute('role'), labelledBy: node.getAttribute('aria-labelledby'), description: (node.getAttribute('aria-describedby') ?? '').split(' ').map((id) => document.getElementById(id)?.textContent ?? '').join(' '), focused: document.activeElement === node }));
+          const before = await page.locator('#activation-count').textContent(); const url = page.url(); await page.keyboard.press('Enter');
+          if (!(await control.isDisabled()) || observed.role !== 'group' || observed.labelledBy !== 'disabled-action' || !observed.focused || !observed.description.includes('Fixture action is unavailable') || await page.locator('button button').count() !== 0 || await page.locator('#activation-count').textContent() !== before || page.url() !== url) throw new Error(JSON.stringify(observed));
+          return { ...observed, nativeChildDisabled: true, enterDidNotActivate: true };
+        });
+        await step('selected', async () => { await page.locator('#selected-action').click(); const pressed = await page.locator('#selected-action').getAttribute('aria-pressed'); if (pressed !== 'true') throw new Error('Selection state not retained'); return pressed; });
+        await step('pending', async () => { await page.locator('#pending-toggle').check(); const state = await page.locator('#pending-action').evaluate((node) => ({ disabled: node.disabled, ariaDisabled: node.getAttribute('aria-disabled'), text: node.textContent })); if (!state.disabled || state.ariaDisabled !== 'true') throw new Error(JSON.stringify(state)); return state; });
+        await step('filled-invalid', async () => { await page.locator('#proof-input').fill('Disposable input'); await page.locator('#invalid-toggle').check(); const state = await page.locator('#proof-input').evaluate((node) => ({ value: node.value, invalid: node.getAttribute('aria-invalid') })); if (state.value !== 'Disposable input' || state.invalid !== 'true') throw new Error(JSON.stringify(state)); return state; });
+        await step('readonly-disabled', async () => ({ readonly: await page.locator('#readonly-input').evaluate((node) => node.readOnly), disabled: await page.locator('#disabled-input').isDisabled(), card: await page.locator('#card').evaluate((node) => ({ className: node.className, padding: getComputedStyle(node).padding })) }));
+        await step('table-selection', async () => { await page.getByLabel('Select Asset 1', { exact: true }).check(); const selected = await page.locator('#selected-count').textContent(); if (selected !== '1') throw new Error(`Selected count ${selected}`); return selected; });
+        await step('table-sort', async () => { await page.locator('#sort-name').click(); await page.locator('#sort-name').click(); const first = await page.locator('tbody tr').first().textContent(); if (!first.includes('Asset 8')) throw new Error(`Unexpected first row ${first}`); return first; });
+        await step('table-expand', async () => { await page.getByRole('button', { name: 'Asset 1', exact: true }).click(); await page.getByText('Expanded Asset 1', { exact: true }).waitFor({ state: 'visible' }); });
+        await step('table-scroll-owner', async () => {
+          const table = page.locator('table'); const wrapper = page.locator('.proof-table-scroll'); await wrapper.scrollIntoViewIfNeeded(); await wrapper.hover();
+          const before = await wrapper.evaluate((node) => node.scrollLeft); await page.mouse.wheel(300, 0);
+          await page.waitForFunction(({ before }) => document.querySelector('.proof-table-scroll').scrollLeft > before, { before });
+          const observed = await table.evaluate((node) => { const parents = []; for (let p = node.parentElement; p; p = p.parentElement) { const style = getComputedStyle(p); if (/(auto|scroll)/.test(style.overflowX)) parents.push({ tag: p.tagName, className: p.className, scrollLeft: p.scrollLeft, scrollWidth: p.scrollWidth, clientWidth: p.clientWidth }); } return { parents, documentOverflow: document.documentElement.scrollWidth - innerWidth, viewportWidth: innerWidth }; });
+          if (observed.parents.length !== 1) throw new Error(`Expected one table scroll owner: ${JSON.stringify(observed)}`);
+          const owner = observed.parents[0];
+          if (owner.clientWidth >= owner.scrollWidth || owner.clientWidth > observed.viewportWidth || owner.scrollLeft <= before || observed.documentOverflow !== 0) throw new Error(`Table scroll containment failed: ${JSON.stringify(observed)}`);
+          return { ...observed, scrollLeftBefore: before };
+        });
+        if (!diagnostic && device === 'desktop') await step('sidebar-reverse-reopen-anchor', async () => {
+          const anchor = page.locator('#anchor-text'); await anchor.scrollIntoViewIfNeeded(); const before = await anchor.boundingBox(); const lineHeight = await anchor.evaluate((node) => getComputedStyle(node).lineHeight);
+          await page.getByRole('button', { name: 'Collapse navigation', exact: true }).click(); await page.getByRole('button', { name: 'Expand navigation', exact: true }).click();
+          return { before, after: await anchor.boundingBox(), lineHeight, activeAnimations: await page.evaluate(() => document.getAnimations().map((animation) => ({ playState: animation.playState, timing: animation.effect?.getComputedTiming() }))) };
+        });
+        else if (!diagnostic) await step('phone-open-escape-focus-return', async () => {
+          const trigger = page.locator('#phone-navigation button').first(); await trigger.scrollIntoViewIfNeeded(); const accessibleName = await trigger.getAttribute('aria-label'); await trigger.click(); await page.getByRole('dialog').waitFor({ state: 'visible' }); await page.keyboard.press('Escape'); await page.getByRole('dialog').waitFor({ state: 'hidden' }); return { accessibleName, focusReturned: await trigger.evaluate((node) => node === document.activeElement) };
+        });
+        if (dismissOnly && !reopenDiagnostic) {
+          await step('tooltip-lost-events-dismiss', async () => {
+            const trigger = page.locator('#disabled-action').locator('..');
+            await trigger.hover(); await page.getByRole('tooltip').waitFor({ state: 'visible' });
+            const before = await page.evaluate(() => {
+              const node = document.querySelector('[role=tooltip]').closest('[data-state]');
+              if (!node) throw new Error('Shared surface node missing');
+              window.__dedupeRetainedSurface = node;
+              node.style.animationPlayState = 'paused';
+              const style = getComputedStyle(node);
+              return { state: node.dataset.state, animationName: style.animationName, animationDuration: style.animationDuration, animationPlayState: style.animationPlayState, transform: style.transform, dismissRole: style.getPropertyValue('--motion-dismiss').trim() };
+            });
+            if (!before.dismissRole || !before.transform || (reducedMotion === 'no-preference' && (!before.animationName.includes('tangle-surface-present') || parseFloat(before.animationDuration) <= 0))) throw new Error('Shared presence role/CSS not active: '+JSON.stringify(before));
+            await page.keyboard.press('Escape');
+            await page.waitForFunction(() => !window.__dedupeRetainedSurface.isConnected);
+            const observed = await trigger.evaluate((node) => ({ focused: node === document.activeElement, role: node.getAttribute('role'), labelledBy: node.getAttribute('aria-labelledby'), describedBy: node.getAttribute('aria-describedby'), nativeChildDisabled: node.querySelector('button').disabled }));
+            if (!observed.focused || observed.role !== 'group' || !observed.nativeChildDisabled || observed.labelledBy !== 'disabled-action') throw new Error(JSON.stringify(observed));
+            return { before, ...observed, retiredWithoutCSSCompletion: true, lostEvents: ['animationend','animationcancel','transitionend','transitioncancel'] };
+          });
+          await step('tooltip-interrupted-reopen', async () => {
+            const trigger = page.locator('#disabled-action').locator('..');
+            await page.mouse.move(0,0);
+            if (!await trigger.evaluate(node => node === document.activeElement)) throw new Error('Expected keyboard trigger focus after lost-events dismissal');
+            await page.keyboard.press('Tab'); await page.keyboard.press('Shift+Tab');
+            if (!await trigger.evaluate(node => node === document.activeElement)) throw new Error('Native Shift+Tab did not return to explanatory trigger');
+            await page.waitForFunction(() => { const trigger = document.querySelector('#disabled-action').parentElement; const content = document.querySelector('[role=tooltip]')?.closest('[data-state]'); return trigger.dataset.state !== 'closed' && content && content.dataset.state !== 'closed'; });
+            const before = await page.evaluate(() => {
+              const node = document.querySelector('[role=tooltip]').closest('[data-state]'); window.__dedupeRetainedSurface = node;
+              window.__dedupeSurfaceTrace = [{ state: node.dataset.state, at: performance.now() }]; window.__dedupeFocusTrace = []; const trigger = document.querySelector('#disabled-action').parentElement; for (const name of ['focusin','focusout']) trigger.addEventListener(name, event => window.__dedupeFocusTrace.push({ event: event.type, at: performance.now() }));
+              window.__dedupeObserver?.disconnect(); window.__dedupeObserver = new MutationObserver(() => window.__dedupeSurfaceTrace.push({ state: node.dataset.state, at: performance.now() })); window.__dedupeObserver.observe(node,{attributes:true,attributeFilter:['data-state']});
+              node.style.animationPlayState = 'paused';
+              const role = getComputedStyle(node).getPropertyValue('--motion-dismiss').trim(); const time = /^(\d+(?:\.\d+)?)(ms|s)/.exec(role);
+              if (!time) throw new Error('Unresolved owner dismiss role '+role);
+              return { ownerDismissRole: role, ownerDismissMs: Number(time[1])*(time[2]==='s'?1000:1) };
+            });
+            await page.keyboard.press('Tab'); await page.keyboard.press('Shift+Tab');
+            if (!await trigger.evaluate(node => node === document.activeElement)) throw new Error('Native interrupted reopen focus did not return');
+            await page.waitForFunction(() => { const trigger = document.querySelector('#disabled-action').parentElement; const content = document.querySelector('[role=tooltip]')?.closest('[data-state]'); return trigger.dataset.state !== 'closed' && content && content.dataset.state !== 'closed'; });
+            await page.evaluate((milliseconds) => new Promise(resolve => setTimeout(resolve,milliseconds*2)),before.ownerDismissMs);
+            const observed = await page.evaluate(() => { const node = document.querySelector('[role=tooltip]')?.closest('[data-state]'); return { sameNode: node===window.__dedupeRetainedSurface, connected: !!node?.isConnected, state: node?.dataset.state, trace: window.__dedupeSurfaceTrace, focusTrace: window.__dedupeFocusTrace, triggerState: document.querySelector('#disabled-action').parentElement.dataset.state, suppressedEvents: window.__dedupeSuppressedEvents, childDisabled: document.querySelector('#disabled-action').disabled, reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches }; });
+            if (!observed.connected || !observed.childDisabled || observed.state==='closed' || observed.reducedMotion!==(reducedMotion==='reduce') || (reducedMotion==='no-preference' && (!observed.sameNode || !observed.trace.some(entry => entry.state === 'closed')))) throw new Error(JSON.stringify(observed));
+            await page.keyboard.press('Escape'); await page.waitForFunction(()=>!document.querySelector('[role=tooltip]'));
+            return { ...before,...observed, finalDismissed: true, timingAcceptance:'UNKNOWN' };
+          });
+        }
+        if (reopenDiagnostic) {
+          await step('tooltip-native-fresh-open', async () => {
+            const trigger=page.locator('#disabled-action').locator('..');
+            let focused=false;
+            for (let count=0;count<40;count++) { await page.keyboard.press('Tab'); if (await trigger.evaluate(node=>node===document.activeElement)) { focused=true; break; } }
+            if (!focused) throw new Error('Native Tab did not reach explanatory group');
+            await page.waitForFunction(()=>{const trigger=document.querySelector('#disabled-action').parentElement;const node=document.querySelector('[role=tooltip]')?.closest('[data-state]');return trigger.dataset.state!=='closed'&&node&&node.dataset.state!=='closed';});
+            return await page.evaluate(()=>window.__dedupeReadOnlySnapshot('fresh-open-accepted'));
+          });
+          await step('tooltip-native-close-reopen', async () => {
+            const trigger=page.locator('#disabled-action').locator('..');
+            const before=await page.evaluate(()=>{const node=document.querySelector('[role=tooltip]')?.closest('[data-state]');if(!node)throw new Error('Fresh open surface missing');window.__dedupeRetainedSurface=node;node.style.animationPlayState='paused';window.__dedupeSequenceStart=performance.now();const role=getComputedStyle(node).getPropertyValue('--motion-dismiss').trim();const time=/^(\d+(?:\.\d+)?)(ms|s)/.exec(role);if(!time)throw new Error('Owner dismiss role unresolved');return{ownerDismissRole:role,ownerDismissMs:Number(time[1])*(time[2]==='s'?1000:1),snapshot:window.__dedupeReadOnlySnapshot('before-native-close')};});
+            await page.keyboard.press('Tab');await page.keyboard.press('Shift+Tab');
+            if(!await trigger.evaluate(node=>node===document.activeElement))throw new Error('Native Shift+Tab did not return to trigger');
+            await page.evaluate(ms=>new Promise(resolve=>setTimeout(resolve,ms*2)),before.ownerDismissMs);
+            const observed=await page.evaluate(()=>({snapshot:window.__dedupeReadOnlySnapshot('after-owner-deadline'),trace:window.__dedupeNativeTrace.filter(row=>row.at>=window.__dedupeSequenceStart)}));
+            const nativeClose=observed.trace.find(row=>row.eventType==='focusout'&&row.isTrusted);
+            const originalClosed=observed.trace.find(row=>row.reason==='dom-mutation'&&row.mutationAttribute==='data-state'&&row.mutationTargetIsRetainedSurface&&row.surfaceState==='closed'&&row.sameRetainedNode);
+            const returnedFocus=observed.trace.find(row=>row.eventType==='focusin'&&row.isTrusted&&row.triggerFocused&&(!nativeClose||row.at>nativeClose.at));
+            const published=observed.trace.find(row=>row.reason==='dom-mutation'&&row.mutationAttribute==='data-state'&&row.mutationTargetIsRetainedSurface&&row.oldValue==='closed'&&row.triggerFocused&&row.triggerState!=='closed'&&row.surfaceState!=='closed'&&row.sameRetainedNode&&returnedFocus&&row.at>=returnedFocus.at);
+            const accepted=observed.trace.find(row=>row.eventType==='tooltip.open'&&row.triggerFocused&&row.triggerState!=='closed');
+            const oldEventPredicate=!!nativeClose&&!!accepted&&accepted.at-nativeClose.at<before.ownerDismissMs;
+            const originalDeadline=originalClosed?originalClosed.at+before.ownerDismissMs:null;
+            const acceptedBeforeDeadline=!!originalClosed&&!!returnedFocus&&!!published&&published.at<originalDeadline;
+            const finalOpen=observed.snapshot.triggerFocused&&observed.snapshot.triggerState!=='closed'&&observed.snapshot.surfaceConnected&&observed.snapshot.surfaceState!=='closed';
+            const safety=await trigger.evaluate(node=>({role:node.getAttribute('role'),labelledBy:node.getAttribute('aria-labelledby'),nativeChildDisabled:node.querySelector('button').disabled,description:(node.getAttribute('aria-describedby')??'').split(' ').map(id=>document.getElementById(id)?.textContent??'').join(' ')}));
+            const result={...before,...observed,originalClosed,originalDeadline,trustedReturnedFocus:returnedFocus,publishedSameNodeOpen:published,acceptedBeforeDeadline:before.ownerDismissMs===0?'NOT_APPLICABLE_REDUCED':acceptedBeforeDeadline,oldEventPublishedPredicate:oldEventPredicate,oldPredicateStatus:'OBSERVER_ASSUMPTION_UNQUALIFIED: internal CustomEvent can precommit after checked Root fix',acceptedOpenEvent:accepted??null,finalOpen,safety,siblingBehavior:'UNCHECKED: original frozen fixture has one shared Tooltip root',timingAcceptance:'UNKNOWN'};
+            if(before.ownerDismissMs>0&&!acceptedBeforeDeadline){uncheckedPremises++;report.reopenAcceptance='UNCHECKED_PREMISE';return result;}
+            if(!finalOpen||(before.ownerDismissMs>0&&!observed.snapshot.sameRetainedNode)||safety.role!=='group'||safety.labelledBy!=='disabled-action'||!safety.nativeChildDisabled||!safety.description.includes('Fixture action is unavailable'))throw new Error('Native reopen falsifier '+JSON.stringify(result));
+            report.reopenAcceptance='PASS_SCOPED_NATIVE_REOPEN';
+            await page.keyboard.press('Escape');await page.waitForFunction(()=>!document.querySelector('[role=tooltip]'));
+            return{...result,finalDismissed:true};
+          });
+        }
+        if (adapterDiagnostic) {
+          const focusNative = async selector => {
+            const locator = page.locator(selector);
+            await locator.scrollIntoViewIfNeeded();
+            for (let count = 0; count < 100; count++) {
+              if (await locator.evaluate(node => node === document.activeElement)) return;
+              await page.keyboard.press('Tab');
+            }
+            throw new Error('Native Tab did not reach ' + selector);
+          };
+          const waitOpen = async selector => page.waitForFunction(selector => {
+            const node = document.querySelector(selector);
+            const ids = (node?.getAttribute('aria-describedby') ?? '').split(' ').filter(Boolean);
+            return node?.dataset.state !== 'closed' && ids.some(id => {
+              const surface = document.getElementById(id)?.closest('[data-state]');
+              return surface && surface.dataset.state !== 'closed';
+            });
+          }, selector);
+          const dismiss = async () => { await page.keyboard.press('Escape'); await page.waitForFunction(() => !document.querySelector('[role=tooltip]')); };
+          const inspect = async ({ selector, host, text, portal, side, offset, triggerRef, contentRef }) => page.evaluate(args => {
+            const trigger = document.querySelector(args.selector);
+            const ids = (trigger.getAttribute('aria-describedby') ?? '').split(' ').filter(Boolean);
+            const description = ids.map(id => document.getElementById(id)?.textContent ?? '').join(' ');
+            const surface = ids.map(id => document.getElementById(id)?.closest('[data-state]')).find(Boolean);
+            if (!surface) throw new Error('No actual described Tooltip surface');
+            const anchor = trigger.getBoundingClientRect(), box = surface.getBoundingClientRect();
+            const side = surface.dataset.side;
+            const gap = side === 'right' ? box.left-anchor.right : side === 'left' ? anchor.left-box.right : side === 'bottom' ? box.top-anchor.bottom : anchor.top-box.bottom;
+            const space = args.side === 'bottom' ? innerHeight-anchor.bottom : args.side === 'top' ? anchor.top : args.side === 'right' ? innerWidth-anchor.right : anchor.left;
+            const required = (['top','bottom'].includes(args.side) ? box.height : box.width)+args.offset;
+            const collisionFlip = side === ({top:'bottom',bottom:'top',left:'right',right:'left'})[args.side] && space < required;
+            const rgb = color => { const match=/^rgba?\(([^)]+)\)$/.exec(color); if(!match) return null; const parts=match[1].split(/[,\s/]+/).filter(Boolean).map(Number); return parts.length>=3 && (parts.length<4||parts[3]===1) ? parts.slice(0,3) : null; };
+            const luminance = color => { const parts=rgb(color); if(!parts) return null; const linear=parts.map(value=>{const channel=value/255;return channel<=0.04045?channel/12.92:((channel+0.055)/1.055)**2.4;});return linear[0]*0.2126+linear[1]*0.7152+linear[2]*0.0722; };
+            const css=getComputedStyle(surface), background=css.backgroundColor, panelLuminance=luminance(background);
+            const leaves=[];const walk=document.createTreeWalker(surface,NodeFilter.SHOW_TEXT);let textNode;
+            while((textNode=walk.nextNode())) { const parent=textNode.parentElement; const hidden=parent?.closest('[role=tooltip]'); if(!textNode.textContent.trim()||!parent||(hidden&&hidden!==surface)) continue; const style=getComputedStyle(parent);const value=luminance(style.color);leaves.push({tag:parent.tagName,className:parent.className,text:textNode.textContent.trim(),color:style.color,background:style.backgroundColor,fontSize:style.fontSize,contrast:panelLuminance===null||value===null?null:(Math.max(panelLuminance,value)+0.05)/(Math.min(panelLuminance,value)+0.05)}); }
+            const contrastAcceptance=leaves.length>0 && leaves.every(leaf=>leaf.contrast!==null&&leaf.contrast>=4.5);
+            const observed = { selector: args.selector, triggerTag: trigger.tagName, focused: trigger === document.activeElement, description, requestedSide:args.side, requestedOffset:args.offset, side, gap, collisionFlip, requestedSideSpace:space, requestedSideRequired:required, triggerBox:anchor.toJSON(),contentBox:box.toJSON(),local: document.querySelector(args.host).contains(surface), triggerRef: trigger.dataset.forwardedRef, contentRef: surface.dataset.forwardedRef, surfaceTag: surface.tagName, triggerState: trigger.dataset.state, contentState: surface.dataset.state, nativeViewport: innerWidth, panel:{background,color:css.color},visibleTextLeaves:leaves,contrastAcceptance,contrastScope:'Computed normal-text regression guard only; no full accessibility qualification; W3C WCAG22 Understanding1.4.3' };
+            if (!observed.focused || !description.includes(args.text) || observed.local === args.portal || (side !== args.side&&!collisionFlip) || Math.abs(gap-args.offset) > 1.5 || !contrastAcceptance || (args.triggerRef && observed.triggerRef !== args.triggerRef) || (args.contentRef && observed.contentRef !== args.contentRef)) throw new Error('Actual adapter contract ' + JSON.stringify(observed));
+            return observed;
+          }, { selector, host, text, portal, side, offset, triggerRef, contentRef });
+          const reopen = async args => {
+            await page.mouse.move(0,0);
+            await page.evaluate(({ selector, actor }) => { window.__adapterWatch = { selector, actor }; window.__adapterRetained = null; window.__adapterSnapshot('watch-start'); }, { selector: args.selector, actor: args.actor });
+            await focusNative(args.selector);
+            await waitOpen(args.selector);
+            await page.waitForFunction(selector => {
+              const trigger = document.querySelector(selector);
+              const id = (trigger.getAttribute('aria-describedby') ?? '').split(' ')[0];
+              const surface = document.getElementById(id)?.closest('[data-state]');
+              return surface && surface.getAnimations({subtree:true}).every(animation => animation.playState !== 'running' && animation.playState !== 'pending');
+            }, args.selector);
+            const placement = await inspect(args);
+            const before = await page.evaluate(selector => {
+              const trigger = document.querySelector(selector);
+              const id = (trigger.getAttribute('aria-describedby') ?? '').split(' ')[0];
+              const surface = document.getElementById(id).closest('[data-state]');
+              window.__adapterRetained = surface;
+              surface.style.animationPlayState = 'paused';
+              window.__adapterSequenceStart = performance.now();
+              const role = getComputedStyle(surface).getPropertyValue('--motion-dismiss').trim();
+              const time = /^(\d+(?:\.\d+)?)(ms|s)/.exec(role);
+              if (!time) throw new Error('Unresolved owner dismiss role ' + role);
+              return { ownerRole: role, ownerDismissMs: Number(time[1])*(time[2]==='s'?1000:1), snapshot: window.__adapterSnapshot('before-native-close') };
+            }, args.selector);
+            await page.keyboard.press('Tab'); await page.keyboard.press('Shift+Tab');
+            await page.evaluate(ms => new Promise(resolve => setTimeout(resolve, ms*2)), before.ownerDismissMs);
+            const observed = await page.evaluate(() => ({ snapshot: window.__adapterSnapshot('after-original-deadline'), trace: window.__adapterTrace.filter(row => row.at >= window.__adapterSequenceStart) }));
+            const close = observed.trace.find(row => row.reason === 'dom-mutation' && row.mutationAttribute === 'data-state' && row.mutationTargetIsRetainedSurface && row.surfaceState === 'closed');
+            const focus = observed.trace.find(row => row.eventType === 'focusin' && row.isTrusted && row.focused && (!close || row.at > close.at));
+            const published = observed.trace.find(row => row.reason === 'dom-mutation' && row.mutationAttribute === 'data-state' && row.mutationTargetIsRetainedSurface && row.oldValue === 'closed' && row.surfaceState !== 'closed' && row.focused && focus && row.at >= focus.at);
+            const deadline = close ? close.at + before.ownerDismissMs : null;
+            const premise = !!published && published.at < deadline;
+            const finalOpen = observed.snapshot.focused && observed.snapshot.triggerState !== 'closed' && observed.snapshot.surfaceConnected && observed.snapshot.surfaceState !== 'closed';
+            const oldEventPredicate = observed.trace.some(row => row.eventType === 'tooltip.open' && row.focused && row.triggerState !== 'closed');
+            const externalScroll=observed.trace.filter(row=>row.reason==='native-scroll'&&row.scrollTargetContainsTrigger&&focus&&row.at>=focus.at);
+            const result = { ...before, placement, ...observed, originalClosed: close ?? null, originalDeadline: deadline, trustedReturnedFocus: focus ?? null, publishedSameNodeOpen: published ?? null, acceptedBeforeDeadline: before.ownerDismissMs ? premise : 'NOT_APPLICABLE_REDUCED', oldEventPublishedPredicate: oldEventPredicate, oldPredicateStatus: 'OBSERVER_ASSUMPTION_UNQUALIFIED; internal CustomEvent may precommit',externalScroll,externalDismissalPremise:externalScroll.length?'UNCHECKED_EXTERNAL_SCROLL':'NO_OBSERVED_ANCESTOR_SCROLL_AFTER_RETURNED_FOCUS',finalOpen, timingAcceptance: 'UNKNOWN' };
+            if(externalScroll.length){uncheckedPremises++;return{...result,acceptance:'UNCHECKED_EXTERNAL_DISMISSAL',scope:'Native ancestor/document scroll can call owning Radix onClose; persistent-open contract not qualified with that external dismissal input'};}
+            if (before.ownerDismissMs && !premise) { uncheckedPremises++; return { ...result, acceptance: 'UNCHECKED_PREMISE' }; }
+            if (!finalOpen || (before.ownerDismissMs && !observed.snapshot.sameRetainedNode)) throw new Error('Adapter native reopen ' + JSON.stringify(result));
+            return { ...result, acceptance: 'PASS_SCOPED_ACTUAL_ADAPTER_REOPEN' };
+          };
+          await step('adapter-default-open-compatibility', async () => {
+            const observed = await page.evaluate(() => {
+              const trigger = document.querySelector('#adapter-default-trigger');
+              const surface = document.querySelector('#adapter-default-content');
+              return { defaultOpen: trigger.dataset.state !== 'closed' && !!surface, defaultPortal: !!surface && !document.querySelector('#adapter-default-host').contains(surface), triggerRef: trigger.dataset.forwardedRef, contentRef: surface?.dataset.forwardedRef, noHrefText: document.querySelector('#adapter-nohref').textContent, noHrefAnchors: document.querySelectorAll('#adapter-nohref a').length, disabledItemAnchors: document.querySelectorAll('#adapter-disabled-item a').length, disabledSubItemAnchors: document.querySelectorAll('#adapter-disabled-subitem a').length };
+            });
+            if (!observed.defaultOpen || !observed.defaultPortal || observed.triggerRef !== 'default-trigger' || observed.contentRef !== 'default-content' || observed.noHrefText !== 'No href remains text' || observed.noHrefAnchors || observed.disabledItemAnchors || observed.disabledSubItemAnchors) throw new Error(JSON.stringify(observed));
+            return { ...observed, disabledSidebarKeyboardDescription: 'UNCHECKED: existing disabled/no-href fragment and nonfocusable wrapper behavior preserved' };
+          });
+          const expectedSide = viewport.width >= 640 ? 'right' : 'top';
+          const expectedOffset = viewport.width >= 640 ? 24 : 4;
+          await step('adapter-item-native-reopen', () => reopen({ actor: 'actual-Item-WithInfo', selector: '#adapter-item a', host: '#adapter-item', text: 'Actual item explanation', portal: false, side: expectedSide, offset: expectedOffset }));
+          await step('adapter-sibling-switch-focused-item', async () => {
+            const before=await page.evaluate(()=>{const trigger=document.querySelector('#adapter-item a');const id=(trigger.getAttribute('aria-describedby')??'').split(' ')[0];const surface=document.getElementById(id)?.closest('[data-state]');if(!surface)throw new Error('Old sibling surface missing');window.__adapterRetained=surface;window.__adapterWatch={selector:'#adapter-item a',actor:'actual-Item-sibling-arbitration'};window.__adapterSiblingStart=performance.now();const role=getComputedStyle(surface).getPropertyValue('--motion-dismiss').trim();const time=/^(\d+(?:\.\d+)?)(ms|s)/.exec(role);if(!time)throw new Error('Sibling dismiss role unresolved');return{at:window.__adapterSiblingStart,ownerRole:role,ownerDismissMs:Number(time[1])*(time[2]==='s'?1000:1),focused:trigger===document.activeElement,state:trigger.dataset.state};});
+            await page.locator('#adapter-subitem a').hover(); await waitOpen('#adapter-subitem a');
+            const immediate=await page.evaluate(()=>({at:performance.now(),itemFocused:document.querySelector('#adapter-item a')===document.activeElement,itemState:document.querySelector('#adapter-item a').dataset.state,siblingState:document.querySelector('#adapter-subitem a').dataset.state}));
+            await page.waitForFunction(()=>document.querySelector('#adapter-item a').dataset.state==='closed'&&document.querySelector('#adapter-subitem a').dataset.state!=='closed');
+            await page.evaluate(ms=>new Promise(resolve=>setTimeout(resolve,ms*2)),before.ownerDismissMs);
+            const observed = await page.evaluate(() => ({ at:performance.now(),itemFocused: document.querySelector('#adapter-item a') === document.activeElement, itemState: document.querySelector('#adapter-item a').dataset.state, itemDescription: document.querySelector('#adapter-item a').getAttribute('aria-describedby'), siblingState: document.querySelector('#adapter-subitem a').dataset.state,oldContentRetired:!window.__adapterRetained.isConnected, trace: window.__adapterTrace.filter(row=>row.at>=window.__adapterSiblingStart) }));
+            const trustedPointer=observed.trace.find(row=>row.eventType==='pointerover'&&row.isTrusted&&row.targetWithinSibling);
+            const sharedOpen=observed.trace.find(row=>row.eventType==='tooltip.open'&&row.isTrusted===false&&trustedPointer&&row.at>=trustedPointer.at);
+            if (!before.focused||before.state==='closed'||!trustedPointer||!sharedOpen||!observed.itemFocused || observed.itemState !== 'closed' || observed.itemDescription || observed.siblingState === 'closed'||!observed.oldContentRetired) throw new Error('Sibling arbitration '+JSON.stringify({...observed,trace:undefined}));
+            return { before,immediate,...observed,trustedPointer,sharedOpen,acceptance: 'PASS_NATIVE_HOVER_SIBLING_CLOSE_WITH_OLD_FOCUS_RETAINED',timingAcceptance:'UNKNOWN' };
+          });
+          await page.mouse.move(0,0); await dismiss();
+          await step('adapter-subitem-native-reopen', () => reopen({ actor: 'actual-SubItem-WithInfo', selector: '#adapter-subitem a', host: '#adapter-subitem', text: 'Actual subitem explanation', portal: false, side: expectedSide, offset: expectedOffset }));
+          await dismiss();
+          await step('adapter-default-portal-ref-reopen', () => reopen({ actor: 'public-adapter-default-portal', selector: '#adapter-default-trigger', host: '#adapter-default-host', text: 'Default portal explanation', portal: true, side: 'bottom', offset: 11, triggerRef: 'default-trigger', contentRef: 'default-content' }));
+          await dismiss();
+          await step('adapter-local-aschild-ref-reopen', () => reopen({ actor: 'public-adapter-local-asChild', selector: '#adapter-local-trigger', host: '#adapter-local-host', text: 'Local asChild explanation', portal: false, side: 'bottom', offset: 13, triggerRef: 'local-trigger', contentRef: 'local-content' }));
+          await dismiss();
+          await step('adapter-native-disabled-safety', async () => {
+            const selector = '#disabled-action'; const trigger = page.locator(selector).locator('..');
+            await trigger.scrollIntoViewIfNeeded();
+            for (let count = 0; count < 100 && !await trigger.evaluate(node => node === document.activeElement); count++) await page.keyboard.press('Tab');
+            if (!await trigger.evaluate(node => node === document.activeElement)) throw new Error('Native Tab did not reach disabled explanation group');
+            await page.getByRole('tooltip').waitFor({state:'visible'});
+            const before = await page.locator('#activation-count').textContent(), url = page.url();
+            const observed = await trigger.evaluate(node => ({ role: node.getAttribute('role'), childDisabled: node.querySelector('button').disabled, description: (node.getAttribute('aria-describedby') ?? '').split(' ').map(id => document.getElementById(id)?.textContent ?? '').join(' '), focused: node === document.activeElement }));
+            await page.keyboard.press('Enter');
+            if (!observed.focused || observed.role !== 'group' || !observed.childDisabled || !observed.description.includes('Fixture action is unavailable') || await page.locator('#activation-count').textContent() !== before || page.url() !== url || await page.locator('button button').count()) throw new Error(JSON.stringify(observed));
+            return { ...observed, nativeEnterDidNotActivate: true, scope: 'generic native-disabled Button, not disabled Sidebar keyboard proof' };
+          });
+          await dismiss();
+          await step('adapter-activation-closes', async () => {
+            const results = [];
+            for (const selector of ['#adapter-item a','#adapter-subitem a']) {
+              await focusNative(selector); await waitOpen(selector);
+              const before = Number(await page.locator('#adapter-activations').textContent());
+              await page.keyboard.press('Enter');
+              await page.waitForFunction(selector => document.querySelector(selector).dataset.state === 'closed', selector);
+              const after = Number(await page.locator('#adapter-activations').textContent());
+              if (after !== before+1 || !page.url().endsWith('#adapter-safe-anchor')) throw new Error('Actual adapter activation failed ' + selector);
+              results.push({selector,before,after,closed:true,url:page.url()});
+              await page.waitForFunction(() => !document.querySelector('[role=tooltip]'));
+            }
+            return { results, navigationScope: 'local fragment only; no backend, wallet or production claim' };
+          });
+        }
+
+        report.roleValues = await page.evaluate(() => { const css = getComputedStyle(document.documentElement); return Object.fromEntries(['--motion-control', '--motion-surface', '--motion-dismiss', '--motion-stream', '--motion-arrive', '--interaction-feedback-budget', '--interaction-pending-delay', '--interaction-long-work-delay', '--interaction-mutation-budget'].map((role) => [role, css.getPropertyValue(role).trim()])); });
+      } catch (error) { failures++; report.fatalFailure = error.message; } finally { report.adapterTrace = await page.evaluate(()=>window.__adapterTrace??[]).catch(()=>[]); report.adapterFinalSnapshot = await page.evaluate(()=>window.__adapterSnapshot?.('finally')).catch(()=>null); report.nativeTrace = await page.evaluate(()=>window.__dedupeNativeTrace??[]).catch(()=>[]); report.finalNativeSnapshot=await page.evaluate(()=>window.__dedupeReadOnlySnapshot?.('finally')).catch(()=>null); await Promise.all(stylesheetTasks); report.loadedStylesheetResponses = loadedStylesheets; report.stylesheetURLs = await page.evaluate(() => Array.from(document.styleSheets, (sheet) => sheet.href)).catch(() => []); report.dom = await page.locator('body').innerText().catch(() => 'DOM unavailable'); report.actualViewport = await page.evaluate(() => ({ innerWidth, innerHeight, meta: document.querySelector('meta[name=viewport]')?.content, reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches })).catch(() => null); if (report.actualViewport?.innerWidth !== viewport.width || report.actualViewport?.reducedMotion !== (reducedMotion === 'reduce') || !report.actualViewport?.meta?.includes('width=device-width')) { failures++; report.captureInputsAcceptance = 'FAIL'; } else report.captureInputsAcceptance = 'PASS'; report.documentOverflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth).catch(() => null); if (report.consoleErrors.length) { failures++; report.consoleAcceptance = 'FAIL'; } else report.consoleAcceptance = 'PASS'; if (report.documentOverflow !== 0) { failures++; report.pageContainmentAcceptance = 'FAIL'; } else report.pageContainmentAcceptance = 'PASS'; if(adapterDiagnostic) report.adapterAcceptance = report.fatalFailure || report.steps.some(step=>step.status==='FAIL') || report.consoleErrors.length || report.captureInputsAcceptance!=='PASS' || report.pageContainmentAcceptance!=='PASS' ? 'FAIL' : uncheckedPremises>caseUncheckedStart ? 'UNCHECKED_PREMISE' : 'PASS_SCOPED_ACTUAL_ADAPTERS'; await context.close(); await fs.writeFile(path.join(directory, 'observations.json'), JSON.stringify(report, null, 2)); console.log(JSON.stringify({DAPP_CAPTURE_SUMMARY: device+'-'+theme+'-'+reducedMotion, failures: report.steps.filter(step => step.status === 'FAIL'), consoleErrors: report.consoleErrors, reopenAcceptance: report.reopenAcceptance, actualViewport: report.actualViewport, documentOverflow: report.documentOverflow})); }
+    }
+  }
+} finally { await browser.close(); }
+
+if (failures) process.exitCode = 1; else if (uncheckedPremises) process.exitCode = 2;

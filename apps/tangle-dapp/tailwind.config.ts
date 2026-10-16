@@ -7,6 +7,11 @@ import { Config } from 'tailwindcss/types/config';
 export default {
   presets: [preset],
   content: [
+    join(__dirname, '../../node_modules/@tangle-network/ui/src/**/*.{ts,tsx}'),
+    join(
+      __dirname,
+      '../../node_modules/@tangle-network/sandbox-ui/dist/**/*.js',
+    ),
     join(__dirname, '{src,public}/**/*!(*.stories|*.spec).{ts,tsx,html}'),
     ...createGlobPatternsForDependencies(__dirname),
   ],

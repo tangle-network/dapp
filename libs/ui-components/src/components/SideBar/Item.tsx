@@ -89,53 +89,58 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
 
   if (!isMounted) return null;
 
+  const itemLink = (
+    <Link {...linkProps}>
+      <StyledItem
+        isActive={isActive}
+        isDisabled={isDisabled}
+        isExpanded={isExpanded}
+        subItemsCount={subItems.length}
+      >
+        <div
+          className={twMerge(
+            'flex gap-4 !text-inherit',
+            !isExpanded && 'justify-center',
+          )}
+        >
+          <Icon width={24} height={24} className="!fill-current" />
+
+          {isExpanded && (
+            <Typography variant="body1" className="!text-inherit">
+              {name}
+            </Typography>
+          )}
+        </div>
+
+        {isExpanded &&
+          (!isInternal && href && subItems.length <= 0 ? (
+            <ArrowRightUp
+              size="lg"
+              className="hidden fill-current group-hover:block dark:fill-current"
+            />
+          ) : subItems.length > 0 ? (
+            isDropdownOpen ? (
+              <ChevronDown className="!fill-current" />
+            ) : (
+              <ChevronUp className="!fill-current" />
+            )
+          ) : null)}
+      </StyledItem>
+    </Link>
+  );
+  const hasAnchor = Boolean(href) && !isDisabled && subItems.length === 0;
+  const item = (
+    <div
+      onClick={setItemAsActiveAndToggleDropdown}
+      className={isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}
+    >
+      {hasAnchor ? <WithInfo info={info}>{itemLink}</WithInfo> : itemLink}
+    </div>
+  );
+
   return (
     <>
-      <WithInfo info={info}>
-        <div
-          onClick={setItemAsActiveAndToggleDropdown}
-          className={isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}
-        >
-          {/* NOTE: Make the link generic */}
-          <Link {...linkProps}>
-            <StyledItem
-              isActive={isActive}
-              isDisabled={isDisabled}
-              isExpanded={isExpanded}
-              subItemsCount={subItems.length}
-            >
-              <div
-                className={twMerge(
-                  'flex gap-4 !text-inherit',
-                  !isExpanded && 'justify-center',
-                )}
-              >
-                <Icon width={24} height={24} className="!fill-current" />
-
-                {isExpanded && (
-                  <Typography variant="body1" className="!text-inherit">
-                    {name}
-                  </Typography>
-                )}
-              </div>
-
-              {isExpanded &&
-                (!isInternal && href && subItems.length <= 0 ? (
-                  <ArrowRightUp
-                    size="lg"
-                    className="hidden fill-current group-hover:block dark:fill-current"
-                  />
-                ) : subItems.length > 0 ? (
-                  isDropdownOpen ? (
-                    <ChevronDown className="!fill-current" />
-                  ) : (
-                    <ChevronUp className="!fill-current" />
-                  )
-                ) : null)}
-            </StyledItem>
-          </Link>
-        </div>
-      </WithInfo>
+      {hasAnchor ? item : <WithInfo info={info}>{item}</WithInfo>}
 
       {isExpanded && isDropdownOpen && (
         <ul className="flex flex-col gap-1 empty:hidden">

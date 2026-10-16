@@ -1,5 +1,9 @@
 'use client';
 
+import {
+  Sidebar as SharedSidebar,
+  SidebarProvider,
+} from '@tangle-network/sandbox-ui/dashboard';
 import { DoubleArrowLeftIcon } from '@radix-ui/react-icons';
 import { TangleIcon, WebbLogoIcon } from '@tangle-network/icons';
 import cx from 'classnames';
@@ -87,102 +91,113 @@ export const SideBar = forwardRef<HTMLDivElement, MobileSidebarProps>(
         {...props}
         ref={ref}
       >
-        <div
-          className={twMerge(
-            'h-full flex flex-col justify-between py-6',
-            'bg-mono-0 dark:bg-mono-200 transition-all duration-200 ease-in-out',
-            'dark:border-r dark:border-mono-160',
-            isSidebarOpen ? 'w-72 px-4' : 'w-16 px-2',
-          )}
-        >
-          <div className="space-y-6">
+        <SidebarProvider defaultPanelOpen={false} hasPanels={false}>
+          <SharedSidebar
+            className="relative inset-auto z-auto h-full"
+            style={{ width: isSidebarOpen ? '18rem' : '4rem' }}
+          >
             <div
-              className={cx(
-                'flex items-center',
-                isSidebarOpen ? 'justify-between' : 'justify-center',
-                isSidebarOpen && 'px-3',
-              )}
-            >
-              <SideBarLogo
-                logoLink={logoLink}
-                Logo={!isSidebarOpen ? ClosedLogo : Logo}
-                isExpanded={isSidebarOpen}
-              />
-
-              <IconButton
-                onClick={handleToggleSidebar}
-                className={cx(
-                  'transition-[right] duration-300 ease-in-out',
-                  !isSidebarOpen
-                    ? 'absolute -right-[calc(50%_+_8px)]'
-                    : 'right-full',
-                )}
-              >
-                <DoubleArrowLeftIcon
-                  className={cx(
-                    'transition-transform duration-300 ease-in-out',
-                    isSidebarOpen ? 'rotate-0' : 'rotate-180',
-                  )}
-                />
-              </IconButton>
-            </div>
-
-            <SideBarItems
-              ActionButton={ActionButton}
-              pathnameOrHash={pathnameOrHash}
-              items={items.filter((item) => item.isInternal)}
-              isExpanded={isSidebarOpen}
-            />
-          </div>
-
-          <div className="space-y-5">
-            {isSidebarOpen && footer.extraContent}
-
-            <Link
-              href={footer.href}
-              target="_blank"
               className={twMerge(
-                'flex items-center gap-2',
-                isSidebarOpen ? 'justify-start' : 'justify-center',
+                'h-full w-full flex flex-col justify-between py-6',
+                isSidebarOpen ? 'px-4' : 'px-2',
               )}
             >
-              <footer.Icon
-                width={24}
-                height={24}
-                className="cursor-pointer !fill-mono-100 dark:!fill-mono-60 group-hover:!fill-mono-200 dark:group-hover:!fill-mono-0"
-              />
-
-              {isSidebarOpen && (
-                <Typography
-                  variant="body1"
-                  className="cursor-pointer text-mono-100 dark:text-mono-60 group-hover:text-mono-200 dark:group-hover:text-mono-0"
+              <div className="space-y-6">
+                <div
+                  className={cx(
+                    'flex items-center',
+                    isSidebarOpen ? 'justify-between' : 'justify-center',
+                    isSidebarOpen && 'px-3',
+                  )}
                 >
-                  {footer.name}
-                </Typography>
-              )}
-            </Link>
+                  <SideBarLogo
+                    logoLink={logoLink}
+                    Logo={!isSidebarOpen ? ClosedLogo : Logo}
+                    isExpanded={isSidebarOpen}
+                  />
 
-            <div
-              className={cx(
-                'flex flex-col items-center justify-between gap-5',
-                isSidebarOpen ? '!flex-row' : '',
-              )}
-            >
-              {items
-                .filter((item) => !item.isInternal)
-                .map((item, index) => (
-                  <Link key={index} href={item.href} target="_blank">
-                    <item.Icon
-                      width={24}
-                      height={24}
-                      className="cursor-pointer !fill-mono-100 dark:!fill-mono-60 group-hover:!fill-mono-200 dark:group-hover:!fill-mono-0"
+                  <IconButton
+                    aria-label={
+                      isSidebarOpen
+                        ? 'Collapse navigation'
+                        : 'Expand navigation'
+                    }
+                    aria-expanded={isSidebarOpen}
+                    onClick={handleToggleSidebar}
+                    className={cx(
+                      !isSidebarOpen
+                        ? 'absolute -right-[calc(50%_+_8px)]'
+                        : 'right-full',
+                    )}
+                  >
+                    <DoubleArrowLeftIcon
+                      aria-hidden="true"
+                      className={cx(
+                        '[transition:transform_var(--motion-control)] motion-reduce:transition-none',
+                        isSidebarOpen ? 'rotate-0' : 'rotate-180',
+                      )}
                     />
-                  </Link>
-                ))}
-              {isSidebarOpen && <ThemeToggle />}
+                  </IconButton>
+                </div>
+
+                <SideBarItems
+                  ActionButton={ActionButton}
+                  pathnameOrHash={pathnameOrHash}
+                  items={items.filter((item) => item.isInternal)}
+                  isExpanded={isSidebarOpen}
+                />
+              </div>
+
+              <div className="space-y-5">
+                {isSidebarOpen && footer.extraContent}
+
+                <Link
+                  href={footer.href}
+                  target="_blank"
+                  className={twMerge(
+                    'flex items-center gap-2',
+                    isSidebarOpen ? 'justify-start' : 'justify-center',
+                  )}
+                >
+                  <footer.Icon
+                    width={24}
+                    height={24}
+                    className="cursor-pointer !fill-mono-100 dark:!fill-mono-60 group-hover:!fill-mono-200 dark:group-hover:!fill-mono-0"
+                  />
+
+                  {isSidebarOpen && (
+                    <Typography
+                      variant="body1"
+                      className="cursor-pointer text-mono-100 dark:text-mono-60 group-hover:text-mono-200 dark:group-hover:text-mono-0"
+                    >
+                      {footer.name}
+                    </Typography>
+                  )}
+                </Link>
+
+                <div
+                  className={cx(
+                    'flex flex-col items-center justify-between gap-5',
+                    isSidebarOpen ? '!flex-row' : '',
+                  )}
+                >
+                  {items
+                    .filter((item) => !item.isInternal)
+                    .map((item, index) => (
+                      <Link key={index} href={item.href} target="_blank">
+                        <item.Icon
+                          width={24}
+                          height={24}
+                          className="cursor-pointer !fill-mono-100 dark:!fill-mono-60 group-hover:!fill-mono-200 dark:group-hover:!fill-mono-0"
+                        />
+                      </Link>
+                    ))}
+                  {isSidebarOpen && <ThemeToggle />}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </SharedSidebar>
+        </SidebarProvider>
       </div>
     );
   },

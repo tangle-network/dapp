@@ -1,0 +1,34 @@
+{
+  "react": {
+    "version": "18.3.1",
+    "resolvedFrom": "@tangle-network/ui/package.json",
+    "entry": "/home/drew/code/_wt/dapp-dedupe-10198/node_modules/react/index.js",
+    "entrySHA256": "a216c390bf956cbb906c66d29fdb2e2ad6999464a5ca83e476533a6f25ad0ef3",
+    "packageSHA256": "d4e68a5c96babb20cad1daafea8b78822eae45b341552cf5418d06a5304fa64c"
+  },
+  "react-dom": {
+    "version": "18.3.1",
+    "resolvedFrom": "@tangle-network/ui/package.json",
+    "entry": "/home/drew/code/_wt/dapp-dedupe-10198/node_modules/react-dom/index.js",
+    "entrySHA256": "f26fcb81b5d1dc32c6edea34645c75b60d259916293d3208c8be48ac33e882e4",
+    "packageSHA256": "d2f29e31bd48b833e48cd7bbf41f192e8ee4ff8da249fdbe10d4ac4114b8b12e"
+  },
+  "@radix-ui/react-tooltip": {
+    "version": "1.4.1",
+    "resolvedFrom": "@tangle-network/ui/package.json",
+    "entry": "/home/drew/code/_wt/dapp-dedupe-10198/node_modules/@tangle-network/ui/node_modules/@radix-ui/react-tooltip/dist/index.js",
+    "entrySHA256": "0858986beb23e591798003c079ea3cddd2ea36b0ac63cbc0ab7c7c0de37dbe77",
+    "packageSHA256": "5aca00d0868666988514ac53638253d2b2273d00b5c74c2ed8cfc1f6b3379774"
+  },
+  "@radix-ui/react-presence": {
+    "version": "1.1.11",
+    "resolvedFrom": "@tangle-network/ui/package.json",
+    "entry": "/home/drew/code/_wt/dapp-dedupe-10198/node_modules/@tangle-network/ui/node_modules/@radix-ui/react-presence/dist/index.js",
+    "entrySHA256": "69322a0601ad31bcb3fcd1d7826c59675166cff00103e6b5ad3f6ecce815147d",
+    "packageSHA256": "f18c8e3a59aeb29796d9b55f8be683674b994b68e43c8f9adf97f218cae15af7"
+  },
+  "sharedTooltip": {
+    "source": "/home/drew/code/_wt/dapp-dedupe-10198/node_modules/@tangle-network/ui/src/primitives/tooltip.tsx",
+    "sha256": "e976d256761b6972767524a9ead5df2f330a31aa59b862b36253f6e5ecedbf54"
+  }
+}

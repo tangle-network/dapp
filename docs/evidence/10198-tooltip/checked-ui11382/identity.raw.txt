@@ -1,0 +1,64 @@
+{
+  "runtimes": {
+    "DAPP_APP_NODE": {
+      "path": "/home/drew/.nvm/versions/node/v18.18.2/bin/node",
+      "version": "v18.18.2"
+    },
+    "DAPP_CAPTURE_NODE": {
+      "path": "/home/drew/.nvm/versions/node/v24.18.0/bin/node",
+      "version": "v24.18.0"
+    }
+  },
+  "browserSDK": {
+    "package": "/home/drew/code/agent-app/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/package.json",
+    "version": "1.63.0",
+    "engines": {
+      "node": ">=20"
+    },
+    "browsers": [
+      {
+        "name": "chromium",
+        "revision": "1243",
+        "installByDefault": true,
+        "browserVersion": "153.0.8010.12",
+        "title": "Chrome for Testing"
+      },
+      {
+        "name": "chromium-headless-shell",
+        "revision": "1243",
+        "installByDefault": true,
+        "browserVersion": "153.0.8010.12",
+        "title": "Chrome Headless Shell"
+      },
+      {
+        "name": "ffmpeg",
+        "revision": "1011",
+        "installByDefault": true
+      }
+    ]
+  },
+  "authorSHA": "ecffdbc7f9cfb854c4e2910b652353aa97a4d036",
+  "sharedSurfaceMotionSHA256": "f744b19887da230400176cad7328f53389932396bbfdfc5dfa610805af75473b",
+  "purpose": "diagnostic-supported-controls",
+  "sidebar": "BLOCKED",
+  "latency": "UNKNOWN",
+  "physical": "UNKNOWN",
+  "production": "UNKNOWN",
+  "dependencies": {
+    "@tangle-network/ui": "11.38.2",
+    "@tangle-network/brand": "1.25.1",
+    "@tangle-network/sandbox-ui": "0.90.3",
+    "vite": "6.4.3",
+    "@vitejs/plugin-react-swc": "3.11.0"
+  },
+  "fixtureHashes": {
+    "vite.config.mjs": "eee9be081357f6979cfcdbbdd77c25611d662cf9b331cdaeef4aaa92c75a04ff",
+    "index.html": "998165442edca1433effae95d5393307cbe06bbfcfad99985282340cd894cae0",
+    "README.md": "73cd6d930a6762badf8cca5e9fc5cf43dc7bbc2c5545f10a57c1bc84b0f57f97",
+    "capture.mjs": "5a53dfe3e6b4e461ce2750eab414c2c04d48a4f9cdee471647d6efb789410919",
+    "App.tsx": "5ae7925e1deda17d9e3adb92f54a2167e83622bb6d50cf14befbc9fca7576f96"
+  },
+  "cssHashes": {
+    "index-DQeBDShd.css": "f35400221a5793d5f103ef09bc87eb8a23aa8344d6bf57284654c1dc249a9477"
+  }
+}

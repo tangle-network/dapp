@@ -39,8 +39,10 @@ export function useDarkMode(
         window.matchMedia('(prefers-color-scheme: dark)').matches)
     ) {
       document.documentElement.classList.add('dark');
+      document.documentElement.classList.remove('light');
     } else {
       document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
     }
   }, [theme]);
 
@@ -64,11 +66,13 @@ export function useDarkMode(
       switch (_nextThemeMode) {
         case 'dark': {
           document.documentElement.classList.add('dark');
+          document.documentElement.classList.remove('light');
           break;
         }
 
         case 'light': {
           document.documentElement.classList.remove('dark');
+          document.documentElement.classList.add('light');
           break;
         }
       }

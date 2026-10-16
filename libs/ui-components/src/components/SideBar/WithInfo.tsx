@@ -1,18 +1,15 @@
 'use client';
 
-import { TooltipTrigger } from '@radix-ui/react-tooltip';
 import { useState, type ComponentProps, type PropsWithChildren } from 'react';
 import useBreakpointValue from '../../hooks/useBreakpointValue';
 import { Typography } from '../../typography/Typography';
-import { Tooltip, TooltipBody } from '../Tooltip';
+import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 import type { SideBarItemProps } from './types';
 
 function WithInfo({
   children,
   info,
 }: PropsWithChildren<Pick<SideBarItemProps, 'info'>>) {
-  // Manually manage tooltip state to avoid tooltip closing when
-  // the child component is clicked.
   const [isOpen, setIsOpen] = useState(false);
 
   const tooltipBodyProps = useBreakpointValue(
@@ -27,17 +24,11 @@ function WithInfo({
   if (!info) return children;
 
   return (
-    <Tooltip isOpen={isOpen}>
-      <TooltipTrigger
-        asChild
-        onMouseEnter={() => setIsOpen(true)}
-        onMouseLeave={() => setIsOpen(false)}
-      >
-        {children}
-      </TooltipTrigger>
+    <Tooltip isOpen={isOpen} onChange={setIsOpen}>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
       <TooltipBody {...tooltipBodyProps} isDisablePortal>
         {typeof info === 'string' ? (
-          <Typography variant={'body1'} className="break-normal">
+          <Typography variant={'body1'} className="break-normal !text-inherit">
             {info}
           </Typography>
         ) : (

@@ -1,9 +1,9 @@
 import { DoubleArrowRightIcon } from '@radix-ui/react-icons';
-import { TooltipTrigger } from '@radix-ui/react-tooltip';
 import IconButton from '@tangle-network/ui-components/components/buttons/IconButton';
 import {
   Tooltip,
   TooltipBody,
+  TooltipTrigger,
 } from '@tangle-network/ui-components/components/Tooltip';
 import type { ComponentProps, FC, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';

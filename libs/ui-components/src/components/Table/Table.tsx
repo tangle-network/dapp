@@ -1,3 +1,11 @@
+import {
+  Table as SharedTable,
+  TableBody,
+  TableHeader,
+  TableFooter,
+  TableRow,
+  TableCell,
+} from '@tangle-network/ui/primitives';
 import { type Row, type RowData, flexRender } from '@tanstack/react-table';
 import { ArrowDropDownFill, ArrowDropUpFill } from '@tangle-network/icons';
 import { Fragment, useCallback } from 'react';
@@ -115,16 +123,17 @@ export const Table = <T extends RowData>({
     >
       {titleElement}
       <div className={twMerge('w-full overflow-x-auto', tableWrapperClassName)}>
-        <table
+        <SharedTable
+          wrapper={false}
           className={twMerge(
             'w-full border-collapse table-auto',
             getVariantTableClass(variant),
             tableClassName,
           )}
         >
-          <thead>
+          <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
+              <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <THeader
                     className={twMerge(getVariantThClass(variant), thClassName)}
@@ -173,14 +182,14 @@ export const Table = <T extends RowData>({
                     )}
                   </THeader>
                 ))}
-              </tr>
+              </TableRow>
             ))}
-          </thead>
+          </TableHeader>
 
-          <tbody className={tbodyClassName}>
+          <TableBody className={tbodyClassName}>
             {table.getRowModel().rows.map((row) => (
               <Fragment key={row.id}>
-                <tr
+                <TableRow
                   data-expanded={row.getIsExpanded() ? 'true' : 'false'}
                   className={twMerge(
                     'group/tr peer',
@@ -212,28 +221,28 @@ export const Table = <T extends RowData>({
                       )}
                     </TData>
                   ))}
-                </tr>
+                </TableRow>
 
                 {getExpandedRowContent && row.getIsExpanded() && (
-                  <tr
+                  <TableRow
                     className={twMerge(
                       getVariantTrClass(variant),
                       expandedRowClassName,
                     )}
                   >
-                    <td colSpan={row.getVisibleCells().length}>
+                    <TableCell colSpan={row.getVisibleCells().length}>
                       {getExpandedRowContent(row)}
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 )}
               </Fragment>
             ))}
-          </tbody>
+          </TableBody>
 
           {isDisplayFooter && (
-            <tfoot>
+            <TableFooter>
               {table.getFooterGroups().map((footerGroup) => (
-                <tr key={footerGroup.id}>
+                <TableRow key={footerGroup.id}>
                   {footerGroup.headers.map((header) => (
                     <THeader key={header.id}>
                       {header.isPlaceholder
@@ -244,11 +253,11 @@ export const Table = <T extends RowData>({
                           )}
                     </THeader>
                   ))}
-                </tr>
+                </TableRow>
               ))}
-            </tfoot>
+            </TableFooter>
           )}
-        </table>
+        </SharedTable>
       </div>
 
       {/** Pagination */}

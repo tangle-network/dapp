@@ -1,12 +1,12 @@
 'use client';
 
-import { Fragment } from 'react';
+import { forwardRef, Fragment } from 'react';
 import { Link as ReactRouterLink } from 'react-router';
 import { LinkProps, isReactRouterLinkProps } from './types';
 
-export const Link: React.FC<LinkProps> = (props) => {
+export const Link = forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => {
   if (isReactRouterLinkProps(props)) {
-    return <ReactRouterLink {...extractInternalProp(props)} />;
+    return <ReactRouterLink ref={ref} {...extractInternalProp(props)} />;
   }
 
   if (!props.href?.length) {
@@ -15,8 +15,13 @@ export const Link: React.FC<LinkProps> = (props) => {
 
   const internalProps = extractInternalProp(props);
 
-  return <a {...internalProps}>{internalProps.children}</a>;
-};
+  return (
+    <a ref={ref} {...internalProps}>
+      {internalProps.children}
+    </a>
+  );
+});
+Link.displayName = 'Link';
 
 function extractInternalProp<T extends LinkProps>(
   props: T,

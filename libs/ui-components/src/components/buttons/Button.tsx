@@ -1,5 +1,12 @@
 'use client';
 
+import {
+  Button as SharedButton,
+  Tooltip as SharedTooltip,
+  TooltipContent as SharedTooltipContent,
+  TooltipProvider as SharedTooltipProvider,
+  TooltipTrigger as SharedTooltipTrigger,
+} from '@tangle-network/ui/primitives';
 import { getFlexBasic } from '@tangle-network/icons/utils';
 import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
@@ -7,8 +14,7 @@ import ButtonSpinner from './ButtonSpinner';
 import { ButtonContentProps, ButtonProps } from './types';
 import { useButtonProps } from './use-button-props';
 import { getButtonClassNameByVariant } from './utils';
-import { forwardRef } from 'react';
-import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
+import { forwardRef, useId } from 'react';
 
 /**
  * The Button Component
@@ -33,6 +39,7 @@ import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
  * ```
  */
 const Button = forwardRef<HTMLElement, ButtonProps>((props, ref) => {
+  const disabledTooltipId = useId();
   const {
     as: asProps,
     children,
@@ -53,10 +60,14 @@ const Button = forwardRef<HTMLElement, ButtonProps>((props, ref) => {
     ...restProps
   } = props;
 
+  const hasDisabledTooltip = isDisabled && disabledTooltip !== undefined;
+  const buttonId =
+    restProps.id ?? (hasDisabledTooltip ? disabledTooltipId : undefined);
+
   const [buttonProps, { tagName: Component }] = useButtonProps({
     tagName: asProps,
-    isDisabled,
     ...restProps,
+    isDisabled: isDisabled || isLoading,
   });
 
   const mergedClassName = twMerge(
@@ -70,46 +81,61 @@ const Button = forwardRef<HTMLElement, ButtonProps>((props, ref) => {
   const contentProps = { children, leftIcon, rightIcon, variant };
 
   const button = (
-    <Component
-      {...restProps}
-      {...buttonProps}
-      disabled={buttonProps.disabled || isLoading}
-      className={cx(mergedClassName)}
-      ref={ref}
-    >
-      {isLoading && spinnerPlacement === 'start' && (
-        <ButtonSpinner hasLabel={!!loadingText}>{spinner}</ButtonSpinner>
-      )}
-      {isLoading ? (
-        loadingText || (
-          <span className="opacity-0 flex items-center">
-            <ButtonContent {...contentProps} />
-          </span>
-        )
-      ) : (
-        <ButtonContent {...contentProps} />
-      )}
-      {isLoading && spinnerPlacement === 'end' && (
-        <ButtonSpinner hasLabel={!!loadingText} placement="end">
-          {spinner}
-        </ButtonSpinner>
-      )}
-    </Component>
+    <SharedButton asChild className={mergedClassName}>
+      <Component
+        {...restProps}
+        {...buttonProps}
+        id={buttonId}
+        disabled={buttonProps.disabled || isLoading}
+        aria-busy={isLoading || undefined}
+        ref={ref}
+      >
+        {isLoading && spinnerPlacement === 'start' && (
+          <ButtonSpinner hasLabel={!!loadingText}>{spinner}</ButtonSpinner>
+        )}
+        {isLoading ? (
+          loadingText || (
+            <span className="opacity-0 flex items-center">
+              <ButtonContent {...contentProps} />
+            </span>
+          )
+        ) : (
+          <ButtonContent {...contentProps} />
+        )}
+        {isLoading && spinnerPlacement === 'end' && (
+          <ButtonSpinner hasLabel={!!loadingText} placement="end">
+            {spinner}
+          </ButtonSpinner>
+        )}
+      </Component>
+    </SharedButton>
   );
 
   // If the button isn't disabled or a tooltip for the disabled state isn't
   // provided, just return the button as is.
-  if (disabledTooltip === undefined || !isDisabled) {
+  if (!hasDisabledTooltip) {
     return button;
   }
 
   return (
-    <Tooltip>
-      {/** NOTE: Erroring due to need for `asChild`, but when `asChild` is passed, the tooltip doesn't appear. */}
-      <TooltipTrigger>{button}</TooltipTrigger>
+    <SharedTooltipProvider>
+      <SharedTooltip delayDuration={100}>
+        <SharedTooltipTrigger asChild>
+          <span
+            className={cx('inline-flex', isFullWidth && 'w-full')}
+            tabIndex={0}
+            role="group"
+            aria-labelledby={buttonId}
+          >
+            {button}
+          </span>
+        </SharedTooltipTrigger>
 
-      <TooltipBody>{disabledTooltip}</TooltipBody>
-    </Tooltip>
+        <SharedTooltipContent sideOffset={4}>
+          {disabledTooltip}
+        </SharedTooltipContent>
+      </SharedTooltip>
+    </SharedTooltipProvider>
   );
 });
 

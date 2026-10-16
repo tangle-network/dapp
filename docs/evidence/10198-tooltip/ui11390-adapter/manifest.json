@@ -1,0 +1,789 @@
+{
+  "schema": 1,
+  "evidenceCommit": "5d6ec41b40e6ab1fc8d45179e9a8653f509ad72b",
+  "testedExecutableSource": "6925ec46adadc526971c5f92cbfacbbf9a567e00",
+  "prefix": "docs/evidence/10198-tooltip/ui11390-adapter/",
+  "formattedSourceCommit": "bf31ee0e7a433916b35b3bdd7e306e851204c83e",
+  "formatEquivalence": "Three files differ bytewise from tested692; normalized TypeScript and emitted JS AST equivalence in provenance/format-equivalence.raw.txt; final source delta +125/-194/net69",
+  "basis": "Committed Git blobs after normal hooks, verified again at final publication head against retained source bytes and blob OIDs; excludes only this manifest. Old parent evidence stays immutable at81a78b36.",
+  "sourceGates": {
+    "install": "beelink2-f4022c1af6fac1841681c84b9c01f7e1 valid frozen installation only; overall2",
+    "typeBuild": "beelink2-cde48fb23c95f53d093bd64e2e075acc type/build0diagnostics; overall1browser",
+    "targetedPhone": "beelink2-db117c67514cc19b755015816d9cc9f9 exit0; unchanged source/build, readonly scroll observer"
+  },
+  "composite": {
+    "acceptedConditions": 4,
+    "normalRetainedDOMBeforeDeadlineAndPersistence": 8,
+    "reducedNewNodeAllowed": 8,
+    "nativeSiblingArbitrations": 4,
+    "genericNativeDisabledEnterChecks": 4,
+    "actualItemSubItemLocalHashActivations": 8,
+    "acceptedOriginalPNGs": 36,
+    "acceptedOriginalUncutWebMs": 4,
+    "selection": "Three valid cde cases plus targeted db phone-normal; observer5c19 vs8bea, same App6e4, not one byte-identical four-case run"
+  },
+  "allRetainedOriginals": {
+    "PNGs": 81,
+    "uncutWebMs": 9,
+    "rawCaseObservations": 9
+  },
+  "historicalFailureLimit": "cde phone-normal close cause remainsUNKNOWN; scroll not instrumented there; no shared-retirement cause asserted",
+  "files": [
+    {
+      "path": "README.md",
+      "gitBlob": "6439f26d78a2a93de458c6a49d11c8eb1b88051c",
+      "sha256": "11e1d227655757c44ddccb951af665daef3c55b20c97634fcbbb237bef7513fb",
+      "bytes": 10477
+    },
+    {
+      "path": "observer-baseline-888c7d/actual-ui-actor-identity.raw.txt",
+      "gitBlob": "f2df8ff8b7b1db1a904630bbc7d978d6c89ecb51",
+      "sha256": "98e0f99cf27f98fb5040f0994e04ac371d932f4c8c1a18d7811ae62092884eb4",
+      "bytes": 1799
+    },
+    {
+      "path": "observer-baseline-888c7d/build.log.raw.txt",
+      "gitBlob": "6546fd62492c058362a6642a4ecac1959ec31177",
+      "sha256": "4d35cbac9afba003748f5c16cd0ffaaa7f46e1c0ce412bb020187411e8440731",
+      "bytes": 38914
+    },
+    {
+      "path": "observer-baseline-888c7d/desktop-light-no-preference/00-rest.png",
+      "gitBlob": "c2b205550937c2797099513a8f47f68abe53528a",
+      "sha256": "f2992032e9ddbca9778074b709cc5152ffca59518871f5cb4b5ef0704257971b",
+      "bytes": 88455
+    },
+    {
+      "path": "observer-baseline-888c7d/desktop-light-no-preference/01-adapter-default-open-compatibility.png",
+      "gitBlob": "7309e2fc1c913186a4fe2ff3d44e93ee236a59ce",
+      "sha256": "48a329688e0051905d9e6d83c4bbdb8d67a18a202a8279225a62e657082c2fe7",
+      "bytes": 88464
+    },
+    {
+      "path": "observer-baseline-888c7d/desktop-light-no-preference/02-adapter-item-native-reopen.png",
+      "gitBlob": "b93605d74adb31ffc35e9f7a700b5589f68137a7",
+      "sha256": "491fe44267ba60daae539a194cc085d89e37524be71a703e531b81cbf35e231d",
+      "bytes": 90375
+    },
+    {
+      "path": "observer-baseline-888c7d/desktop-light-no-preference/04-adapter-subitem-native-reopen.png",
+      "gitBlob": "e522a101136862e373ff3c9441d3d2c7caed1b29",
+      "sha256": "75629d40fbb7bbe6536e69e97bcc26f7500f83d98ccde1beba5f7c4fcce5eb75",
+      "bytes": 92564
+    },
+    {
+      "path": "observer-baseline-888c7d/desktop-light-no-preference/05-adapter-default-portal-ref-reopen.png",
+      "gitBlob": "67118e9dea55938db55c9108100e5fd87a57d890",
+      "sha256": "e074b4d9e0a858690f17376cbe872a0892edbba51439a31a74a183be8185bd10",
+      "bytes": 88715
+    },
+    {
+      "path": "observer-baseline-888c7d/desktop-light-no-preference/06-adapter-local-aschild-ref-reopen.png",
+      "gitBlob": "485cdcc141c1cbebe8c02cacddb1a42b6feb33ad",
+      "sha256": "f9e248ebb98bec93574020e52f3e51a9d614ec3abb26bb25ad097388951d3315",
+      "bytes": 88036
+    },
+    {
+      "path": "observer-baseline-888c7d/desktop-light-no-preference/07-adapter-native-disabled-safety.png",
+      "gitBlob": "3692ead5f4efd062a8dfe7ca3851bd5ca683fe41",
+      "sha256": "c20312aa7614678a9b25b4ed99a1c129d00ed98cd49d58d0ad1beadd235e1be2",
+      "bytes": 90588
+    },
+    {
+      "path": "observer-baseline-888c7d/desktop-light-no-preference/08-adapter-activation-closes.png",
+      "gitBlob": "9f2c6d25f1a5e4e1131ef9fb47c6d780387a859c",
+      "sha256": "41593fab648e64342e6410c9c79a1e2a5507311a563b72de9acc464c66cde85d",
+      "bytes": 89656
+    },
+    {
+      "path": "observer-baseline-888c7d/desktop-light-no-preference/adapter-sibling-switch-focused-item-failure.png",
+      "gitBlob": "9d6a60701cce2390375990f5e28ade8c99ec4999",
+      "sha256": "d4c8c45d03e0c41582750ac104908922b32bc8def71b6e981b5ad560574131fa",
+      "bytes": 93857
+    },
+    {
+      "path": "observer-baseline-888c7d/desktop-light-no-preference/observations.raw.txt",
+      "gitBlob": "987a33ecd72ec355f5442e7af90ab22a5a8b315e",
+      "sha256": "6305629a7d445d3b6292e15b9be5dcabf0ccd70b4fb9119ade4a94d4db2741ae",
+      "bytes": 298712
+    },
+    {
+      "path": "observer-baseline-888c7d/desktop-light-no-preference/page@01c13175e4a0d38ff72a80cfdd797ed7.webm",
+      "gitBlob": "e01f456d51d347cdd74fd9139d83732c595b6fcf",
+      "sha256": "8518e93a76d57a384c40ec9e0e511dc96c39399c5575e4a2b5326d2f0e1baf61",
+      "bytes": 775945
+    },
+    {
+      "path": "observer-baseline-888c7d/desktop-light-reduce/00-rest.png",
+      "gitBlob": "db4a7ee5c334ba06297ae17d66b88558a6c76a22",
+      "sha256": "61a391dc1f2264fdbddf8eaec0729cd85557fd92b6f38fc4b98c19964af9f178",
+      "bytes": 88451
+    },
+    {
+      "path": "observer-baseline-888c7d/desktop-light-reduce/01-adapter-default-open-compatibility.png",
+      "gitBlob": "42d1ec5614fd61a22d23f1cdf151d8b68255f3d8",
+      "sha256": "c9d3bb2a4de1d9e4425c8a2bd40432f095cae17e74d77ed7a84c265eba680c14",
+      "bytes": 88472
+    },
+    {
+      "path": "observer-baseline-888c7d/desktop-light-reduce/02-adapter-item-native-reopen.png",
+      "gitBlob": "eccc06562e75cb9ce96563e0b7fbb12630f1084e",
+      "sha256": "181ad84104d0c9935b34fe9027f203d3e3a982268759d700b0398eabebf7a83a",
+      "bytes": 90379
+    },
+    {
+      "path": "observer-baseline-888c7d/desktop-light-reduce/04-adapter-subitem-native-reopen.png",
+      "gitBlob": "70e91d60133ccb5361fe77f06ed9bc13905fdd92",
+      "sha256": "5bcd75f6c36c024caff447c3395171bf3ab51d83bece9db0ed51d9603ee39e5c",
+      "bytes": 92571
+    },
+    {
+      "path": "observer-baseline-888c7d/desktop-light-reduce/05-adapter-default-portal-ref-reopen.png",
+      "gitBlob": "f3632b0c5b769cd58dce865bd25186d94aed19c5",
+      "sha256": "25a77237b4f6bd972e5ef52cee53ee79af21c05b86bcd9b1c94293c7ba96665b",
+      "bytes": 88718
+    },
+    {
+      "path": "observer-baseline-888c7d/desktop-light-reduce/06-adapter-local-aschild-ref-reopen.png",
+      "gitBlob": "9790b98b1edbeb826c9f704053c12733e57e012d",
+      "sha256": "e98386ae75fb5839a467afb5c2be4e4d5f715a430866ea8437aa30a019ad6035",
+      "bytes": 88038
+    },
+    {
+      "path": "observer-baseline-888c7d/desktop-light-reduce/07-adapter-native-disabled-safety.png",
+      "gitBlob": "433d601f1c6b5190e7accc3f8f5cdc4b9519a90f",
+      "sha256": "3381b61479a3a572714d99a8be1c2ce6b0b1a7afb7c0c7bf1d01b583e9542a07",
+      "bytes": 90724
+    },
+    {
+      "path": "observer-baseline-888c7d/desktop-light-reduce/08-adapter-activation-closes.png",
+      "gitBlob": "078a9b760c2817ef062c2d9516074ea8a4f3f754",
+      "sha256": "4cdf14760ace2b09ff6d1fb68451a4c6bfe947c4ee95d3b5ea95144bc4eeee5a",
+      "bytes": 89668
+    },
+    {
+      "path": "observer-baseline-888c7d/desktop-light-reduce/adapter-sibling-switch-focused-item-failure.png",
+      "gitBlob": "5596189bf126d3b28d478289cd56d23cd17a3e60",
+      "sha256": "4684dd6affdf9ecf65f21e6bdf9f3ac9573713e2730070bbcdfe128d80b42206",
+      "bytes": 93915
+    },
+    {
+      "path": "observer-baseline-888c7d/desktop-light-reduce/observations.raw.txt",
+      "gitBlob": "0bd21c065d952171a5d807d210dcaff28ae2b212",
+      "sha256": "53c0fa922a3e2de68d9eae6cdd2e6e87fe9915965330d7e3b93b78dac37facbc",
+      "bytes": 300936
+    },
+    {
+      "path": "observer-baseline-888c7d/desktop-light-reduce/page@a4276280887e4aca2cfd75d8c0cbd6a4.webm",
+      "gitBlob": "67c8041353d959591d8819c9864f141576440e54",
+      "sha256": "2e52eb00dd450909aab89ce788c3788e17dd930c8fe95810b26cf6d63faadb66",
+      "bytes": 635580
+    },
+    {
+      "path": "observer-baseline-888c7d/identity.raw.txt",
+      "gitBlob": "72b5d1041a8fe83097be213811d7ae3b1a11f567",
+      "sha256": "91e16273740604b6665b72bb35c414031f04a295688743494a064825f034c4fa",
+      "bytes": 2088
+    },
+    {
+      "path": "observer-baseline-888c7d/phone-light-no-preference/00-rest.png",
+      "gitBlob": "80f021fa57cec70946fcb58d6df476a89f9d8510",
+      "sha256": "396cbcc9288f5a02831aefbd6fdd15bda156cb2a1124eb1b03c4a673c54c7f8f",
+      "bytes": 44803
+    },
+    {
+      "path": "observer-baseline-888c7d/phone-light-no-preference/01-adapter-default-open-compatibility.png",
+      "gitBlob": "369123472b01a11fc5c5a94a1f1277dcdc2e16fc",
+      "sha256": "a369b449d803fd6ee9a5bbeeca892ed15789ba6b35ae7479ddabfef86537b875",
+      "bytes": 44804
+    },
+    {
+      "path": "observer-baseline-888c7d/phone-light-no-preference/02-adapter-item-native-reopen.png",
+      "gitBlob": "80521f3d7655019effcc2bbdaead765db55541c5",
+      "sha256": "2e6fc0cb8477722d89ca4b7d617ef8516b255586dc0b67511f8d14640ff7f599",
+      "bytes": 45055
+    },
+    {
+      "path": "observer-baseline-888c7d/phone-light-no-preference/03-adapter-sibling-switch-focused-item.png",
+      "gitBlob": "a266626143454b0b416dc716b59a5ab7542f3439",
+      "sha256": "8e926d97f0f004947487e81402cf97a1d237ff1ef21e3406b18215e8447c85db",
+      "bytes": 47627
+    },
+    {
+      "path": "observer-baseline-888c7d/phone-light-no-preference/04-adapter-subitem-native-reopen.png",
+      "gitBlob": "8fdaf88fe05e621b5c6fc8e637ea549359775522",
+      "sha256": "2fb122cd6ec76fd023e4c87a347be3db99a965d507fd6488a9c9615b378338dc",
+      "bytes": 46896
+    },
+    {
+      "path": "observer-baseline-888c7d/phone-light-no-preference/07-adapter-native-disabled-safety.png",
+      "gitBlob": "6926c642da66ff9c10f511fcabaa321b103bdef5",
+      "sha256": "80b86eeec2eb9b7ffb3b728b498850ee1129be4b782e65746f5dc8cb6b53b518",
+      "bytes": 46896
+    },
+    {
+      "path": "observer-baseline-888c7d/phone-light-no-preference/08-adapter-activation-closes.png",
+      "gitBlob": "bcc3886a18a7107c5c78838dce6ffefeec8d7f0a",
+      "sha256": "773f870f0147fca139702ee8125f911fe928e527ca122350875ac74f02bbc962",
+      "bytes": 46341
+    },
+    {
+      "path": "observer-baseline-888c7d/phone-light-no-preference/adapter-default-portal-ref-reopen-failure.png",
+      "gitBlob": "d302c55387ef664f9087c4511b737fff1f8e3ca4",
+      "sha256": "62822c795bc242e389e786d6985058023e9b8f6793cf57963f746e69339cb729",
+      "bytes": 45006
+    },
+    {
+      "path": "observer-baseline-888c7d/phone-light-no-preference/adapter-local-aschild-ref-reopen-failure.png",
+      "gitBlob": "ceae373d72a2cf728e2dbbbfdab3ca9fa0974082",
+      "sha256": "dc4764524bb87c0cb88b43e253aba852651936b7d9771f95547065a7311ae1a7",
+      "bytes": 46633
+    },
+    {
+      "path": "observer-baseline-888c7d/phone-light-no-preference/observations.raw.txt",
+      "gitBlob": "461b7c150d6b6cf7a501fa711aa73508027961f1",
+      "sha256": "d62bc2d02d25ad991f33e9de042a0326d6c328775a5e835aaa461301116e097c",
+      "bytes": 226001
+    },
+    {
+      "path": "observer-baseline-888c7d/phone-light-no-preference/page@98325cc6752f0fa7a57755865ff6375e.webm",
+      "gitBlob": "5ede1f293027f3b31b51f53d8e9a68c51cbe6972",
+      "sha256": "e93299d5f7086e2173ef440b620e4d044dd1d6bae54da2e30b92e9dbddba4d21",
+      "bytes": 384667
+    },
+    {
+      "path": "observer-baseline-888c7d/phone-light-reduce/00-rest.png",
+      "gitBlob": "86fd175899dd0e3b32abbd013c45550ac05c569c",
+      "sha256": "118aa8b32d9e827ef872f10f70cc6358fe77f52dffc4504ac83cf3891c728944",
+      "bytes": 44797
+    },
+    {
+      "path": "observer-baseline-888c7d/phone-light-reduce/01-adapter-default-open-compatibility.png",
+      "gitBlob": "97e0df82f3076a8351a53fc6cb6c1b7fdf4209c7",
+      "sha256": "ec0c3feb992760462437226c231ffdae016b5429364956c91238e97299d685c2",
+      "bytes": 44810
+    },
+    {
+      "path": "observer-baseline-888c7d/phone-light-reduce/02-adapter-item-native-reopen.png",
+      "gitBlob": "49b91a90116abd4b935fced84017b2bc11928399",
+      "sha256": "501b98ad60d7d98766c98eb227ad3eee6d3f55eb18b06cd24dba80a407777d89",
+      "bytes": 45050
+    },
+    {
+      "path": "observer-baseline-888c7d/phone-light-reduce/04-adapter-subitem-native-reopen.png",
+      "gitBlob": "d7fcf8f10b5e1d0995a7753cff69bb42d771c69c",
+      "sha256": "d49dadbbd1a9c7dc05488512b4f93fff64c0d7f01417c38a9c2dfd40f2865202",
+      "bytes": 46890
+    },
+    {
+      "path": "observer-baseline-888c7d/phone-light-reduce/07-adapter-native-disabled-safety.png",
+      "gitBlob": "f5ad5729bbd703f8b4abc36eb7efdda8d360b81f",
+      "sha256": "6c1bb351531ff86796a2f33a082e414fda35bfc1e85aac0f8855d04f6cb188b1",
+      "bytes": 46968
+    },
+    {
+      "path": "observer-baseline-888c7d/phone-light-reduce/08-adapter-activation-closes.png",
+      "gitBlob": "b674df3165cbcf5fd3b9fc2e122b0cddfe2de47f",
+      "sha256": "9ecf20517693d261467f42633252139eb2dbedfbcf74ba0db1133ef14b87d741",
+      "bytes": 46348
+    },
+    {
+      "path": "observer-baseline-888c7d/phone-light-reduce/adapter-default-portal-ref-reopen-failure.png",
+      "gitBlob": "f264f1b54fe0a50fef98da76b00c7825e8f275f1",
+      "sha256": "9c016ba7de283e1eb705b3544d14f190268b974f044e37f922fd2b94eb15818c",
+      "bytes": 45052
+    },
+    {
+      "path": "observer-baseline-888c7d/phone-light-reduce/adapter-local-aschild-ref-reopen-failure.png",
+      "gitBlob": "d4546a3ace53b3be72e5202ebeb86864c247a07f",
+      "sha256": "9adee140053f38af31f39a53cfb6c08950e7ddffcb94f5acbfc6eddbba866cb4",
+      "bytes": 46645
+    },
+    {
+      "path": "observer-baseline-888c7d/phone-light-reduce/adapter-sibling-switch-focused-item-failure.png",
+      "gitBlob": "053393407ec3b1baf40673a10de4f61d90f7b5f4",
+      "sha256": "f09943cee4f1823d578a6d989a71b4ee2fd8a16903d06b04c75d1a99ceb5d483",
+      "bytes": 46088
+    },
+    {
+      "path": "observer-baseline-888c7d/phone-light-reduce/observations.raw.txt",
+      "gitBlob": "7e98d01eb3267d329eb19759b71c3d92e1f6b6c3",
+      "sha256": "7357d9540f5e2bf306ac3087e7a9e05bd57c855f89ea730447b170e99eedc0dd",
+      "bytes": 239682
+    },
+    {
+      "path": "observer-baseline-888c7d/phone-light-reduce/page@33d4a097873b946821db6eba5f536527.webm",
+      "gitBlob": "bd55f72cb90ed35c446a48c0f564c14a241c8e32",
+      "sha256": "af042d0fed5a5563397d256f355967f7e609537eaba7465f46dca20cf78a0beb",
+      "bytes": 338774
+    },
+    {
+      "path": "observer-baseline-888c7d/post-build-css-identity.raw.txt",
+      "gitBlob": "d5e1bbb1f9855af98e9e6f78b0cb11dd5a9fe5b1",
+      "sha256": "f348d63467f6873690ff5be97f4ae08bd90a55ff85e502402b9c9cc7468188e8",
+      "bytes": 125
+    },
+    {
+      "path": "observer-baseline-888c7d/server.log.raw.txt",
+      "gitBlob": "bd91a3b275a81d938447e3269ba61b3530423627",
+      "sha256": "8c3b427f6f8c6db0c1b930e9d5b03a7bf1d633de424e63963f2007ee5ea71fa2",
+      "bytes": 156
+    },
+    {
+      "path": "provenance/App-fixture.raw.txt",
+      "gitBlob": "0c3f0481a4b6bc3389d102a00ef1af6d2f3524ff",
+      "sha256": "6e4f3eaf7b46a655020e618aacf474a28be8df530df8edd72e2906d05307f77f",
+      "bytes": 7906
+    },
+    {
+      "path": "provenance/checked-owner-package.raw.txt",
+      "gitBlob": "d8e7ebd1426ea932f3752116c1a414fe85addb33",
+      "sha256": "9921954b4f2e815b8d1ac7c4b86f2e7ee7a22ef227579512b8f946d9b6cbba8c",
+      "bytes": 16731
+    },
+    {
+      "path": "provenance/composite-consumer-receipt.raw.txt",
+      "gitBlob": "e52a5cc66b9d98bd7778c7bfe007394bcffd1c60",
+      "sha256": "807f1eda2f4765b9d0ae70b0294929132b67031c3b00763e7c204dda28c90893",
+      "bytes": 142530
+    },
+    {
+      "path": "provenance/format-equivalence.raw.txt",
+      "gitBlob": "9cd210eea4ebba23dffbba435c1501492464c1eb",
+      "sha256": "5a09714c8933459302389bda3dc5b16ae58f71d298aed7cb0fe86bb7ff0b26b1",
+      "bytes": 1776
+    },
+    {
+      "path": "provenance/gate-888c7d.raw.txt",
+      "gitBlob": "1acade00aa2b0ce8ba0c7bd4bf777fe5c996cc39",
+      "sha256": "bd7fd72fc63ef69b5068f3cf51a3fe834d15033ff94b5c929e8e5c6a246406f7",
+      "bytes": 221429
+    },
+    {
+      "path": "provenance/gate-cde48f.raw.txt",
+      "gitBlob": "76d00cf222469eba25ba0cbfd11a06c0f7a8d95a",
+      "sha256": "9d3a2969fbc8f6517b03315b367d827c25d7ed94e40658fb040f9929551ae68f",
+      "bytes": 34514
+    },
+    {
+      "path": "provenance/gate-db117c.raw.txt",
+      "gitBlob": "0d2ee22f60c07eaa1bd82a63ecc25e8c1ca66940",
+      "sha256": "5406b3fcb9a4b1d6f836f2da33cf8c44546964aad0cb0da59f8bc894956aec47",
+      "bytes": 7011
+    },
+    {
+      "path": "provenance/gate-f0dd02-publication-failure.raw.txt",
+      "gitBlob": "74b86f33c583e7f8c63ebcabe60d0c9a6499b366",
+      "sha256": "14e371b96e4f63ec1ffa19d705970e5b82e87704f5865a4ecc580812afb665d8",
+      "bytes": 40209
+    },
+    {
+      "path": "provenance/gate-f4022c.raw.txt",
+      "gitBlob": "f66a68b912b2a7ad8240e784053940ae719dc235",
+      "sha256": "b26648b0a3cbdcfc78e87e4204a17676602a67e860c64ccb500aee4024fbe471",
+      "bytes": 8298
+    },
+    {
+      "path": "provenance/observer-4c1e.raw.txt",
+      "gitBlob": "716f43e16387d162f8a4b3dc546f2a63b40c923a",
+      "sha256": "4c1e889cdc882021f607546d375cc65f9d555af36fff37c40034f8376e8c116b",
+      "bytes": 47313
+    },
+    {
+      "path": "provenance/observer-5c19.raw.txt",
+      "gitBlob": "953828efcb7381a3d3e6112aeb5442be30f75672",
+      "sha256": "5c197b4c65cb67018f628bd7ee56ffa0b8343a70d93556f002f0a80e9be3e319",
+      "bytes": 52205
+    },
+    {
+      "path": "provenance/observer-8bea.raw.txt",
+      "gitBlob": "efc34c68976eb8f422a892933e96e2d8f8a98055",
+      "sha256": "8bea9cd7eebc73ceb2c5abdf1669ecda3ee7ffe504c518ad706f32029f058308",
+      "bytes": 53244
+    },
+    {
+      "path": "source-run-cde48f/actual-ui-actor-identity.raw.txt",
+      "gitBlob": "f2df8ff8b7b1db1a904630bbc7d978d6c89ecb51",
+      "sha256": "98e0f99cf27f98fb5040f0994e04ac371d932f4c8c1a18d7811ae62092884eb4",
+      "bytes": 1799
+    },
+    {
+      "path": "source-run-cde48f/build.log.raw.txt",
+      "gitBlob": "b4e2490cb3fddadc2cb5fbcba64951e164ffae56",
+      "sha256": "08ecaa243e9560a4eae95bb2667a22c3d7fdd3b1d84d610c6e4af4815f182bc3",
+      "bytes": 38914
+    },
+    {
+      "path": "source-run-cde48f/desktop-light-no-preference/00-rest.png",
+      "gitBlob": "652cd2c644b73113391025944cd5d40290632b9c",
+      "sha256": "1ccf8ae02efccc9203dded76b5928709a785fb72e1371acfd736a6f4fa99f612",
+      "bytes": 87852
+    },
+    {
+      "path": "source-run-cde48f/desktop-light-no-preference/01-adapter-default-open-compatibility.png",
+      "gitBlob": "6c99b2b3d8fc51b0df1193a945944738963c01c4",
+      "sha256": "34664e95d59bc23e2dcf32c7e0292bc7c4046481cf0830f77b7ceabfb75559e6",
+      "bytes": 87871
+    },
+    {
+      "path": "source-run-cde48f/desktop-light-no-preference/02-adapter-item-native-reopen.png",
+      "gitBlob": "8e19f7adc7afcebe5d50eaf1859d1befced9a7f9",
+      "sha256": "be09b76561ab57690d07d3ec1f7490bee098ed979840f5460579c82fefdef175",
+      "bytes": 89738
+    },
+    {
+      "path": "source-run-cde48f/desktop-light-no-preference/03-adapter-sibling-switch-focused-item.png",
+      "gitBlob": "938944db723eef3ea2c04b3d71f2d73d2c03f07e",
+      "sha256": "21769fb8a8b534afd03999af79af697e3fb11e4fae1ec40d179865bfa671f2d9",
+      "bytes": 91170
+    },
+    {
+      "path": "source-run-cde48f/desktop-light-no-preference/04-adapter-subitem-native-reopen.png",
+      "gitBlob": "da0e9eb512403440b2f362126ee9bdff6447507c",
+      "sha256": "01f464bdf15f8aebf95af095c20e92dc465cdfd545b0ce3f925fdefea1e9ba26",
+      "bytes": 92238
+    },
+    {
+      "path": "source-run-cde48f/desktop-light-no-preference/05-adapter-default-portal-ref-reopen.png",
+      "gitBlob": "b74da93a57da5c7cbcf7141b58cec4b3f48e1c04",
+      "sha256": "a6489ecfacf75a3153c6e0b8bef5df848094fadda60bfc9041c3836f16155b52",
+      "bytes": 88122
+    },
+    {
+      "path": "source-run-cde48f/desktop-light-no-preference/06-adapter-local-aschild-ref-reopen.png",
+      "gitBlob": "c806bed2a50fa0cb42d2cb9aad3e92b2cf3801ce",
+      "sha256": "cbaca72dd7f18c734e82e36ba501c1bf10357ff6a8629d4d13a552a5abfabae2",
+      "bytes": 87158
+    },
+    {
+      "path": "source-run-cde48f/desktop-light-no-preference/07-adapter-native-disabled-safety.png",
+      "gitBlob": "26cd7a5322f0dc6f348bb8fb8e0c39ef583ad59d",
+      "sha256": "f0844b132fce2c6bc5e7cc93fc0e186936b619a88c9d94d0ba67e3d1e7491f9c",
+      "bytes": 89138
+    },
+    {
+      "path": "source-run-cde48f/desktop-light-no-preference/08-adapter-activation-closes.png",
+      "gitBlob": "d396f75065a2cda28e5641ae3ad602cd9b7c35df",
+      "sha256": "1d962b005af582eb4993a236da3f5bc58119770f4e9f3dcca865dac68eeb4b27",
+      "bytes": 88098
+    },
+    {
+      "path": "source-run-cde48f/desktop-light-no-preference/observations.raw.txt",
+      "gitBlob": "be5a885366ca6878b45285ebfbb47bdd6c958a20",
+      "sha256": "408d3d3f7c92d297a35988f1f301fe97dece907005a047e88fc324159f72aaa5",
+      "bytes": 284092
+    },
+    {
+      "path": "source-run-cde48f/desktop-light-no-preference/page@03d10190fca45850fb2b4b1a2ccc688f.webm",
+      "gitBlob": "f43d14f2bb8094dedfa079e0db459bd193ce758e",
+      "sha256": "f0adce94cac39fd9d01a2f5707addc4c13695a5f43ef9de93de460e84f4efaf7",
+      "bytes": 788299
+    },
+    {
+      "path": "source-run-cde48f/desktop-light-reduce/00-rest.png",
+      "gitBlob": "33b3e851b0d2293930654f14121169a9c4cbb0f9",
+      "sha256": "317a3967eff1754f43f05151f5ada3ffcca2dd78c9e8f6999b925bcda161366a",
+      "bytes": 87778
+    },
+    {
+      "path": "source-run-cde48f/desktop-light-reduce/01-adapter-default-open-compatibility.png",
+      "gitBlob": "5580b8fdde22881abcc5a7f50f1ed9e599cc094a",
+      "sha256": "36296ef383396d86fe330d34a21ef838053484f3ebfc98496d05417d068a387f",
+      "bytes": 87858
+    },
+    {
+      "path": "source-run-cde48f/desktop-light-reduce/02-adapter-item-native-reopen.png",
+      "gitBlob": "fd6b2ea37aeeb23cffb65535f0a31fdf35147af8",
+      "sha256": "d8e56fc0e1ac64811b2a45d15c3fb17a6ec59ca4b5496b50a22429a8d3acc479",
+      "bytes": 89765
+    },
+    {
+      "path": "source-run-cde48f/desktop-light-reduce/03-adapter-sibling-switch-focused-item.png",
+      "gitBlob": "1b0f240a6d2387fc283133cc3d65ad1a3f845ac3",
+      "sha256": "c453b37346a2fa4354dea257a3d9dda1ca3b8a60909a01ad4d406eec145368b9",
+      "bytes": 91159
+    },
+    {
+      "path": "source-run-cde48f/desktop-light-reduce/04-adapter-subitem-native-reopen.png",
+      "gitBlob": "dc185e0f89c4f228d0a4da76c06c4043473c5900",
+      "sha256": "baa8da4423dacacc64b0bb1e4657c2280301512db877ac73785a2f373cdd66ab",
+      "bytes": 92224
+    },
+    {
+      "path": "source-run-cde48f/desktop-light-reduce/05-adapter-default-portal-ref-reopen.png",
+      "gitBlob": "236ce941a28d5e59a63caebe211c6493e58704a6",
+      "sha256": "970f45d6329e247617027f1cdf11d8dd0ed1af04d5f662c1da1d69fb11ae820e",
+      "bytes": 88083
+    },
+    {
+      "path": "source-run-cde48f/desktop-light-reduce/06-adapter-local-aschild-ref-reopen.png",
+      "gitBlob": "1882ad2c48bc4206c1d0880326e8a8e3cf259b5d",
+      "sha256": "c75b6af139a7b9dd3d9b6e2e20b6581426355acb49ed8a8fcf99b908eb78f311",
+      "bytes": 87137
+    },
+    {
+      "path": "source-run-cde48f/desktop-light-reduce/07-adapter-native-disabled-safety.png",
+      "gitBlob": "3faa17f6dc89ce6128b95a29a9ed5bed007ff4dd",
+      "sha256": "209d9670cf495f771505fbaace67eec0d1d7605d9e54df46ae89a4ba891a9ed6",
+      "bytes": 89254
+    },
+    {
+      "path": "source-run-cde48f/desktop-light-reduce/08-adapter-activation-closes.png",
+      "gitBlob": "93fc36e72e7b4b20c51e1ab38212ee4c762f7b68",
+      "sha256": "4c6f51b09efb54689165c00e2a65126c9046c2997e0407187a891e1d558e1e6c",
+      "bytes": 88131
+    },
+    {
+      "path": "source-run-cde48f/desktop-light-reduce/observations.raw.txt",
+      "gitBlob": "ca1e1a086672e95d1597e39366f4b0c1f21e2248",
+      "sha256": "286968cb452c7d89d23db01f9425f58f323adc24b75da5839bdbc29af29a2b0c",
+      "bytes": 285396
+    },
+    {
+      "path": "source-run-cde48f/desktop-light-reduce/page@deb2d7ff85b6e30279836d81f2138646.webm",
+      "gitBlob": "f847e9046fbdabb5baf69ab2cd218101492af5e9",
+      "sha256": "0dd379844f913e05537eff7e39533d30d99163c34b4a839c55a415d4557b70ee",
+      "bytes": 541934
+    },
+    {
+      "path": "source-run-cde48f/identity.raw.txt",
+      "gitBlob": "76b36d6441c29207fa58bb06ea9e15041ba6e632",
+      "sha256": "a32f0700f3b50d84818597ab64e68249efcbb8254e787559224fc7471491cf7d",
+      "bytes": 2088
+    },
+    {
+      "path": "source-run-cde48f/phone-light-no-preference/00-rest.png",
+      "gitBlob": "af276a3ca29f300568cb67ba1bffbd7289b83474",
+      "sha256": "ca3bc01c5aa1337e6053103b2b9b655f3d16f1c705cde01fe41fddc896f2cd2a",
+      "bytes": 44997
+    },
+    {
+      "path": "source-run-cde48f/phone-light-no-preference/01-adapter-default-open-compatibility.png",
+      "gitBlob": "7198bd54aa00d474635b6e4714757e05fc50ae1b",
+      "sha256": "3311fd499f10c8fac1ebc32a8fd727296763bc18d99ae63c8a50ff2c236f6eaf",
+      "bytes": 45008
+    },
+    {
+      "path": "source-run-cde48f/phone-light-no-preference/02-adapter-item-native-reopen.png",
+      "gitBlob": "7e8c9483f0748e773b37b58a8a40d36fd01956cd",
+      "sha256": "7d25981509bf48389e527e53bc6810095cfd17bb4563f273543cbe62c861bbb9",
+      "bytes": 45292
+    },
+    {
+      "path": "source-run-cde48f/phone-light-no-preference/03-adapter-sibling-switch-focused-item.png",
+      "gitBlob": "dd0607b33c73f3ca3497c7b9f5399144cfdcc593",
+      "sha256": "202e1261d3b17dce57d7b4958091ba77cdd31a723b863f0f4a34017dc046d38d",
+      "bytes": 46513
+    },
+    {
+      "path": "source-run-cde48f/phone-light-no-preference/04-adapter-subitem-native-reopen.png",
+      "gitBlob": "9ae010d2230e8d6ccb0beab86cc79973e4622267",
+      "sha256": "b09c3f2c7e95fad38640a496af3dc6eae6ea8d6a653cd89d22a0e607d8da9dbf",
+      "bytes": 47443
+    },
+    {
+      "path": "source-run-cde48f/phone-light-no-preference/05-adapter-default-portal-ref-reopen.png",
+      "gitBlob": "dace3584e4308795703f3282a719bd261df1f59f",
+      "sha256": "37b3c5f19f0c74e1b4e552edcbc6d14b7fe736bb2607a0d54dd137b421d0d94a",
+      "bytes": 45874
+    },
+    {
+      "path": "source-run-cde48f/phone-light-no-preference/07-adapter-native-disabled-safety.png",
+      "gitBlob": "3e77d310fe4abb8edff0d00a9285fbca254577b6",
+      "sha256": "569fe2b248a354798c032e85ac1188e2e5877faf73fd8d5f7d03258b0d87f824",
+      "bytes": 46951
+    },
+    {
+      "path": "source-run-cde48f/phone-light-no-preference/08-adapter-activation-closes.png",
+      "gitBlob": "bd80bebaa95639d9c6bf76de2ba18114655c72dc",
+      "sha256": "59a400a6bd26e974873763ef2e9b88900531e291639b1b4f5323523936b490da",
+      "bytes": 45837
+    },
+    {
+      "path": "source-run-cde48f/phone-light-no-preference/adapter-local-aschild-ref-reopen-failure.png",
+      "gitBlob": "904663d80c63ced95c50088c000abfff72a54b14",
+      "sha256": "0ddfd524a9ec1a53c02817e422ce4d148ce84868a28390a809244efb5f29fccd",
+      "bytes": 45767
+    },
+    {
+      "path": "source-run-cde48f/phone-light-no-preference/observations.raw.txt",
+      "gitBlob": "2c3ef1c85995b8b8c372a734d4085b083c16d7f2",
+      "sha256": "9d91843d278644dfaef051d918dea0963f0e9b3b6dcff2c6a43ee5c302a0a0e9",
+      "bytes": 289929
+    },
+    {
+      "path": "source-run-cde48f/phone-light-no-preference/page@005db56fc1f101f88c7c9adf2af29855.webm",
+      "gitBlob": "951566be4821f6656179453de4b117ee47940573",
+      "sha256": "3dfa13ef075bfdf37a0f8d0f8856e42da48ae6714b290e65c9722227af37b372",
+      "bytes": 457595
+    },
+    {
+      "path": "source-run-cde48f/phone-light-reduce/00-rest.png",
+      "gitBlob": "7198bd54aa00d474635b6e4714757e05fc50ae1b",
+      "sha256": "3311fd499f10c8fac1ebc32a8fd727296763bc18d99ae63c8a50ff2c236f6eaf",
+      "bytes": 45008
+    },
+    {
+      "path": "source-run-cde48f/phone-light-reduce/01-adapter-default-open-compatibility.png",
+      "gitBlob": "b047117f420ea88a415c96b843bc02769da97303",
+      "sha256": "78ad8900a02961144b47c977115f36a71cd81b43478a1f982bcf134738abe106",
+      "bytes": 45012
+    },
+    {
+      "path": "source-run-cde48f/phone-light-reduce/02-adapter-item-native-reopen.png",
+      "gitBlob": "e6e77c498737cc26755822450301ffe4551da838",
+      "sha256": "cc5f788b9a5b9a54c7968bcadc8c5c2b31773c78e68dc8c43e9cd619fecd0eee",
+      "bytes": 45371
+    },
+    {
+      "path": "source-run-cde48f/phone-light-reduce/03-adapter-sibling-switch-focused-item.png",
+      "gitBlob": "286bc483172699ca35056ae31a6eab76ab1cbb52",
+      "sha256": "4a62d16d0e6df9b8debe7009358c3c0432457eca85396478f286a60441bf6be6",
+      "bytes": 46551
+    },
+    {
+      "path": "source-run-cde48f/phone-light-reduce/04-adapter-subitem-native-reopen.png",
+      "gitBlob": "508c449a2ce355ac3cadc92e2c12f0dcb818010e",
+      "sha256": "0d13abb076f6b184b6bb0b38c6da15c6245a4346a4b4743a97e3f81faf87f488",
+      "bytes": 47451
+    },
+    {
+      "path": "source-run-cde48f/phone-light-reduce/05-adapter-default-portal-ref-reopen.png",
+      "gitBlob": "42acd0fc5021aed09d137b81c83fb1b6248107f3",
+      "sha256": "084559ccd072c9457f9694e2a15b60315f6c841853e4a402939f38fa8d431536",
+      "bytes": 45884
+    },
+    {
+      "path": "source-run-cde48f/phone-light-reduce/06-adapter-local-aschild-ref-reopen.png",
+      "gitBlob": "2f218a68900ed46e4a217646c0b756c5a8f0190f",
+      "sha256": "c372fea37080f48a27f96ea9eee442d2f1fa6366c12abe841dc138bc26ce9b8a",
+      "bytes": 46374
+    },
+    {
+      "path": "source-run-cde48f/phone-light-reduce/07-adapter-native-disabled-safety.png",
+      "gitBlob": "bc33223a6f579d5c02bf2ad9a300c05087fa769e",
+      "sha256": "cc2c3a2df380e68c3e3c34ddf17f266017e5ffc69137dd3a1fecf3ab928be783",
+      "bytes": 46480
+    },
+    {
+      "path": "source-run-cde48f/phone-light-reduce/08-adapter-activation-closes.png",
+      "gitBlob": "10bccd4e707488d93420989308f582a31e1f56a0",
+      "sha256": "aff86d9fd8ed40d66c395b5aa87b996994b13f4153dbc25d4863ca7e21c48ab9",
+      "bytes": 45852
+    },
+    {
+      "path": "source-run-cde48f/phone-light-reduce/observations.raw.txt",
+      "gitBlob": "244b975641df6f671fdc8e8171741d0ef8cb96f9",
+      "sha256": "186dd9f98667a268026eefbbdedf18bb48dbf9bee743cf3acbea9678b8495e92",
+      "bytes": 279144
+    },
+    {
+      "path": "source-run-cde48f/phone-light-reduce/page@45cd44518c5f4a02ee1a5b0bac9e291e.webm",
+      "gitBlob": "cdaf29586691c6a0739a15a0595ab2e7d4054ca7",
+      "sha256": "24aed8eddbe26c2ac7af0e668d4fd7d2544bae383943eaafa97fcb51bda38d1c",
+      "bytes": 359245
+    },
+    {
+      "path": "source-run-cde48f/post-build-css-identity.raw.txt",
+      "gitBlob": "52009da4f20e4e5ce9907a2b2264c6d30a04e7dd",
+      "sha256": "04579fc9ae0c5764483b57fc793ed57e81b9de5e9ccc356840f6a5855cfb0a66",
+      "bytes": 125
+    },
+    {
+      "path": "source-run-cde48f/server.log.raw.txt",
+      "gitBlob": "d51617113cb46973acb88038db2739604630804b",
+      "sha256": "9f208b3131535cf98b7d5fada07fcefb5b8472da72c4589855c75615d26c0385",
+      "bytes": 73
+    },
+    {
+      "path": "targeted-phone-db117c/actual-ui-actor-identity.raw.txt",
+      "gitBlob": "f2df8ff8b7b1db1a904630bbc7d978d6c89ecb51",
+      "sha256": "98e0f99cf27f98fb5040f0994e04ac371d932f4c8c1a18d7811ae62092884eb4",
+      "bytes": 1799
+    },
+    {
+      "path": "targeted-phone-db117c/identity.raw.txt",
+      "gitBlob": "09aa6cc3608cd23905102544e5cb64059ecf97d8",
+      "sha256": "01f2cfa25940a2e6e3bd78c9f8b9097edee6e4cd0b4c39a7dceb586da4026588",
+      "bytes": 2088
+    },
+    {
+      "path": "targeted-phone-db117c/phone-light-no-preference/00-rest.png",
+      "gitBlob": "af276a3ca29f300568cb67ba1bffbd7289b83474",
+      "sha256": "ca3bc01c5aa1337e6053103b2b9b655f3d16f1c705cde01fe41fddc896f2cd2a",
+      "bytes": 44997
+    },
+    {
+      "path": "targeted-phone-db117c/phone-light-no-preference/01-adapter-default-open-compatibility.png",
+      "gitBlob": "010a75d21b2a5ea1729c206da025418a680af16e",
+      "sha256": "3bbc71e1d024d54460071b5c24f5e128a249df031d8ed97cb892c1d098da0468",
+      "bytes": 45006
+    },
+    {
+      "path": "targeted-phone-db117c/phone-light-no-preference/02-adapter-item-native-reopen.png",
+      "gitBlob": "d2674e512c78a292da26f1c8f5645726bf36a04f",
+      "sha256": "d3603465df4e837b1347eb078bf7a7546ebb437cc9369c4fddc51d753b9e728c",
+      "bytes": 45364
+    },
+    {
+      "path": "targeted-phone-db117c/phone-light-no-preference/03-adapter-sibling-switch-focused-item.png",
+      "gitBlob": "4b3156eaaa772a84d2dc411f7f7d5a8196a29da6",
+      "sha256": "bc54f05437acb42c11513fee62c0b02da5daf952af7ae9efc17dbcc77e9a4e2c",
+      "bytes": 46539
+    },
+    {
+      "path": "targeted-phone-db117c/phone-light-no-preference/04-adapter-subitem-native-reopen.png",
+      "gitBlob": "6ed897488a61c74df6eb91b55722630aa3cf0c97",
+      "sha256": "862e845cafdaa09753379c59e04d7dfe8a8a958812e3df70339c46767f100f3c",
+      "bytes": 47409
+    },
+    {
+      "path": "targeted-phone-db117c/phone-light-no-preference/05-adapter-default-portal-ref-reopen.png",
+      "gitBlob": "1a44a23be26acfe836f9a8d363bf50ddd49b2a97",
+      "sha256": "c5119ecf1657b7d3fa05fdf8eaf016daad25dc1361799f40a7f7976088faf30f",
+      "bytes": 45869
+    },
+    {
+      "path": "targeted-phone-db117c/phone-light-no-preference/06-adapter-local-aschild-ref-reopen.png",
+      "gitBlob": "2f218a68900ed46e4a217646c0b756c5a8f0190f",
+      "sha256": "c372fea37080f48a27f96ea9eee442d2f1fa6366c12abe841dc138bc26ce9b8a",
+      "bytes": 46374
+    },
+    {
+      "path": "targeted-phone-db117c/phone-light-no-preference/07-adapter-native-disabled-safety.png",
+      "gitBlob": "64cec10781d4c453ebafea7ab563a62dc3c4cb67",
+      "sha256": "6edde5c09659e58d813a4e5f5a86b97c2e9a4b8320462a61eeb1bbcdaba91b53",
+      "bytes": 46876
+    },
+    {
+      "path": "targeted-phone-db117c/phone-light-no-preference/08-adapter-activation-closes.png",
+      "gitBlob": "a445e4628825c4939d1df5a4289fddc442c06aba",
+      "sha256": "c378344baa219bdc58a73d195e1c6e8884e0a2aa734eab1b8ed5e226cc28a4ad",
+      "bytes": 45844
+    },
+    {
+      "path": "targeted-phone-db117c/phone-light-no-preference/observations.raw.txt",
+      "gitBlob": "d7245090561bfc79440d07b3128c79464df909be",
+      "sha256": "3e1585ecbfcec60c4790a92577cb174e6e9aacb938f461b154de26ac2923ac6a",
+      "bytes": 499221
+    },
+    {
+      "path": "targeted-phone-db117c/phone-light-no-preference/page@366fcc919e30adfcbb85d2c5b623a754.webm",
+      "gitBlob": "84d1365390995997de8d170cfa74e709cdd5f164",
+      "sha256": "dcde3ab96472f2aad2185d2d7af2faca0659d4e2401506f819df2d54164352d4",
+      "bytes": 465585
+    },
+    {
+      "path": "targeted-phone-db117c/post-build-css-identity.raw.txt",
+      "gitBlob": "52009da4f20e4e5ce9907a2b2264c6d30a04e7dd",
+      "sha256": "04579fc9ae0c5764483b57fc793ed57e81b9de5e9ccc356840f6a5855cfb0a66",
+      "bytes": 125
+    },
+    {
+      "path": "targeted-phone-db117c/server.log.raw.txt",
+      "gitBlob": "e9c3241892e631c718ea934b3e0bef027e65dca4",
+      "sha256": "6a441053b0020832e792ba0ba0396a434aaed02ffeac92049493f19c42df89d6",
+      "bytes": 73
+    }
+  ]
+}

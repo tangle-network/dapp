@@ -245,12 +245,48 @@ const animation = {
   'accordion-slide-up': 'accordion-slide-up 300ms ease-out',
 } as const satisfies ThemeConfig['animation'];
 
-const preset = {
+const preset: Config = {
   darkMode: 'class',
   content: [],
   theme: {
     extend: {
-      colors,
+      colors: {
+        ...colors,
+        'surface-container-low': 'var(--md3-surface-container-low)',
+        background: 'hsl(var(--hsl-background) / <alpha-value>)',
+        foreground: 'hsl(var(--hsl-foreground) / <alpha-value>)',
+        card: {
+          DEFAULT: 'hsl(var(--hsl-card) / <alpha-value>)',
+          foreground: 'hsl(var(--hsl-card-foreground) / <alpha-value>)',
+        },
+        primary: {
+          DEFAULT: 'hsl(var(--hsl-primary) / <alpha-value>)',
+          foreground: 'hsl(var(--hsl-primary-foreground) / <alpha-value>)',
+        },
+        muted: {
+          DEFAULT: 'hsl(var(--hsl-muted) / <alpha-value>)',
+          foreground: 'hsl(var(--hsl-muted-foreground) / <alpha-value>)',
+        },
+        secondary: {
+          DEFAULT: 'hsl(var(--hsl-secondary) / <alpha-value>)',
+          foreground: 'hsl(var(--hsl-secondary-foreground) / <alpha-value>)',
+        },
+        destructive: {
+          DEFAULT: 'hsl(var(--hsl-destructive) / <alpha-value>)',
+          foreground: 'hsl(var(--hsl-destructive-foreground) / <alpha-value>)',
+        },
+        popover: {
+          DEFAULT: 'hsl(var(--hsl-popover) / <alpha-value>)',
+          foreground: 'hsl(var(--hsl-popover-foreground) / <alpha-value>)',
+        },
+        accent: {
+          DEFAULT: 'hsl(var(--hsl-accent) / <alpha-value>)',
+          foreground: 'hsl(var(--hsl-accent-foreground) / <alpha-value>)',
+        },
+        border: 'hsl(var(--hsl-border) / <alpha-value>)',
+        input: 'hsl(var(--hsl-input) / <alpha-value>)',
+        ring: 'hsl(var(--hsl-ring) / <alpha-value>)',
+      },
       keyframes,
       animation,
       boxShadow: {

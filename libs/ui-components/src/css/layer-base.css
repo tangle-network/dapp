@@ -1,7 +1,7 @@
 /** Layer base */
 body,
 html {
-  @apply bg-mono-20 dark:bg-mono-200 min-h-full min-w-full;
+  @apply bg-mono-20 dark:bg-mono-200 text-mono-180 dark:text-mono-0 min-h-full min-w-full;
 }
 
 html[class*='dark'] {
@@ -15,13 +15,6 @@ h4,
 h5,
 h6 {
   @apply text-mono-200 dark:text-mono-0;
-}
-
-p,
-div,
-span,
-label {
-  @apply text-mono-180 dark:text-mono-0;
 }
 
 .card {

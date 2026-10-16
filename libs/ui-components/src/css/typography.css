@@ -1,44 +1,12 @@
-/**
- * Default font-family rules for the Tangle UI typography variants.
- *
- * The actual @font-face declarations for 'Cousine' / 'Satoshi' live in
- * the optional `typography-fonts.css` sidecar. Apps that want those
- * specific WOFF2 assets bundled (e.g. `tangle-dapp`) import the sidecar
- * explicitly. Apps that bring their own fonts (e.g. `tangle-cloud` uses
- * Geist via `@fontsource`) skip the sidecar — when the @font-face
- * declarations are absent, the rules below resolve to the next fallback
- * in each stack (system sans / monospace).
- */
-
-/** Default font is Satoshi (when loaded), otherwise system sans. */
+/* Brand owns font families. Legacy class names are consumer adapters. */
 *:not(code, .mono1, .mono2) {
-  font-family:
-    'Satoshi',
-    -apple-system,
-    BlinkMacSystemFont,
-    Arial,
-    sans-serif;
-}
-
-/* Applied Satoshi Variable for all elements when the html tag has the
-   `font-satoshi-var` classname. The associated @font-face declarations
-   live in `typography-fonts.css`. */
-html.font-satoshi-var *:not(code, .mono1, .mono2) {
-  font-family:
-    'Satoshi Variable',
-    -apple-system,
-    BlinkMacSystemFont,
-    Arial,
-    sans-serif;
+  font-family: var(--font-sans);
 }
 
 code,
 .mono1,
-.mono2 {
-  font-family: 'Cousine', monospace;
-  font-size: 16px;
-}
-
+.mono2,
+.mkt-monospace,
 .recharts-cartesian-axis-tick-value tspan {
-  font-family: 'Cousine', monospace !important;
+  font-family: var(--font-mono);
 }
