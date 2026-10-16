@@ -16,12 +16,7 @@ export const TooltipBody = forwardRef<
   ElementRef<typeof TooltipContent>,
   TooltipBodyProps
 >(({ button, children, className, title, isDisablePortal, ...props }, ref) => (
-  <TooltipContent
-    ref={ref}
-    sideOffset={4}
-    {...props}
-    portal={!isDisablePortal}
-  >
+  <TooltipContent ref={ref} sideOffset={4} {...props} portal={!isDisablePortal}>
     <div
       className={twMerge(
         'body2 text-center break-normal font-normal min-w-0 max-w-[250px]',

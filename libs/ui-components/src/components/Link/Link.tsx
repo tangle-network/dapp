@@ -15,7 +15,11 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => {
 
   const internalProps = extractInternalProp(props);
 
-  return <a ref={ref} {...internalProps}>{internalProps.children}</a>;
+  return (
+    <a ref={ref} {...internalProps}>
+      {internalProps.children}
+    </a>
+  );
 });
 Link.displayName = 'Link';
 

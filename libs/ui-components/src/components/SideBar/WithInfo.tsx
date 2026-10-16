@@ -25,9 +25,7 @@ function WithInfo({
 
   return (
     <Tooltip isOpen={isOpen} onChange={setIsOpen}>
-      <TooltipTrigger asChild>
-        {children}
-      </TooltipTrigger>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
       <TooltipBody {...tooltipBodyProps} isDisablePortal>
         {typeof info === 'string' ? (
           <Typography variant={'body1'} className="break-normal !text-inherit">
