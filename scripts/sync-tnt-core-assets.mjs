@@ -42,9 +42,6 @@ const syncAbis = (tntCoreDir) => {
   const mappings = [
     { source: 'ITangleFull.json', target: 'libs/tangle-shared-ui/src/abi/tangle.ts' },
     { source: 'IMultiAssetDelegation.json', target: 'libs/tangle-shared-ui/src/abi/multiAssetDelegation.ts' },
-    // tnt-core v0.13.0 ships the implementation ABI (no `I` prefix) — it carries
-    // the same external surface the dapp needs and the interface JSON is no longer emitted.
-    { source: 'OperatorStatusRegistry.json', target: 'libs/tangle-shared-ui/src/abi/operatorStatusRegistry.ts' },
     { source: 'IBlueprintServiceManager.json', target: 'libs/tangle-shared-ui/src/abi/blueprintServiceManager.ts' },
   ];
 
@@ -84,7 +81,6 @@ const formatGeneratedAbis = () => {
   const targets = [
     'libs/tangle-shared-ui/src/abi/tangle.ts',
     'libs/tangle-shared-ui/src/abi/multiAssetDelegation.ts',
-    'libs/tangle-shared-ui/src/abi/operatorStatusRegistry.ts',
     'libs/tangle-shared-ui/src/abi/blueprintServiceManager.ts',
   ].map((relative) => resolve(repoRoot, relative));
 
