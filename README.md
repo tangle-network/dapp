@@ -22,14 +22,14 @@ Decentralized interfaces for the [Tangle Operator Layer for AI services](https:/
 
 - Monorepo: `Nx`
 - Package manager: `Yarn 4` workspaces
-- Runtime: `Node.js >= 18.18.x`
+- Runtime: `Node.js >= 20.19.0`
 - Frontend: `React + Vite`
 - Data plane: GraphQL indexer + on-chain reads/writes
 - Protocol contracts and indexer source of truth: `../tnt-core`
 
 ## Quick Start
 
-1. Install Node 18.18+ and enable Corepack:
+1. Install Node 20.19+ (`.nvmrc` pins 22) and enable Corepack:
 
 ```bash
 corepack enable

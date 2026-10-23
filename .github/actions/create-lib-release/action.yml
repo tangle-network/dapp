@@ -16,10 +16,10 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Use Node.js >=18.18.x
+    - name: Use Node.js >=20.19.0
       uses: actions/setup-node@v4.0.2
       with:
-        node-version: '>=18.18.x'
+        node-version: '>=20.19.0'
 
     - name: Run gh-release-script.js
       shell: bash
