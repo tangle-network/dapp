@@ -60,6 +60,7 @@
     "@polkadot/api-derive": "^13.2.1",
     "adm-zip@npm:0.6.0": "npm:0.6.1",
     "axios@npm:1.16.0": "npm:1.20.0",
+    "axios@npm:1.18.1": "npm:1.20.0",
     "brace-expansion@npm:5.0.6": "npm:5.0.9",
     "decode-uri-component@npm:^0.2.2": "npm:0.5.0",
     "follow-redirects@npm:1.16.0": "npm:1.16.1",
