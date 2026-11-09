@@ -72,7 +72,7 @@
     "shell-quote@npm:1.8.4": "npm:1.11.0",
     "smol-toml@npm:1.6.1": "npm:1.7.1",
     "tmp@npm:^0.0.33": "npm:0.2.7",
-    "undici@npm:7.29.0": "npm:7.29.1",
+    "undici@npm:7.29.0": "npm:7.30.1",
     "uuid@npm:8.3.2": "npm:11.1.1",
     "uuid@npm:^8.3.2": "npm:11.1.1",
     "uuid@npm:^9.0.0": "npm:11.1.1",
