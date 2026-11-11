@@ -1,0 +1,38 @@
+# Tangle dApp
+
+> Tangle dApp (https://app.tangle.tools) is the web interface for the Tangle network: staking and restaking TNT, liquid staking, browsing and deploying blueprints, and managing services, plus account, claim, and bridge features. It is a client-side single-page app; every write (bond, nominate, restake, deploy a service) is signed by the user's own wallet, so an agent does not transact here. An agent's job on this property is to read public network data and route its user to the right page with context.
+
+This product has no setup skill of its own — there is nothing to install and no API key. For Tangle ecosystem agent onboarding (one owner approval, one scoped key for the agent-ready products), fetch https://tangle.tools/agent-setup.md and follow it. It is a complete prompt and a SKILL.md.
+
+## Start here
+
+- [Tangle ecosystem setup skill](https://tangle.tools/agent-setup.md): one owner approval, one key for every agent-ready Tangle product
+- [Agent manifest](https://app.tangle.tools/.well-known/tangle-agent.json): machine-readable contract for this site
+- [Documentation](https://docs.tangle.tools/): staking, liquid staking, blueprints, operators
+- [Tangle dApp](https://app.tangle.tools/): the app itself
+
+## Route users
+
+- [Restaking](https://app.tangle.tools/staking): deposit, delegate, undelegate, withdraw, vaults, operators, rewards
+- [Nomination staking](https://app.tangle.tools/nomination): validators and nominations
+- [Liquid staking](https://app.tangle.tools/liquid-staking): vaults, positions, deposit, redeem
+- [Blueprints](https://app.tangle.tools/blueprints): browse service blueprints
+- [Services](https://app.tangle.tools/services): running service instances
+- [Claims](https://app.tangle.tools/claim): airdrop and migration claims
+
+## Public network data
+
+No key is required. These are the public chain endpoints the dapp itself is configured to read — they belong to the Tangle network, not to this site, so their availability tracks the network's own status.
+
+- Tangle mainnet RPC: wss://rpc.tangle.tools (WebSocket) and https://rpc.tangle.tools (HTTP JSON-RPC); EVM chain id 5845; token TNT
+- Tangle testnet RPC: wss://testnet-rpc.tangle.tools and https://testnet-rpc.tangle.tools; EVM chain id 3799; token tTNT
+- Testnet indexer (GraphQL): https://standalone-subql.tangle.tools/graphql
+- Explorers: https://explorer.tangle.tools (mainnet), https://testnet-explorer.tangle.tools (testnet)
+- Testnet faucet: https://faucet.tangle.tools
+
+## Related agent surfaces
+
+- [Tangle Router](https://router.tangle.tools/.well-known/tangle-agent.json): OpenAI-compatible model routing API
+- [Tangle Sandbox](https://sandbox.tangle.tools/.well-known/tangle-agent.json)
+- [Tangle Agents](https://agents.tangle.tools/.well-known/tangle-agent.json)
+- [Tangle Browser Agent](https://tangle.tools/.well-known/tangle-browser-agent.json)

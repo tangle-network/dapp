@@ -1,0 +1,72 @@
+{
+  "schema_version": "2026-10-10",
+  "name": "Tangle Cloud",
+  "description": "Tangle Cloud is the control plane for the Tangle operator layer: discover blueprints and embedded apps, deploy service instances with chosen operators and payment/security settings, register and manage operator capacity, and track requests, jobs, payments, rewards, and earnings. It is a client-side single-page app; every write (deploy a service, register as an operator, approve a request, publish a blueprint, claim rewards) is an EVM transaction signed by the user's own wallet, so an agent cannot transact on a user's behalf here. An agent's job on this property is to read public on-chain state and route its user to the right console page with context.",
+  "homepage": "https://cloud.tangle.tools/",
+  "llms": "https://cloud.tangle.tools/llms.txt",
+  "agent_setup": "https://tangle.tools/agent-setup.md",
+  "docs": "https://docs.tangle.tools/",
+  "agent_setup_note": "This product has no setup skill of its own: there is nothing to install and no API key. agent_setup points at the Tangle ecosystem hub skill, which covers the agent-ready products that do have a self-serve flow.",
+  "custody": "All state-changing actions are EVM transactions signed by the user's own wallet in the browser. An agent must never ask for or handle a user's keys; direct the user to the relevant console page instead.",
+  "route_users": {
+    "deployed service instances (default landing page)": "https://cloud.tangle.tools/instances",
+    "browse blueprints and embedded apps": "https://cloud.tangle.tools/blueprints",
+    "deploy a service from a blueprint": "https://cloud.tangle.tools/blueprints/:id/deploy",
+    "publish and manage blueprints": "https://cloud.tangle.tools/blueprints/manage",
+    "operator registry": "https://cloud.tangle.tools/operators",
+    "manage operator capacity": "https://cloud.tangle.tools/operators/manage",
+    "rewards": "https://cloud.tangle.tools/rewards",
+    "earnings": "https://cloud.tangle.tools/earnings",
+    "payment pool and credits": "https://cloud.tangle.tools/payments/pool"
+  },
+  "network_data": {
+    "note": "Public chain endpoints the console itself is configured to read. No key is required. They belong to the networks, not to this site; their availability tracks each network's own status.",
+    "tempo_moderato": {
+      "http_rpc": "https://rpc.moderato.tempo.xyz",
+      "evm_chain_id": 42431,
+      "evm_explorer": "https://explore.tempo.xyz",
+      "detail": "Hosts the live tnt-core deployment. Native gas is a USD stablecoin."
+    },
+    "base_sepolia": {
+      "http_rpc": "https://sepolia.base.org",
+      "evm_chain_id": 84532,
+      "evm_explorer": "https://sepolia.basescan.org"
+    }
+  },
+  "embedded_apps": "Blueprint apps run as sandboxed iframes under *.blueprint.tangle.tools behind publisher, host, and metadata trust gates. Prefer the agent-facing product behind an app: e.g. the Tangle Sandbox app (https://agent-sandbox.blueprint.tangle.tools) is served by https://sandbox.tangle.tools, which has its own manifest and setup skill.",
+  "safe_discovery_calls": [
+    "GET https://cloud.tangle.tools/llms.txt",
+    "GET https://cloud.tangle.tools/.well-known/tangle-agent.json",
+    "GET https://cloud.tangle.tools/ (HTML; client-side app)",
+    "POST https://rpc.moderato.tempo.xyz (Ethereum JSON-RPC, e.g. eth_chainId)",
+    "GET https://docs.tangle.tools/"
+  ],
+  "smoke_tests": [
+    "curl -fsS https://cloud.tangle.tools/llms.txt",
+    "curl -fsS https://cloud.tangle.tools/.well-known/tangle-agent.json",
+    "curl -fsS -X POST https://rpc.moderato.tempo.xyz -H 'content-type: application/json' -d '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_chainId\",\"params\":[]}'",
+    "curl -fsS https://docs.tangle.tools/"
+  ],
+  "related_surfaces": [
+    {
+      "name": "Tangle Router",
+      "manifest": "https://router.tangle.tools/.well-known/tangle-agent.json"
+    },
+    {
+      "name": "Tangle Sandbox",
+      "manifest": "https://sandbox.tangle.tools/.well-known/tangle-agent.json"
+    },
+    {
+      "name": "Tangle Agents",
+      "manifest": "https://agents.tangle.tools/.well-known/tangle-agent.json"
+    },
+    {
+      "name": "Tangle dApp",
+      "manifest": "https://app.tangle.tools/.well-known/tangle-agent.json"
+    },
+    {
+      "name": "Tangle Browser Agent",
+      "manifest": "https://tangle.tools/.well-known/tangle-browser-agent.json"
+    }
+  ]
+}

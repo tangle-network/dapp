@@ -52,7 +52,10 @@ import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
 import { chainsConfig } from '@tangle-network/dapp-config/chains';
 import AssetListItem from '../../../components/Lists/AssetListItem';
 import MULTI_ASSET_DELEGATION_ABI from '@tangle-network/tangle-shared-ui/abi/multiAssetDelegation';
-import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
+import {
+  getContractsByChainId,
+  getTntCoreRevisionByChainId,
+} from '@tangle-network/dapp-config/contracts';
 import { useResilientReadContract } from '@tangle-network/tangle-shared-ui/hooks/useResilientReadContract';
 import { useResilientReadContracts } from '@tangle-network/tangle-shared-ui/hooks/useResilientReadContracts';
 
@@ -293,18 +296,35 @@ const StakingWithdrawForm: FC = () => {
       const locks = res.result as Array<{
         amount: bigint;
         multiplier: number;
-        expiryBlock: bigint;
+        // The synced (0.18+) `MULTI_ASSET_DELEGATION_ABI` names field 2
+        // `expiryTimestamp`; viem keys decoded tuples by ABI component name,
+        // so this is the property to read on every revision. The *value* is a
+        // block number on `legacy` and a unix timestamp on `v018`/`v019` — the
+        // same positional slot (uint64), so the decode succeeds either way and
+        // only the comparison basis must branch below.
+        expiryTimestamp: bigint;
       }>;
 
+      // Pre-0.18 (`legacy`) stored `expiryBlock` as a BLOCK NUMBER, so it must
+      // be compared against the current block height. tnt-core 0.18 redefined
+      // the slot as a unix TIMESTAMP (seconds) and 0.19 kept that semantics, so
+      // `v018`/`v019` compare against wall-clock seconds. Comparing a timestamp
+      // against a block number (or vice versa) reads "locked for decades".
+      const isLegacyBlockBasis =
+        getTntCoreRevisionByChainId(chainId) === 'legacy';
+      const nowSeconds = BigInt(Math.floor(Date.now() / 1000));
       const locked = locks.reduce((sum, lock) => {
-        return lock.expiryBlock > currentBlockNumber ? sum + lock.amount : sum;
+        const stillLocked = isLegacyBlockBasis
+          ? lock.expiryTimestamp > currentBlockNumber
+          : lock.expiryTimestamp > nowSeconds;
+        return stillLocked ? sum + lock.amount : sum;
       }, BigInt(0));
 
       map.set(token.toLowerCase(), locked);
     });
 
     return map;
-  }, [currentBlockNumber, lockResults, tokenAddresses]);
+  }, [chainId, currentBlockNumber, lockResults, tokenAddresses]);
 
   const selectedAssetId = watch('assetId');
   const amount = watch('amount');

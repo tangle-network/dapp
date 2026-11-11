@@ -24,12 +24,14 @@ import {
 } from 'viem/chains';
 import type { ChainConfig } from '../chain-config.interface';
 import anvilLocal from './customChains/anvilLocal';
+import tempoModerato from './customChains/tempoModerato';
 
 // Primary chains for development and production
 export const wagmiChains = [
   anvilLocal, // Local development (Anvil on port 8545)
   base, // Base mainnet
   baseSepolia, // Base testnet
+  tempoModerato, // Tempo Moderato testnet (live tnt-core 0.19 deployment)
   mainnet, // Ethereum mainnet (for native staking)
   {
     ...holesky,
@@ -198,6 +200,16 @@ export const chainsConfig = {
     group: 'base',
     tag: 'test',
     displayName: 'Base Sepolia',
+  } satisfies ChainConfig,
+
+  [PresetTypedChainId.TempoModerato]: {
+    ...tempoModerato,
+    chainType: ChainType.EVM,
+    // Tempo hosts Tangle's own tnt-core 0.19 deployment; there is no dedicated
+    // `tempo` ChainGroup, and `tangle` is the closest semantic bucket.
+    group: 'tangle',
+    tag: 'test',
+    displayName: 'Tempo Moderato',
   } satisfies ChainConfig,
 
   [PresetTypedChainId.AnvilLocal]: {

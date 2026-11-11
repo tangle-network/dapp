@@ -70,7 +70,7 @@ const FundCreditsContainer: FC = () => {
           value={label}
           onChange={setLabel}
           isControlled
-          isDisabled={isGenerating || !isUnlocked}
+          disabled={isGenerating || !isUnlocked}
         />
       </div>
 

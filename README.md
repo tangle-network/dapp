@@ -9,7 +9,6 @@
 
 Decentralized interfaces for the [Tangle Operator Layer for AI services](https://tangle.tools), built on the TNT EVM protocol stack from `tnt-core`.
 
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/tangle-network/dapp/check-build.yml?branch=develop&style=flat-square)](https://github.com/tangle-network/dapp/actions)
 [![License Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 ## Applications
@@ -22,14 +21,14 @@ Decentralized interfaces for the [Tangle Operator Layer for AI services](https:/
 
 - Monorepo: `Nx`
 - Package manager: `Yarn 4` workspaces
-- Runtime: `Node.js >= 18.18.x`
+- Runtime: `Node.js >= 20.19.0`
 - Frontend: `React + Vite`
 - Data plane: GraphQL indexer + on-chain reads/writes
 - Protocol contracts and indexer source of truth: `../tnt-core`
 
 ## Quick Start
 
-1. Install Node 18.18+ and enable Corepack:
+1. Install Node 20.19+ (`.nvmrc` pins 22) and enable Corepack:
 
 ```bash
 corepack enable
@@ -84,12 +83,9 @@ yarn script:setupStaking
 
 ## Quality Gates
 
-```bash
-yarn lint
-yarn test
-yarn build
-yarn check:codegen
-```
+For code changes, merge `origin/develop`, then run the canonical local gate (the launcher installs dependencies from the frozen Yarn lockfile): `beelink-gate auto https://github.com/tangle-network/dapp.git <full-sha> -- bash -lc 'yarn typecheck && yarn build && yarn nx affected --target=test --base=origin/develop --head=HEAD'`. Build finishes before the affected test targets run.
+
+Use the configured lint/format hooks and `yarn check:codegen` when changing generated queries. Workflow and documentation changes use YAML and content checks.
 
 Wallet-flow E2E-style test suite:
 

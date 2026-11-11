@@ -67,6 +67,38 @@ export const BASE_SEPOLIA_CONTRACTS: ContractAddresses = {
   blueprintAuditors: '0xf4428bbbfa9207b4b91ca5fe8c1d401fd8b1e8e8', // deployed 2026-05-22 via tnt-core/script/UpgradeFlowAddon.s.sol
 };
 
+// Tempo Moderato testnet addresses — live tnt-core 0.19 deployment.
+//
+// Field mapping (Tempo deploy name -> `ContractAddresses` field):
+//   tangle             -> tangle
+//   staking/restaking  -> multiAssetDelegation
+//   statusRegistry     -> operatorStatusRegistry
+//   rewardVaults       -> rewardVaults
+//   inflationPool      -> inflationPool
+//
+// The Tempo deploy also exposes contracts that have no field on the shared
+// `ContractAddresses` type, so they are intentionally NOT surfaced here (adding
+// them would force a field on every other chain's config). Recorded for
+// traceability:
+//   tntToken               0x64fb7ffae82c1682574e9edb4e2f4e377132f671
+//   serviceFeeDistributor  0x39d16ff4e0bce0e6b00a4a49be80c2b7ad2fb4b4
+//   streamingPaymentManager  address(0) — not deployed in this release
+//
+// Fields with no Tempo address (masterBlueprintServiceManager, credits,
+// liquidDelegationFactory, blueprintAuditors) are the zero address; the dapp
+// already treats zero-address entries as "not available on this chain".
+export const TEMPO_CONTRACTS: ContractAddresses = {
+  tangle: '0xff137b9c879c47c28ce389e84501925438ab4cda',
+  multiAssetDelegation: '0x9484d07899b98384f1d66bd5b2659f3ed346f89e',
+  masterBlueprintServiceManager: '0x0000000000000000000000000000000000000000', // not deployed in this release
+  operatorStatusRegistry: '0xaedaffd260e21b41cb9926370e32d14bef812b48',
+  rewardVaults: '0x9a1615fdcaaf2f659d78eb0d72fd3759480af7c4',
+  inflationPool: '0x3602b76c625464895205466c645feff0d911836f',
+  credits: '0x0000000000000000000000000000000000000000', // not deployed in this release
+  liquidDelegationFactory: '0x0000000000000000000000000000000000000000', // not deployed in this release
+  blueprintAuditors: '0x0000000000000000000000000000000000000000', // pending deployment; dapp falls back to the JSON registry
+};
+
 // Base mainnet addresses (to be updated after deployment)
 export const BASE_MAINNET_CONTRACTS: ContractAddresses = {
   tangle: '0x0000000000000000000000000000000000000000',
@@ -134,6 +166,58 @@ export const ETHEREUM_HOLESKY_CONTRACTS: ContractAddresses = {
   blueprintAuditors: '0x0000000000000000000000000000000000000000',
 };
 
+/**
+ * Which tnt-core contract revision a chain runs.
+ *
+ * - `legacy`: pre-0.18 deployments — `getBlueprint` returns `operatorCount`
+ *   inside the struct, `getOperatorPreferences` persists `rpcAddress`, and
+ *   MultiAssetDelegation `LockInfo.expiryBlock` is a BLOCK NUMBER.
+ * - `v018`: tnt-core 0.18 greenfield redeploys — `operatorCount` moved to the
+ *   `blueprintOperatorCount(uint64)` view (struct is 6 fields; decoding the
+ *   legacy 7-field tuple throws), display prose is event-sourced from
+ *   `BlueprintDefinitionRecorded`, and the third `LockInfo` slot — renamed
+ *   `expiryBlock` -> `expiryTimestamp` in the synced ABI, same uint64 position
+ *   — carries a unix TIMESTAMP (seconds) rather than a block number.
+ * - `v019`: tnt-core 0.19 hash+emit shrink — several on-chain reads lost
+ *   storage fields that are now event-sourced. The `getSlashProposal` tuple
+ *   dropped `proposedAt` / `disputeReason` / `disputedAt`; the binary-version
+ *   read (`getBinaryVersion` / `effectiveBinaryVersion`) dropped `binaryUri`;
+ *   the attestation read (`getAttestation` / `listAttestations`) dropped
+ *   `reportUri`; `blueprintSources(uint64)->BlueprintSource[]` was replaced by
+ *   `blueprintSourcesHash(uint64)->bytes32` (the source list is event-sourced;
+ *   the `setBlueprintSources` WRITE still takes the full `BlueprintSource[]`);
+ *   and the `canScheduleExit(uint64,address)` view was removed (derive from
+ *   `getExitStatus`). `LockInfo.expiryTimestamp` keeps the v018 semantics —
+ *   a uint64 unix TIMESTAMP (seconds), NOT a block number — so the withdraw
+ *   lock/countdown math compares it against wall-clock seconds, not block
+ *   height, exactly as on v018 (confirmed against tnt-core
+ *   `Types.LockInfo.expiryTimestamp`). Publish/attest WRITE params are
+ *   unchanged — only the stored/returned fields moved off-chain. Decoding a
+ *   v0.18 tuple against v0.19 returndata throws, so these reads must select the
+ *   shorter ABI by revision; do not merge the two entries into one ABI.
+ *
+ * Flip a chain to `v018` / `v019` in the same change that updates its
+ * addresses to the redeployed contracts — never separately.
+ */
+export type TntCoreRevision = 'legacy' | 'v018' | 'v019';
+
+export const getTntCoreRevisionByChainId = (
+  chainId: number,
+): TntCoreRevision => {
+  switch (chainId) {
+    // Tempo Moderato runs the live tnt-core 0.19 deployment, so it must select
+    // the v019 read paths (shorter binary-version / attestation / slash tuples,
+    // `getExitStatus`-derived exit eligibility). Every other wired chain runs
+    // pre-0.18 contracts (Base Sepolia is pre-#193; local anvil is post-#193 but
+    // pre-#194, which for every surface the dapp branches on behaves like
+    // `legacy`).
+    case 42431: // Tempo Moderato
+      return 'v019';
+    default:
+      return 'legacy';
+  }
+};
+
 // Get contracts by chain ID
 export const getContractsByChainId = (chainId: number): ContractAddresses => {
   switch (chainId) {
@@ -141,6 +225,8 @@ export const getContractsByChainId = (chainId: number): ContractAddresses => {
       return LOCAL_CONTRACTS;
     case 84532: // Base Sepolia
       return BASE_SEPOLIA_CONTRACTS;
+    case 42431: // Tempo Moderato (live tnt-core 0.19 deployment)
+      return TEMPO_CONTRACTS;
     case 8453: // Base Mainnet
       return BASE_MAINNET_CONTRACTS;
     case 421614: // Arbitrum Sepolia

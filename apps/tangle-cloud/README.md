@@ -37,6 +37,6 @@ Default URL: `http://localhost:4201`
 
 ## Notes
 
-- Node.js: `>=18.18.x`
+- Node.js: `>=20.19.0`
 - Package manager: `Yarn 4`
 - Protocol contracts/indexer source: sibling `../tnt-core`

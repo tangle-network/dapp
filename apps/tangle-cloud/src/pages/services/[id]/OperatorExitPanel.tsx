@@ -313,6 +313,12 @@ const OperatorExitPanel: FC<Props> = ({
         </div>
 
         {/* Current Exit Status */}
+        {/*
+          On v019 chains (tnt-core 0.19 removed the `canScheduleExit` view),
+          `useCanScheduleExit` derives eligibility from `getExitStatus`, so the
+          Schedule-Exit button below re-enables when the operator is not already
+          in the exit queue.
+        */}
         {exitStatus === ExitStatus.None && (
           <div className="space-y-3">
             {canScheduleExit?.canExit ? (

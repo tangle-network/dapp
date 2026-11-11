@@ -8,31 +8,38 @@
  */
 
 import { useQuery, useQueries } from '@tanstack/react-query';
-import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
-import type { Address, PublicClient } from 'viem';
+import {
+  getContractsByChainId,
+  getTntCoreRevisionByChainId,
+} from '@tangle-network/dapp-config/contracts';
+import { parseAbiItem, type Address, type PublicClient } from 'viem';
 import { useChainId, usePublicClient } from 'wagmi';
 import BinaryUpgradeABI from '../../abi/tangleBinaryUpgrade';
 import BlueprintAuditorsABI from '../../abi/blueprintAuditors';
 import {
-  type AttestationKind,
   type Attestation,
   type Auditor,
   type AttestationWithAuditor,
   type AuditorTier,
 } from '../../blueprintApps/trustScore';
+// `BinaryVersion` + the revision-aware ABI selection and tuple normalizers live
+// in the pure (wagmi-free, unit-tested) `binaryVersion` module.
+import {
+  type BinaryVersion,
+  binaryReadAbiFor,
+  normalizeAttestation,
+  normalizeBinaryVersion,
+} from './binaryVersion';
 
-// ─────────────────────────────────────────────────────────────────────────
-// Types — mirror the on-chain ABI exactly so callers don't have to translate
-// ─────────────────────────────────────────────────────────────────────────
-
-export interface BinaryVersion {
-  versionId: bigint;
-  sha256Hash: `0x${string}`;
-  binaryUri: string;
-  attestationHash: `0x${string}`;
-  publishedAt: bigint;
-  deprecated: boolean;
-}
+// Re-exported from the pure `binaryVersion` module so existing importers keep
+// resolving `BinaryVersion` / the normalizers / `binaryReadAbiFor` from
+// `useBinaryVersions`.
+export {
+  binaryReadAbiFor,
+  normalizeAttestation,
+  normalizeBinaryVersion,
+} from './binaryVersion';
+export type { BinaryVersion } from './binaryVersion';
 
 export enum UpgradePolicy {
   APPROVE = 0,
@@ -74,41 +81,93 @@ const auditorRegistryAddressFor = (chainId: number): Address | null => {
   }
 };
 
-const normalizeBinaryVersion = (raw: {
-  versionId: bigint;
-  sha256Hash: `0x${string}`;
-  binaryUri: string;
-  attestationHash: `0x${string}`;
-  publishedAt: bigint;
-  deprecated: boolean;
-}): BinaryVersion => ({
-  versionId: BigInt(raw.versionId),
-  sha256Hash: raw.sha256Hash,
-  binaryUri: raw.binaryUri,
-  attestationHash: raw.attestationHash,
-  publishedAt: BigInt(raw.publishedAt),
-  deprecated: raw.deprecated,
-});
+// ─────────────────────────────────────────────────────────────────────────
+// v019 event-sourced URIs
+//
+// tnt-core 0.19 dropped the URI blobs from the on-chain STORAGE structs, so the
+// struct getters return them as `null` (see `binaryVersion.ts`). The URIs are
+// still emitted by the publish/attest events, so on v019 we resolve them from
+// logs — scoped to the Tangle contract address plus the indexed blueprintId /
+// versionId — exactly the way an off-chain consumer (e.g. blueprint-manager)
+// would. Both fetchers below stay robust: if no event is found the URI simply
+// stays `null` and nothing throws.
+// ─────────────────────────────────────────────────────────────────────────
 
-const normalizeAttestation = (raw: {
-  attester: Address;
-  reportHash: `0x${string}`;
-  reportUri: string;
-  kind: number;
-  severityFound: number;
-  attestedAt: bigint;
-  expiresAt: bigint;
-  revoked: boolean;
-}): Attestation => ({
-  attester: raw.attester,
-  reportHash: raw.reportHash,
-  reportUri: raw.reportUri,
-  kind: raw.kind as AttestationKind,
-  severityFound: raw.severityFound,
-  attestedAt: BigInt(raw.attestedAt),
-  expiresAt: BigInt(raw.expiresAt),
-  revoked: raw.revoked,
-});
+// `binaryUri` is a NON-indexed arg, so it comes back decoded in `log.args`.
+const BINARY_VERSION_PUBLISHED_EVENT = parseAbiItem(
+  'event BinaryVersionPublished(uint64 indexed blueprintId, uint64 indexed versionId, bytes32 sha256Hash, string binaryUri)',
+);
+
+// `reportUri` is a NON-indexed arg. `attestationId` is non-indexed too, so it
+// cannot be filtered via `args`; we scope by blueprintId + versionId (+ the
+// attester, when known) and match on the decoded fields below.
+const BINARY_VERSION_ATTESTED_EVENT = parseAbiItem(
+  'event BinaryVersionAttested(uint64 indexed blueprintId, uint64 indexed versionId, uint64 attestationId, address indexed attester, uint8 kind, uint8 severityFound, string reportUri)',
+);
+
+/**
+ * Resolve the event-sourced `binaryUri` for a single (blueprintId, versionId).
+ * Returns `null` when no publish log is found (never throws) so callers can
+ * fall back to the storage tuple's `null` cleanly.
+ */
+const resolveBinaryUriFromEvent = async (
+  publicClient: PublicClient,
+  tangle: Address,
+  blueprintId: bigint,
+  versionId: bigint,
+): Promise<string | null> => {
+  try {
+    const logs = await publicClient.getLogs({
+      address: tangle,
+      event: BINARY_VERSION_PUBLISHED_EVENT,
+      args: { blueprintId, versionId },
+      fromBlock: BigInt(0),
+      toBlock: 'latest',
+    });
+    // A version is published exactly once (append-only), but be defensive and
+    // take the latest matching log.
+    const uri = logs.at(-1)?.args.binaryUri;
+    return uri && uri.length > 0 ? uri : null;
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * Resolve the event-sourced `reportUri` for every attestation on a
+ * (blueprintId, versionId), keyed by attester address. A version can carry
+ * multiple attestations from different attesters; the map lets the caller join
+ * each storage-tuple attestation back to its emitted `reportUri`. Returns an
+ * empty map on any failure (never throws).
+ */
+const resolveReportUrisFromEvents = async (
+  publicClient: PublicClient,
+  tangle: Address,
+  blueprintId: bigint,
+  versionId: bigint,
+): Promise<Map<string, string>> => {
+  const byAttester = new Map<string, string>();
+  try {
+    const logs = await publicClient.getLogs({
+      address: tangle,
+      event: BINARY_VERSION_ATTESTED_EVENT,
+      args: { blueprintId, versionId },
+      fromBlock: BigInt(0),
+      toBlock: 'latest',
+    });
+    for (const log of logs) {
+      const attester = log.args.attester;
+      const reportUri = log.args.reportUri;
+      if (attester && reportUri && reportUri.length > 0) {
+        // Later logs win — an attester can re-attest a version.
+        byAttester.set(attester.toLowerCase(), reportUri);
+      }
+    }
+  } catch {
+    // Swallow — an unresolvable event just leaves `reportUri` null.
+  }
+  return byAttester;
+};
 
 // ─────────────────────────────────────────────────────────────────────────
 // fetchers — exposed so the publisher dialog can refresh after publish
@@ -134,17 +193,30 @@ export const fetchBinaryVersions = async (
   // The version count is bounded by publish events; batching all reads in
   // parallel via Promise.all is the same pattern fetchBlueprintsOnChain
   // uses for the blueprint list itself.
+  const readAbi = binaryReadAbiFor(chainId);
+  // On v019 the storage tuple no longer carries `binaryUri`, so resolve it from
+  // the `BinaryVersionPublished` event; legacy/v018 chains keep the tuple's URI.
+  const isV019 = getTntCoreRevisionByChainId(chainId) === 'v019';
   const ids = Array.from({ length: Number(count) }, (_, i) => BigInt(i));
   const versions = await Promise.all(
     ids.map(async (versionId) => {
       try {
         const raw = (await publicClient.readContract({
           address: tangle,
-          abi: BinaryUpgradeABI,
+          abi: readAbi,
           functionName: 'getBinaryVersion',
           args: [blueprintId, versionId],
         })) as Parameters<typeof normalizeBinaryVersion>[0];
-        return normalizeBinaryVersion(raw);
+        const version = normalizeBinaryVersion(raw);
+        if (isV019 && version.binaryUri === null) {
+          version.binaryUri = await resolveBinaryUriFromEvent(
+            publicClient,
+            tangle,
+            blueprintId,
+            versionId,
+          );
+        }
+        return version;
       } catch {
         return null;
       }
@@ -166,11 +238,33 @@ export const fetchAttestations = async (
   try {
     const raw = (await publicClient.readContract({
       address: tangle,
-      abi: BinaryUpgradeABI,
+      abi: binaryReadAbiFor(chainId),
       functionName: 'listAttestations',
       args: [blueprintId, versionId],
     })) as Array<Parameters<typeof normalizeAttestation>[0]>;
-    return raw.map(normalizeAttestation);
+    const attestations = raw.map(normalizeAttestation);
+
+    // On v019 the attestation tuple no longer carries `reportUri`; resolve it
+    // from the `BinaryVersionAttested` event, joined back by attester address.
+    // Legacy/v018 chains keep the tuple's URI, so skip the log query there.
+    if (getTntCoreRevisionByChainId(chainId) === 'v019') {
+      const reportUris = await resolveReportUrisFromEvents(
+        publicClient,
+        tangle,
+        blueprintId,
+        versionId,
+      );
+      if (reportUris.size > 0) {
+        for (const attestation of attestations) {
+          if (attestation.reportUri === null) {
+            attestation.reportUri =
+              reportUris.get(attestation.attester.toLowerCase()) ?? null;
+          }
+        }
+      }
+    }
+
+    return attestations;
   } catch {
     return [];
   }
@@ -250,6 +344,10 @@ export const useBinaryVersions = (
 
 export const useEffectiveBinaryVersion = (
   serviceId: bigint | undefined,
+  // `blueprintId` is optional and only used on v019 to resolve the
+  // event-sourced `binaryUri` (the tuple drops it). Pass it when the caller
+  // needs the URI populated; omit it and the URI stays `null` on v019.
+  blueprintId?: bigint,
   options?: { enabled?: boolean },
 ) => {
   const chainId = useChainId();
@@ -261,6 +359,7 @@ export const useEffectiveBinaryVersion = (
       'effective-binary-version',
       chainId,
       serviceId?.toString() ?? null,
+      blueprintId?.toString() ?? null,
     ],
     queryFn: async (): Promise<BinaryVersion | null> => {
       if (!publicClient || serviceId === undefined) return null;
@@ -270,11 +369,24 @@ export const useEffectiveBinaryVersion = (
       try {
         const raw = (await publicClient.readContract({
           address: tangle,
-          abi: BinaryUpgradeABI,
+          abi: binaryReadAbiFor(chainId),
           functionName: 'effectiveBinaryVersion',
           args: [serviceId],
         })) as Parameters<typeof normalizeBinaryVersion>[0];
-        return normalizeBinaryVersion(raw);
+        const version = normalizeBinaryVersion(raw);
+        if (
+          blueprintId !== undefined &&
+          getTntCoreRevisionByChainId(chainId) === 'v019' &&
+          version.binaryUri === null
+        ) {
+          version.binaryUri = await resolveBinaryUriFromEvent(
+            publicClient,
+            tangle,
+            blueprintId,
+            version.versionId,
+          );
+        }
+        return version;
       } catch {
         // Effective version reverts `VersionNotFound` when the blueprint
         // has zero published binaries. That's not an error to surface —
@@ -332,11 +444,26 @@ export const useServiceUpgradeState = (
           try {
             const raw = (await publicClient.readContract({
               address: tangle,
-              abi: BinaryUpgradeABI,
+              abi: binaryReadAbiFor(chainId),
               functionName: 'effectiveBinaryVersion',
               args: [serviceId],
             })) as Parameters<typeof normalizeBinaryVersion>[0];
-            return normalizeBinaryVersion(raw);
+            const version = normalizeBinaryVersion(raw);
+            // v019 drops `binaryUri` from the effective-version tuple; resolve
+            // it from the publish event now that we have the blueprintId.
+            if (
+              blueprintId !== undefined &&
+              getTntCoreRevisionByChainId(chainId) === 'v019' &&
+              version.binaryUri === null
+            ) {
+              version.binaryUri = await resolveBinaryUriFromEvent(
+                publicClient,
+                tangle,
+                blueprintId,
+                version.versionId,
+              );
+            }
+            return version;
           } catch {
             return null;
           }

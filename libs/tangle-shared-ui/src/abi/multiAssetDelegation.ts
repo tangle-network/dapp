@@ -831,7 +831,7 @@ const ABI = [
             internalType: 'enum Types.LockMultiplier',
           },
           {
-            name: 'expiryBlock',
+            name: 'expiryTimestamp',
             type: 'uint64',
             internalType: 'uint64',
           },

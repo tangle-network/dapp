@@ -18,4 +18,5 @@ export const NETWORK_FEATURE_MAP: Record<NetworkId, NetworkFeature[]> = {
   [NetworkId.ANVIL_LOCAL]: [],
   [NetworkId.BASE]: [],
   [NetworkId.BASE_SEPOLIA]: [],
+  [NetworkId.TEMPO_MODERATO]: [],
 };

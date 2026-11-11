@@ -388,11 +388,6 @@ const ABI = [
             internalType: 'bytes32',
           },
           {
-            name: 'binaryUri',
-            type: 'string',
-            internalType: 'string',
-          },
-          {
             name: 'attestationHash',
             type: 'bytes32',
             internalType: 'bytes32',
@@ -408,6 +403,11 @@ const ABI = [
             internalType: 'bool',
           },
         ],
+      },
+      {
+        name: 'binaryUri',
+        type: 'string',
+        internalType: 'string',
       },
     ],
     outputs: [],
@@ -530,9 +530,9 @@ const ABI = [
         internalType: 'address',
       },
       {
-        name: 'inputs',
-        type: 'bytes',
-        internalType: 'bytes',
+        name: 'inputsHash',
+        type: 'bytes32',
+        internalType: 'bytes32',
       },
       {
         name: 'outputs',

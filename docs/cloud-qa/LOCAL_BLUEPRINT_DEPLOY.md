@@ -43,7 +43,7 @@ brew install protobuf
 cd /path/to/blueprint
 cargo install cargo-tangle --path ./cli --force
 
-# Node.js v18.18.x or later
+# Node.js v20.19.0 or later
 # Yarn v4.7.0 (for dapp)
 # Docker (for Envio indexer)
 # pnpm (for indexer)
@@ -443,7 +443,7 @@ parent-directory/
 curl -L https://foundry.paradigm.xyz | bash
 foundryup
 
-# Node.js v18.18.x or later
+# Node.js v20.19.0 or later
 # Yarn v4.7.0 (for dapp)
 # Docker (for Envio indexer)
 # pnpm (for indexer)
@@ -571,7 +571,7 @@ brew install protobuf
 cd /path/to/blueprint
 cargo install cargo-tangle --path ./cli --force
 
-# Node.js v18.18.x or later
+# Node.js v20.19.0 or later
 # Yarn v4.7.0
 # Docker (for Envio indexer)
 # pnpm (for indexer)

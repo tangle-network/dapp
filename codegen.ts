@@ -40,7 +40,7 @@ const config: CodegenConfig = {
       config: {
         defaultScalarType: 'unknown',
         documentMode: 'string',
-        enumsAsTypes: true,
+        enumType: 'string-literal',
         scalars: {
           // Envio uses BigInt for large numbers
           BigInt: 'bigint',

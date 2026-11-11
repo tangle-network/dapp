@@ -8,6 +8,9 @@
     "local:activity": "node scripts/activity-generator.mjs"
   },
   "dependencies": {
-    "viem": "^2.41.2"
+    "viem": "~2.41.2"
+  },
+  "overrides": {
+    "ws": "8.21.3"
   }
 }

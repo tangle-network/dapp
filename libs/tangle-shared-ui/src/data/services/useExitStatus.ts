@@ -7,32 +7,17 @@ import { Address, zeroAddress } from 'viem';
 import { useChainId, usePublicClient } from 'wagmi';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import TangleABI from '../../abi/tangle';
+// `ExitStatus` + `getExitStatusLabel` live in the pure (wagmi-free) `exitStatus`
+// module so they can be imported by unit-tested modules without pulling wagmi.
+// `ExitStatus` is used below; both are re-exported so existing importers keep
+// resolving them from this module.
+import { ExitStatus } from './exitStatus';
 
-export enum ExitStatus {
-  None = 0,
-  Scheduled = 1,
-  Executable = 2,
-  Completed = 3,
-}
+export { ExitStatus, getExitStatusLabel } from './exitStatus';
 
 export interface UseExitStatusOptions {
   enabled?: boolean;
 }
-
-export const getExitStatusLabel = (status: ExitStatus): string => {
-  switch (status) {
-    case ExitStatus.None:
-      return 'None';
-    case ExitStatus.Scheduled:
-      return 'Scheduled';
-    case ExitStatus.Executable:
-      return 'Executable';
-    case ExitStatus.Completed:
-      return 'Completed';
-    default:
-      return 'Unknown';
-  }
-};
 
 /**
  * Hook to fetch the exit status for an operator in a service.

@@ -116,6 +116,11 @@ export enum PresetTypedChainId {
     EVMChainId.ArbitrumSepolia,
   ),
 
+  TempoModerato = calculateTypedChainId(
+    ChainType.EVM,
+    EVMChainId.TempoModerato,
+  ),
+
   AnvilLocal = calculateTypedChainId(ChainType.EVM, EVMChainId.AnvilLocal),
 
   BSC = calculateTypedChainId(ChainType.EVM, EVMChainId.BSC),

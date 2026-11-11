@@ -1,4 +1,5 @@
 import anvilLocal from '@tangle-network/dapp-config/chains/evm/customChains/anvilLocal';
+import tempoModerato from '@tangle-network/dapp-config/chains/evm/customChains/tempoModerato';
 import { getDefaultConfig } from 'connectkit';
 import { baseSepolia } from 'viem/chains';
 import { createConfig, http } from 'wagmi';
@@ -21,7 +22,7 @@ const ENABLE_FAMILY_WALLET =
       process.env?.NEXT_PUBLIC_ENABLE_FAMILY_WALLET === 'true')) ||
   false;
 
-const chains = [anvilLocal, baseSepolia] as const;
+const chains = [anvilLocal, baseSepolia, tempoModerato] as const;
 
 /**
  * Wallet config matches the Tangle staking dapp — ConnectKit's
@@ -42,6 +43,9 @@ export const cloudWagmiConfig = createConfig(
         timeout: 4_000,
       }),
       [baseSepolia.id]: http('https://sepolia.base.org', { timeout: 8_000 }),
+      [tempoModerato.id]: http('https://rpc.moderato.tempo.xyz', {
+        timeout: 8_000,
+      }),
     },
   }),
 );
