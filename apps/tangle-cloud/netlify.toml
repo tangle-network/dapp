@@ -2,24 +2,12 @@
   publish = "dist/apps/tangle-cloud"
   command = "yarn nx build tangle-cloud"
 
-  # Trigger a master deploy whenever the app's own source, the shared
-  # libs it consumes, or the workspace dep manifest changes. The previous
-  # version gated on apps/tangle-cloud/CHANGELOG.md only, which silently
-  # cancelled every push that wasn't a release-PR — a year of overhaul
-  # work piled up un-deployed before we caught it. CHANGELOG.md is now
-  # implicitly covered (it's inside apps/tangle-cloud/), and any source/
-  # config/lockfile change also re-triggers.
-  #
   # This `netlify.toml` is consumed by two sites that both build the same
   # app from this monorepo path:
   #   * tangle-cloud         → cloud.tangle.tools          (master, production)
   #   * staging-tangle-cloud → develop.cloud.tangle.tools  (develop, staging)
-  # Each site is locked to a single branch via `allowed_branches`, so
-  # `$BRANCH` is always either `master` or `develop` here. The diff-quiet
-  # gate runs on both — pushes that don't touch the app, its libs, or the
-  # workspace manifest are no-op skips on both prod and staging. Deploy
-  # previews (PRs into develop) inherit the staging site and always build.
-  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- apps/tangle-cloud/ libs/ package.json yarn.lock tsconfig.base.json nx.json && exit 0 || exit 1"
+  # Each site is locked to a single branch via `allowed_branches`.
+  # Deploy previews inherit the staging site. Netlify owns change detection.
 
 # ─── Per-context environment ───────────────────────────────────────────
 #
