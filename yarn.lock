@@ -3487,9 +3487,9 @@ __metadata:
   linkType: hard
 
 "@fontsource/geist-sans@npm:^5.2.5":
-  version: 5.2.5
-  resolution: "@fontsource/geist-sans@npm:5.2.5"
-  checksum: 10c0/31f1da384a54eaf385f3261218d2971e075fc34306ad2e14f84f079aeabf2e6dbc7dddc23389037a8476fef467a1d94797a573f6a6e2c826b85badfed921cdb3
+  version: 5.3.0
+  resolution: "@fontsource/geist-sans@npm:5.3.0"
+  checksum: 10c0/8df0e2aa46ad701195a2c9d7de9bd9165a5814c4086a10b97cfa76a4548ea2c602c259b3132b6c08906b1708d92d5df03c3e4d77b81a728bff259ff328e383a6
   languageName: node
   linkType: hard
 
