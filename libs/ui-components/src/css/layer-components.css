@@ -145,12 +145,32 @@
 
   @apply fixed top-0 bottom-0 right-0 w-[750px] overflow-auto;
 
+  /* Plain declarations: @apply of an animate-* utility nests its @keyframes inside this rule, which is invalid CSS
+     that Vite 8's lightningcss minifier refuses. The keyframes below match the tailwind preset's. */
   &[data-state='open'] {
-    @apply animate-drawer-content-right-open;
+    animation: theme('animation.drawer-content-right-open');
   }
 
   &[data-state='closed'] {
-    @apply animate-drawer-content-right-close;
+    animation: theme('animation.drawer-content-right-close');
+  }
+}
+
+@keyframes drawer-content-right-slide-in {
+  from {
+    transform: translate3d(100%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes drawer-content-right-slide-out {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(100%, 0, 0);
   }
 }
 
