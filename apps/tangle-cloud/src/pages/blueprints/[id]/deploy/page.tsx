@@ -356,7 +356,7 @@ const DeployPage: FC = () => {
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
-        error.errors.forEach((err) => {
+        error.issues.forEach((err) => {
           const errorPath = err.path.join('.') as keyof DeployBlueprintSchema;
           setError(errorPath, {
             type: 'manual',
