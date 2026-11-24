@@ -158,7 +158,7 @@
     "use-local-storage-state": "^19.5.0",
     "viem": "~2.41.2",
     "wagmi": "^2.19.5",
-    "zod": "^3.25.76",
+    "zod": "^4.6.6",
     "zustand": "^5.0.14"
   },
   "devDependencies": {
